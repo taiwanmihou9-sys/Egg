@@ -3,190 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
-  <title>轉生龍蛋～暗影進化傳說～ 半開放世界</title>
+  <title>轉生龍蛋～暗影進化傳說～ 完善版</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      background: #0b0710;
-      font-family: 'Noto Serif TC', 'Cinzel', 'Microsoft JhengHei', serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      background: #0a0610; font-family: 'Noto Serif TC', 'Microsoft JhengHei', serif;
+      display: flex; justify-content: center; align-items: center; min-height: 100vh;
+      background-image: radial-gradient(circle at 30% 30%, #2a1a35 0%, #03010a 90%);
       padding: 15px;
-      background-image: radial-gradient(circle at 30% 30%, #2a1e35 0%, #05020a 90%);
     }
     #game-container {
-      width: 100%;
-      max-width: 750px;
-      background: rgba(20, 12, 28, 0.95);
-      border: 2px solid #6a4e7a;
-      border-radius: 30px;
-      box-shadow: 0 0 50px rgba(160, 100, 200, 0.4), inset 0 0 20px rgba(0,0,0,0.8);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      width: 100%; max-width: 750px; background: rgba(18,10,25,0.95);
+      border: 2px solid #7a5e8a; border-radius: 30px;
+      box-shadow: 0 0 55px rgba(150,100,210,0.5), inset 0 0 20px #000;
+      display: flex; flex-direction: column; overflow: hidden;
     }
     .top-ornament {
-      height: 4px;
-      background: linear-gradient(90deg, transparent, #d9b3ff, #ffddaa, #d9b3ff, transparent);
+      height: 4px; background: linear-gradient(90deg, transparent, #d9b3ff, #ffddaa, #d9b3ff, transparent);
     }
     #header {
-      padding: 12px 18px;
-      text-align: center;
-      border-bottom: 1px solid #4c3a5a;
-      background: rgba(30, 15, 40, 0.7);
+      padding: 12px 18px; text-align: center; border-bottom: 1px solid #5a4670;
+      background: rgba(25,12,35,0.8);
     }
     #header h1 {
-      font-size: 1.8rem;
-      letter-spacing: 3px;
-      color: #ffe8b0;
-      text-shadow: 0 0 15px #b080e0, 0 2px 5px black;
-      font-weight: 700;
+      font-size: 1.8rem; letter-spacing: 3px; color: #ffe8b0;
+      text-shadow: 0 0 20px #b080e0, 0 2px 5px black; font-weight: 700;
     }
-    .subtitle {
-      font-size: 0.7rem;
-      color: #c0a0d0;
-      letter-spacing: 4px;
-    }
+    .subtitle { font-size: 0.7rem; color: #c0a0d0; letter-spacing: 4px; }
     #main-view {
-      flex: 1;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      overflow-y: auto;
-      max-height: 55vh;
+      flex: 1; padding: 15px; display: flex; flex-direction: column; gap: 12px;
+      overflow-y: auto; max-height: 60vh;
     }
     .panel {
-      background: rgba(15, 8, 22, 0.85);
-      border: 1px solid #5e4870;
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: inset 0 1px 5px rgba(255,255,255,0.06);
-      color: #f0e0ff;
+      background: rgba(12,6,18,0.9); border: 1px solid #6a4e7a;
+      border-radius: 18px; padding: 15px; box-shadow: inset 0 1px 5px rgba(255,255,255,0.08);
+      color: #f4e8ff;
     }
-    .flex-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+    .flex-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
     .btn {
-      background: #2f203b;
-      border: 1px solid #7a5c8c;
-      color: #f0e0ff;
-      padding: 10px 16px;
-      border-radius: 28px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      letter-spacing: 1px;
-      cursor: pointer;
-      background: linear-gradient(180deg, #402a50 0%, #251830 100%);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: 0.2s;
+      background: #2f1f3a; border: 1px solid #8a6a9a; color: #f0e0ff;
+      padding: 10px 18px; border-radius: 28px; font-weight: 600; font-size: 0.9rem;
+      letter-spacing: 1px; cursor: pointer; transition: 0.2s;
+      background: linear-gradient(180deg, #3e2850 0%, #21152e 100%);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5); display: inline-flex; align-items: center; gap: 6px;
       text-shadow: 0 1px 2px black;
     }
-    .btn:hover {
-      background: #533868;
-      border-color: #c0a0d0;
-      color: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(160,120,200,0.5);
-    }
-    .btn.primary {
-      background: #5a3860;
-      border-color: #d4afb0;
-      color: #fff3e0;
-    }
-    .btn.danger {
-      background: #4a2028;
-      border-color: #b87070;
-    }
-    .btn.small {
-      padding: 6px 14px;
-      font-size: 0.8rem;
-    }
+    .btn:hover { background: #553b6a; border-color: #d0b0e0; color: #fff; transform: translateY(-2px); }
+    .btn:active { transform: scale(0.96); }
+    .btn.primary { background: #5e3e62; border-color: #d8b0c0; color: #fff0e0; }
+    .btn.danger { background: #4b1e28; border-color: #c08080; }
+    .btn.small { padding: 6px 14px; font-size: 0.8rem; }
+    .btn:disabled { opacity: 0.4; pointer-events: none; }
     .god-voice {
-      background: #1e1028;
-      border-left: 4px solid #e6b422;
-      padding: 10px 14px;
-      border-radius: 12px;
-      color: #ffe8a0;
-      font-style: italic;
-      text-shadow: 0 1px 3px black;
-      margin: 8px 0;
+      background: #1e1028; border-left: 4px solid #e6b422; padding: 10px 14px;
+      border-radius: 12px; color: #ffe8a0; font-style: italic; margin: 8px 0;
     }
     .map-grid {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 4px;
-      margin: 10px 0;
+      display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin: 10px 0;
     }
     .map-cell {
-      aspect-ratio: 1;
-      background: #1a1025;
-      border: 1px solid #4a3a55;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      color: #ddd;
-      transition: 0.2s;
+      aspect-ratio: 1; background: #1b1228; border: 1px solid #4a3858;
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: #ccc; transition: 0.2s;
     }
     .player-cell {
-      background: #634e70;
-      border-color: #f0d090;
-      box-shadow: 0 0 12px #ffcc80;
+      background: #6b5078; border-color: #f8d080; box-shadow: 0 0 15px #ffbb40;
     }
-    .direction-pad {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      margin-top: 8px;
-    }
-    .dir-row {
-      display: flex;
-      gap: 20px;
-    }
+    .direction-pad { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 8px; }
+    .dir-row { display: flex; gap: 25px; }
     .dir-btn {
-      background: #3a2848;
-      border: 2px solid #8a6c9c;
-      color: #ffe8d0;
-      font-size: 1.8rem;
-      width: 50px;
-      height: 50px;
-      border-radius: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: 0.15s;
-      box-shadow: 0 3px 6px black;
-      user-select: none;
+      background: #372648; border: 2px solid #8a6ea0; color: #ffe0c0;
+      font-size: 2rem; width: 55px; height: 55px; border-radius: 15px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      box-shadow: 0 4px 8px black; user-select: none; transition: 0.1s;
     }
-    .dir-btn:active {
-      background: #5a4270;
-      transform: scale(0.9);
+    .dir-btn:active { background: #5e4275; transform: scale(0.9); }
+    .shake { animation: shake 0.5s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-8px);} 40%{transform:translateX(8px);} 60%{transform:translateX(-5px);} 80%{transform:translateX(5px);} }
+    .flash { animation: flash 0.4s ease; }
+    @keyframes flash { 0%{opacity:0.4; background:#fff;} 100%{opacity:1;} }
+    .explode { animation: explode 0.6s ease-out; }
+    @keyframes explode { 0%{transform:scale(1); opacity:1;} 50%{transform:scale(1.4); opacity:0.5;} 100%{transform:scale(0); opacity:0;} }
+    .fadeIn { animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+    .evolution-card {
+      background: #1e1230; border: 2px solid #553b60; border-radius: 20px;
+      padding: 15px; text-align: center; cursor: pointer; transition: 0.25s;
+      width: 140px;
     }
-    .status-text {
-      font-weight: 600;
-      color: #ffe0c0;
-      text-shadow: 0 0 6px #a060d0;
-    }
-    @media (max-width: 500px) {
-      #header h1 { font-size: 1.4rem; }
-      .map-cell { font-size: 1.2rem; }
-    }
+    .evolution-card:hover { border-color: #e0b0f0; transform: scale(1.05); box-shadow: 0 8px 20px rgba(180,120,200,0.4); }
   </style>
 </head>
 <body>
@@ -197,61 +102,37 @@
     <div class="subtitle">半開放世界探索</div>
   </div>
   <div id="main-view"></div>
-  <div id="control-area" style="padding:8px 16px 12px; background:rgba(0,0,0,0.5); border-top:1px solid #4a3a55;"></div>
+  <div id="control-area" style="padding:8px 16px 12px; background:rgba(0,0,0,0.6); border-top:1px solid #5a4070;"></div>
 </div>
 
 <script>
   (function() {
-    // ---------- 遊戲狀態 ----------
-    const state = {
-      player: null,
-      currentEnemy: null,
-      log: [],
-      godVoice: "神之聲：你是一顆龍蛋，開始移動探索世界吧...",
-      battleActive: false,
-      currentScene: 'map', // map, battle, evolution, status, goals
-      playerPos: { x: 3, y: 3 }, // 8x8地圖
-      map: [], // 地圖地形
-    };
-
-    // 進化樹 (保留完整)
+    // ---------- 進化樹 (濃縮但完整) ----------
     const EVOLUTION_TREE = {
-      'dragon_egg': { name:'龍蛋', icon:'🥚', grade:'F', maxLv:10, hp:40,mp:20,atk:6,def:10,matk:5,mdef:8,spd:4, skills:['roll'], evolutions:['whelp','draket','hatchling'] },
-      'whelp': { name:'幼龍', icon:'🐉', grade:'D', maxLv:20, hp:110,mp:45,atk:24,def:22,matk:18,mdef:20,spd:12, skills:['roll','flame_breath','dragon_scales'], evolutions:['plague_whelp','rainbow_whelp','rock_whelp'] },
-      'draket': { name:'小龍', icon:'🐲', grade:'D', maxLv:20, hp:90,mp:55,atk:30,def:14,matk:25,mdef:15,spd:16, skills:['roll','fireball','dragon_rage'], evolutions:['flame_draket','thunder_draket'] },
-      'hatchling': { name:'雛龍', icon:'🐊', grade:'D', maxLv:20, hp:100,mp:50,atk:22,def:18,matk:20,mdef:22,spd:20, skills:['roll','wind_cutter','shadow_step'], evolutions:['wind_hatchling','shadow_hatchling'] },
-      'plague_whelp':{ name:'厄病幼龍',icon:'☠️',grade:'C',maxLv:35,hp:200,mp:70,atk:42,def:35,matk:38,mdef:30,spd:18,skills:['toxic_breath'],evolutions:['calamity_drake','venom_drake']},
-      'rainbow_whelp':{ name:'小虹龍',icon:'🌈',grade:'C',maxLv:35,hp:180,mp:80,atk:36,def:32,matk:50,mdef:45,spd:20,skills:['holy_light'],evolutions:['sacred_drake','sky_drake']},
-      'rock_whelp':{ name:'岩石幼龍',icon:'🪨',grade:'C',maxLv:35,hp:260,mp:50,atk:38,def:55,matk:25,mdef:40,spd:10,skills:['stone_skin'],evolutions:['earth_drake','steel_drake']},
-      'flame_draket':{ name:'炎龍幼體',icon:'🔥',grade:'C',maxLv:35,hp:160,mp:70,atk:52,def:22,matk:45,mdef:25,spd:22,skills:['inferno'],evolutions:['blast_drake','magma_drake']},
-      'thunder_draket':{ name:'雷龍幼體',icon:'⚡',grade:'C',maxLv:35,hp:170,mp:75,atk:48,def:24,matk:52,mdef:28,spd:26,skills:['lightning_strike'],evolutions:['storm_drake','volt_drake']},
-      'wind_hatchling':{ name:'風龍幼體',icon:'🌪️',grade:'C',maxLv:35,hp:155,mp:65,atk:42,def:26,matk:44,mdef:30,spd:32,skills:['gale_slash'],evolutions:['tempest_drake','sonic_drake']},
-      'shadow_hatchling':{ name:'暗龍幼體',icon:'🌑',grade:'C',maxLv:35,hp:175,mp:68,atk:46,def:28,matk:48,mdef:32,spd:25,skills:['dark_claw'],evolutions:['abyss_drake','phantom_drake']},
-      'calamity_drake':{ name:'災厄龍',icon:'💀',grade:'B',maxLv:55,hp:350,mp:110,atk:68,def:52,matk:62,mdef:48,spd:28,skills:['death_breath'],evolutions:['final_abyss','chaos_dragon']},
-      'venom_drake':{ name:'毒龍',icon:'🧪',grade:'B',maxLv:55,hp:310,mp:100,atk:64,def:48,matk:70,mdef:55,spd:30,skills:['venom_storm'],evolutions:['plague_ancient']},
-      'sacred_drake':{ name:'聖光龍',icon:'✨',grade:'B',maxLv:55,hp:330,mp:130,atk:58,def:50,matk:80,mdef:75,spd:26,skills:['divine_judgment'],evolutions:['light_king']},
-      'sky_drake':{ name:'天翼龍',icon:'🕊️',grade:'B',maxLv:55,hp:290,mp:120,atk:62,def:45,matk:72,mdef:65,spd:38,skills:['sky_dive'],evolutions:['sky_lord']},
-      'earth_drake':{ name:'地龍',icon:'⛰️',grade:'B',maxLv:55,hp:420,mp:80,atk:66,def:80,matk:45,mdef:60,spd:18,skills:['titan_smash'],evolutions:['earth_mother']},
-      'steel_drake':{ name:'鋼龍',icon:'🛡️',grade:'B',maxLv:55,hp:380,mp:90,atk:70,def:75,matk:50,mdef:70,spd:20,skills:['steel_rend'],evolutions:['immortal_steel']},
-      'blast_drake':{ name:'爆炎龍',icon:'💥',grade:'B',maxLv:55,hp:300,mp:110,atk:82,def:40,matk:68,mdef:45,spd:32,skills:['explosion'],evolutions:['inferno_king']},
-      'magma_drake':{ name:'岩漿龍',icon:'🌋',grade:'B',maxLv:55,hp:340,mp:100,atk:76,def:55,matk:64,mdef:50,spd:24,skills:['lava_flow'],evolutions:['core_dragon']},
-      'storm_drake':{ name:'風暴龍',icon:'⛈️',grade:'B',maxLv:55,hp:280,mp:120,atk:60,def:38,matk:78,mdef:48,spd:42,skills:['thunderstorm'],evolutions:['hurricane_god']},
-      'sonic_drake':{ name:'音速龍',icon:'💨',grade:'B',maxLv:55,hp:270,mp:115,atk:65,def:36,matk:70,mdef:44,spd:48,skills:['sonic_boom'],evolutions:['time_dragon']},
-      'abyss_drake':{ name:'暗黑龍',icon:'🖤',grade:'B',maxLv:55,hp:360,mp:105,atk:72,def:48,matk:76,mdef:52,spd:30,skills:['abyss_gaze'],evolutions:['void_lord']},
-      'phantom_drake':{ name:'影龍',icon:'👻',grade:'B',maxLv:55,hp:310,mp:110,atk:68,def:42,matk:80,mdef:58,spd:36,skills:['phantom_dance'],evolutions:['nothingness']},
-      'final_abyss':{ name:'終焉魔龍',icon:'👿',grade:'S',maxLv:80,hp:600,mp:180,atk:105,def:75,matk:95,mdef:70,spd:40 },
-      'chaos_dragon':{ name:'混沌龍',icon:'🌀',grade:'S',maxLv:80,hp:550,mp:200,atk:100,def:70,matk:110,mdef:80,spd:38 },
-      'plague_ancient':{ name:'瘟疫古龍',icon:'☣️',grade:'S',maxLv:80,hp:520,mp:170,atk:98,def:72,matk:108,mdef:82,spd:42 },
-      'light_king':{ name:'光之龍王',icon:'👑',grade:'S',maxLv:80,hp:580,mp:220,atk:92,def:80,matk:120,mdef:110,spd:36 },
-      'sky_lord':{ name:'天空霸主',icon:'🦅',grade:'S',maxLv:80,hp:500,mp:200,atk:96,def:68,matk:105,mdef:90,spd:55 },
-      'earth_mother':{ name:'大地之母',icon:'🌍',grade:'S',maxLv:80,hp:700,mp:150,atk:88,def:120,matk:70,mdef:95,spd:22 },
-      'immortal_steel':{ name:'不滅鋼龍',icon:'⚙️',grade:'S',maxLv:80,hp:650,mp:160,atk:102,def:110,matk:75,mdef:100,spd:26 },
-      'inferno_king':{ name:'焚世炎龍',icon:'🔥',grade:'S',maxLv:80,hp:540,mp:190,atk:115,def:62,matk:98,mdef:68,spd:44 },
-      'core_dragon':{ name:'地核巨龍',icon:'🌡️',grade:'S',maxLv:80,hp:620,mp:170,atk:108,def:85,matk:90,mdef:75,spd:30 },
-      'hurricane_god':{ name:'颶風神龍',icon:'🌬️',grade:'S',maxLv:80,hp:490,mp:210,atk:90,def:58,matk:115,mdef:72,spd:60 },
-      'time_dragon':{ name:'時空龍',icon:'⌛',grade:'S',maxLv:80,hp:510,mp:230,atk:95,def:60,matk:118,mdef:78,spd:58 },
-      'void_lord':{ name:'虛無龍',icon:'🕳️',grade:'S',maxLv:80,hp:570,mp:195,atk:104,def:72,matk:112,mdef:80,spd:46 },
-      'nothingness':{ name:'虛無',icon:'⚫',grade:'S',maxLv:80,hp:530,mp:205,atk:100,def:66,matk:120,mdef:88,spd:52 }
+      'dragon_egg': { name:'龍蛋', icon:'🥚', grade:'F', maxLv:5, hp:40,mp:20,atk:6,def:10,matk:5,mdef:8,spd:4, skills:['roll'], evolutions:['whelp','draket','hatchling'] },
+      'whelp': { name:'幼龍', icon:'🐉', grade:'D', maxLv:5, hp:110,mp:45,atk:24,def:22,matk:18,mdef:20,spd:12, skills:['roll','flame_breath','dragon_scales'], evolutions:['plague_whelp','rainbow_whelp','rock_whelp'] },
+      'draket': { name:'小龍', icon:'🐲', grade:'D', maxLv:5, hp:90,mp:55,atk:30,def:14,matk:25,mdef:15,spd:16, skills:['roll','fireball','dragon_rage'], evolutions:['flame_draket','thunder_draket'] },
+      'hatchling': { name:'雛龍', icon:'🐊', grade:'D', maxLv:5, hp:100,mp:50,atk:22,def:18,matk:20,mdef:22,spd:20, skills:['roll','wind_cutter','shadow_step'], evolutions:['wind_hatchling','shadow_hatchling'] },
+      'plague_whelp':{ name:'厄病幼龍',icon:'☠️',grade:'C',maxLv:5,hp:200,mp:70,atk:42,def:35,matk:38,mdef:30,spd:18,skills:['toxic_breath'],evolutions:['calamity_drake','venom_drake']},
+      'rainbow_whelp':{ name:'小虹龍',icon:'🌈',grade:'C',maxLv:5,hp:180,mp:80,atk:36,def:32,matk:50,mdef:45,spd:20,skills:['holy_light'],evolutions:['sacred_drake','sky_drake']},
+      'rock_whelp':{ name:'岩石幼龍',icon:'🪨',grade:'C',maxLv:5,hp:260,mp:50,atk:38,def:55,matk:25,mdef:40,spd:10,skills:['stone_skin'],evolutions:['earth_drake','steel_drake']},
+      'flame_draket':{ name:'炎龍幼體',icon:'🔥',grade:'C',maxLv:5,hp:160,mp:70,atk:52,def:22,matk:45,mdef:25,spd:22,skills:['inferno'],evolutions:['blast_drake','magma_drake']},
+      'thunder_draket':{ name:'雷龍幼體',icon:'⚡',grade:'C',maxLv:5,hp:170,mp:75,atk:48,def:24,matk:52,mdef:28,spd:26,skills:['lightning_strike'],evolutions:['storm_drake','volt_drake']},
+      'wind_hatchling':{ name:'風龍幼體',icon:'🌪️',grade:'C',maxLv:5,hp:155,mp:65,atk:42,def:26,matk:44,mdef:30,spd:32,skills:['gale_slash'],evolutions:['tempest_drake','sonic_drake']},
+      'shadow_hatchling':{ name:'暗龍幼體',icon:'🌑',grade:'C',maxLv:5,hp:175,mp:68,atk:46,def:28,matk:48,mdef:32,spd:25,skills:['dark_claw'],evolutions:['abyss_drake','phantom_drake']},
+      // B級以上最終形態沒有進化按鈕
+      'calamity_drake':{ name:'災厄龍',icon:'💀',grade:'B',maxLv:100,hp:350,mp:110,atk:68,def:52,matk:62,mdef:48,spd:28,skills:['death_breath'], evolutions:null },
+      'venom_drake':{ name:'毒龍',icon:'🧪',grade:'B',maxLv:100,hp:310,mp:100,atk:64,def:48,matk:70,mdef:55,spd:30,skills:['venom_storm'], evolutions:null },
+      'sacred_drake':{ name:'聖光龍',icon:'✨',grade:'B',maxLv:100,hp:330,mp:130,atk:58,def:50,matk:80,mdef:75,spd:26,skills:['divine_judgment'], evolutions:null },
+      'sky_drake':{ name:'天翼龍',icon:'🕊️',grade:'B',maxLv:100,hp:290,mp:120,atk:62,def:45,matk:72,mdef:65,spd:38,skills:['sky_dive'], evolutions:null },
+      'earth_drake':{ name:'地龍',icon:'⛰️',grade:'B',maxLv:100,hp:420,mp:80,atk:66,def:80,matk:45,mdef:60,spd:18,skills:['titan_smash'], evolutions:null },
+      'steel_drake':{ name:'鋼龍',icon:'🛡️',grade:'B',maxLv:100,hp:380,mp:90,atk:70,def:75,matk:50,mdef:70,spd:20,skills:['steel_rend'], evolutions:null },
+      'blast_drake':{ name:'爆炎龍',icon:'💥',grade:'B',maxLv:100,hp:300,mp:110,atk:82,def:40,matk:68,mdef:45,spd:32,skills:['explosion'], evolutions:null },
+      'magma_drake':{ name:'岩漿龍',icon:'🌋',grade:'B',maxLv:100,hp:340,mp:100,atk:76,def:55,matk:64,mdef:50,spd:24,skills:['lava_flow'], evolutions:null },
+      'storm_drake':{ name:'風暴龍',icon:'⛈️',grade:'B',maxLv:100,hp:280,mp:120,atk:60,def:38,matk:78,mdef:48,spd:42,skills:['thunderstorm'], evolutions:null },
+      'sonic_drake':{ name:'音速龍',icon:'💨',grade:'B',maxLv:100,hp:270,mp:115,atk:65,def:36,matk:70,mdef:44,spd:48,skills:['sonic_boom'], evolutions:null },
+      'abyss_drake':{ name:'暗黑龍',icon:'🖤',grade:'B',maxLv:100,hp:360,mp:105,atk:72,def:48,matk:76,mdef:52,spd:30,skills:['abyss_gaze'], evolutions:null },
+      'phantom_drake':{ name:'影龍',icon:'👻',grade:'B',maxLv:100,hp:310,mp:110,atk:68,def:42,matk:80,mdef:58,spd:36,skills:['phantom_dance'], evolutions:null },
     };
 
     const SKILLS = {
@@ -267,6 +148,18 @@
       lightning_strike:{name:'雷擊',mp:18,power:2.3,attr:'mag'},
       gale_slash:{name:'風刃',mp:12,power:1.9,attr:'phys'},
       dark_claw:{name:'暗爪',mp:14,power:2.0,attr:'phys'},
+      death_breath:{name:'死亡吐息',mp:25,power:2.8,attr:'mag'},
+    };
+
+    const state = {
+      player: null,
+      currentEnemy: null,
+      godVoice: "神之聲：你是龍蛋，移動探索世界吧...",
+      battleActive: false,
+      playerDefeated: false,
+      currentScene: 'map',
+      playerPos: { x:3, y:3 },
+      map: [],
     };
 
     function initPlayer() {
@@ -274,12 +167,13 @@
         formId: 'dragon_egg', level:1, exp:0, gold:100,
         hp:40, maxHp:40, mp:20, maxMp:20,
         baseAtk:6, baseDef:10, baseMatk:5, baseMdef:8, baseSpd:4,
-        titles:[], equipment:{}, inventory:[], potions:{hp:3, mp:2},
+        titles:[], equipment:{}, potions:{hp:3, mp:2},
         goalProgress:{kill:0}
       };
       applyFormStats();
       state.player.hp = state.player.maxHp;
       state.player.mp = state.player.maxMp;
+      state.playerDefeated = false;
     }
 
     function applyFormStats() {
@@ -296,28 +190,19 @@
       return {atk:p.baseAtk,def:p.baseDef,matk:p.baseMatk,mdef:p.baseMdef,spd:p.baseSpd,maxHp:p.maxHp,maxMp:p.maxMp};
     }
 
-    // 地圖生成
     function generateMap() {
       const terrains = ['🌳','🌲','🌿','🪨','⛰️','🌋','🏰','🌑'];
       state.map = Array(8).fill().map(()=>Array(8).fill().map(()=>terrains[Math.floor(Math.random()*terrains.length)]));
-      state.map[3][3] = '🏡'; // 起始點
+      state.map[3][3] = '🏡';
     }
 
-    // 移動處理
     function movePlayer(dx, dy) {
-      if(state.battleActive) return;
-      let nx = state.playerPos.x + dx;
-      let ny = state.playerPos.y + dy;
+      if(state.battleActive || state.playerDefeated) return;
+      let nx = state.playerPos.x + dx, ny = state.playerPos.y + dy;
       if(nx<0||nx>7||ny<0||ny>7) return;
-      state.playerPos.x = nx;
-      state.playerPos.y = ny;
-      // 隨機遇敵
-      if(Math.random() < 0.25) {
-        startRandomEncounter();
-      } else {
-        setGodVoice(`你移動到了 (${nx},${ny})`);
-        renderMap();
-      }
+      state.playerPos.x = nx; state.playerPos.y = ny;
+      if(Math.random() < 0.25) startRandomEncounter();
+      else { setGodVoice(`移動到 (${nx},${ny})`); renderMap(); }
     }
 
     function startRandomEncounter() {
@@ -327,31 +212,43 @@
         {name:'石傀儡',icon:'🗿',hp:100,atk:22,def:15,exp:80,gold:50},
         {name:'暗影蝙蝠',icon:'🦇',hp:70,atk:18,def:8,exp:60,gold:35}
       ];
-      const enemy = {...monsters[Math.floor(Math.random()*monsters.length)], maxHp:0};
+      const enemy = {...monsters[Math.floor(Math.random()*monsters.length)]};
       enemy.maxHp = enemy.hp;
       state.currentEnemy = enemy;
       state.battleActive = true;
+      state.playerDefeated = false;
       state.currentScene = 'battle';
       setGodVoice(`⚔️ ${enemy.name} 出現了！`);
+      document.getElementById('main-view').classList.add('flash');
+      setTimeout(()=>document.getElementById('main-view').classList.remove('flash'), 400);
       renderBattle();
     }
 
     function playerAttack() {
+      if(state.playerDefeated || !state.battleActive) return;
       const dmg = Math.max(1, getStats().atk - (state.currentEnemy.def||0) + Math.floor(Math.random()*8));
       state.currentEnemy.hp -= dmg;
       setGodVoice(`造成 ${dmg} 傷害`);
+      document.getElementById('enemy-card')?.classList.add('shake');
+      setTimeout(()=>document.getElementById('enemy-card')?.classList.remove('shake'), 500);
       checkBattleEnd();
     }
+
     function playerSkill(skillId) {
+      if(state.playerDefeated || !state.battleActive) return;
       const skill = SKILLS[skillId];
-      if(!skill || state.player.mp<skill.mp) return;
+      if(!skill || state.player.mp < skill.mp) return;
       state.player.mp -= skill.mp;
       const dmg = Math.max(1, Math.floor(getStats().atk*skill.power) - (state.currentEnemy.def||0));
       state.currentEnemy.hp -= dmg;
       setGodVoice(`✨ ${skill.name}！ ${dmg} 傷害`);
+      document.getElementById('enemy-card')?.classList.add('shake');
+      setTimeout(()=>document.getElementById('enemy-card')?.classList.remove('shake'), 500);
       checkBattleEnd();
     }
+
     function usePotion() {
+      if(state.playerDefeated || !state.battleActive) return;
       if(state.player.potions.hp>0 && state.player.hp<state.player.maxHp){
         state.player.hp = Math.min(state.player.maxHp, state.player.hp+40);
         state.player.potions.hp--;
@@ -359,105 +256,185 @@
       }
       enemyTurn();
     }
+
     function enemyTurn() {
-      if(!state.currentEnemy||state.currentEnemy.hp<=0) return;
+      if(!state.currentEnemy || state.currentEnemy.hp<=0) return;
+      if(state.playerDefeated) return;
       const dmg = Math.max(1, (state.currentEnemy.atk||10) - getStats().def);
       state.player.hp -= dmg;
       setGodVoice(`${state.currentEnemy.name} 反擊 ${dmg} 傷害`);
-      if(state.player.hp<=0) { state.player.hp=1; state.battleActive=false; state.currentScene='map'; setGodVoice('被打倒了...'); }
+      document.getElementById('player-card')?.classList.add('shake');
+      setTimeout(()=>document.getElementById('player-card')?.classList.remove('shake'), 500);
+      if(state.player.hp <= 0) {
+        state.player.hp = 0;
+        state.playerDefeated = true;
+        state.battleActive = false;
+        setGodVoice('你被擊倒了... 回到巢穴');
+        setTimeout(()=>{
+          state.player.hp = Math.floor(state.player.maxHp*0.3);
+          state.player.mp = Math.floor(state.player.maxMp*0.3);
+          state.playerDefeated = false;
+          state.currentScene = 'map';
+          renderMap();
+        }, 1500);
+        renderBattle(); // 顯示死亡狀態
+        return;
+      }
+      renderBattle();
     }
+
     function checkBattleEnd() {
-      if(state.currentEnemy.hp<=0){
-        state.player.exp += state.currentEnemy.exp;
+      if(state.currentEnemy.hp <= 0) {
+        state.currentEnemy.hp = 0;
+        const expGain = state.currentEnemy.exp;
+        state.player.exp += expGain;
         state.player.gold += state.currentEnemy.gold;
         state.player.goalProgress.kill++;
-        setGodVoice(`勝利！+${state.currentEnemy.exp}EXP`);
-        checkLevelUp();
-        state.battleActive=false;
-        state.currentScene='map';
-        renderMap();
-      } else { enemyTurn(); renderBattle(); }
-    }
-    function checkLevelUp() {
-      const form = EVOLUTION_TREE[state.player.formId];
-      const need = form.maxLv*10;
-      while(state.player.exp>=need && state.player.level<form.maxLv){
-        state.player.exp-=need; state.player.level++;
-        state.player.maxHp+=8; state.player.maxMp+=4;
-        state.player.baseAtk+=3; state.player.baseDef+=2;
-        state.player.hp=state.player.maxHp; state.player.mp=state.player.maxMp;
-        setGodVoice(`🎉 Lv.${state.player.level}!`);
+        setGodVoice(`勝利！+${expGain}經驗`);
+        document.getElementById('enemy-card')?.classList.add('explode');
+        setTimeout(()=>{
+          checkLevelUp();
+          state.battleActive = false;
+          state.playerDefeated = false;
+          state.currentScene = 'map';
+          renderMap();
+        }, 600);
+        renderBattle();
+      } else {
+        enemyTurn();
       }
     }
 
-    function evolveTo(id) {
-      state.player.formId=id; state.player.level=1; state.player.exp=0;
-      applyFormStats(); state.player.hp=state.player.maxHp; state.player.mp=state.player.maxMp;
-      setGodVoice(`進化！${EVOLUTION_TREE[id].name}`);
-      state.currentScene='map'; renderMap();
+    function checkLevelUp() {
+      const form = EVOLUTION_TREE[state.player.formId];
+      const needExp = 20 + state.player.level * 5;
+      while(state.player.exp >= needExp) {
+        state.player.exp -= needExp;
+        state.player.level++;
+        state.player.maxHp += 12; state.player.maxMp += 6;
+        state.player.baseAtk += 3; state.player.baseDef += 2;
+        state.player.hp = state.player.maxHp; state.player.mp = state.player.maxMp;
+        setGodVoice(`🎉 升級！ Lv.${state.player.level}`);
+        document.getElementById('main-view')?.classList.add('flash');
+        setTimeout(()=>document.getElementById('main-view')?.classList.remove('flash'), 500);
+      }
     }
 
-    // 渲染地圖
+    function evolveTo(newId) {
+      state.player.formId = newId;
+      state.player.level = 1; state.player.exp = 0;
+      applyFormStats();
+      state.player.hp = state.player.maxHp; state.player.mp = state.player.maxMp;
+      setGodVoice(`進化！${EVOLUTION_TREE[newId].name}`);
+      state.currentScene = 'map';
+      renderMap();
+    }
+
+    // ---------- 渲染 ----------
     function renderMap() {
-      let html = `<div class="panel"><h3>🗺️ 世界地圖</h3><div class="map-grid">`;
+      const form = EVOLUTION_TREE[state.player.formId];
+      const canEvo = (state.player.level % 5 === 0 && form.evolutions && form.evolutions.length > 0);
+      let html = `<div class="panel fadeIn"><h3>🗺️ 世界地圖</h3><div class="map-grid">`;
       for(let y=0; y<8; y++){
         for(let x=0; x<8; x++){
           const isPlayer = (x===state.playerPos.x && y===state.playerPos.y);
-          html += `<div class="map-cell ${isPlayer?'player-cell':''}">${isPlayer?EVOLUTION_TREE[state.player.formId].icon:state.map[y][x]}</div>`;
+          html += `<div class="map-cell ${isPlayer?'player-cell':''}">${isPlayer?form.icon:state.map[y][x]}</div>`;
         }
       }
-      html += `</div><p class="status-text">${EVOLUTION_TREE[state.player.formId].name} Lv.${state.player.level} | ❤️${state.player.hp}/${state.player.maxHp}</p>`;
+      html += `</div><p><b>${form.icon} ${form.name}</b> Lv.${state.player.level} | ❤️${state.player.hp}/${state.player.maxHp} 💧${state.player.mp}/${state.player.maxMp}</p>`;
       html += `<div class="god-voice">${state.godVoice}</div>`;
-      html += `<div class="flex-row"><button class="btn small" id="statusBtn">📋狀態</button><button class="btn small" id="goalsBtn">🎯目標</button>`;
-      if(state.player.level >= EVOLUTION_TREE[state.player.formId].maxLv && EVOLUTION_TREE[state.player.formId].evolutions)
-        html += `<button class="btn small primary" id="evoBtn">✨進化</button>`;
+      html += `<div class="flex-row">
+        <button class="btn small" id="statusBtn">📋狀態</button>
+        <button class="btn small" id="goalsBtn">🎯目標</button>`;
+      if(canEvo) html += `<button class="btn small primary" id="evoBtn">✨進化</button>`;
       html += `</div></div>`;
       document.getElementById('main-view').innerHTML = html;
-      document.getElementById('statusBtn')?.addEventListener('click',()=>{state.currentScene='status';renderStatus();});
-      document.getElementById('goalsBtn')?.addEventListener('click',()=>{state.currentScene='goals';renderGoals();});
-      document.getElementById('evoBtn')?.addEventListener('click',()=>{state.currentScene='evolution';renderEvolution();});
+      document.getElementById('statusBtn')?.addEventListener('click', ()=>{ state.currentScene='status'; renderStatus(); });
+      document.getElementById('goalsBtn')?.addEventListener('click', ()=>{ state.currentScene='goals'; renderGoals(); });
+      document.getElementById('evoBtn')?.addEventListener('click', ()=>{ state.currentScene='evolution'; renderEvolution(); });
     }
 
     function renderBattle() {
-      const e=state.currentEnemy; const p=state.player;
-      document.getElementById('main-view').innerHTML = `
-        <div class="panel">
-          <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:2.5rem;">${e.icon}</span><b>${e.name}</b> ❤️${e.hp}/${e.maxHp}</div>
-          <p>${EVOLUTION_TREE[p.formId].icon} Lv.${p.level} ❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</p>
-          <div class="flex-row">
-            <button class="btn" id="atkBtn">⚔️攻擊</button>
-            <button class="btn" id="skillBtn">🔥火焰吐息</button>
-            <button class="btn" id="potionBtn">🧪藥水</button>
-          </div>
-          <div class="god-voice">${state.godVoice}</div>
-        </div>`;
-      document.getElementById('atkBtn').addEventListener('click',playerAttack);
-      document.getElementById('skillBtn').addEventListener('click',()=>playerSkill('flame_breath'));
-      document.getElementById('potionBtn').addEventListener('click',usePotion);
+      const e = state.currentEnemy;
+      const p = state.player;
+      const form = EVOLUTION_TREE[p.formId];
+      const skills = form.skills || [];
+      let skillBtns = skills.map(sid => {
+        const sk = SKILLS[sid];
+        if(!sk || sk.type==='trait') return '';
+        const disabled = p.mp < sk.mp || state.playerDefeated ? 'disabled' : '';
+        return `<button class="btn small" ${disabled} id="skill_${sid}">✨${sk.name} (${sk.mp}MP)</button>`;
+      }).join('');
+      let html = `<div class="panel fadeIn">
+        <div id="enemy-card" style="display:flex;align-items:center;gap:10px;background:#2a1028;border-radius:16px;padding:10px;">
+          <span style="font-size:2.5rem;">${e.icon}</span><b>${e.name}</b> ❤️${e.hp}/${e.maxHp}
+        </div>
+        <div id="player-card" style="margin-top:8px;">
+          <b>${form.icon} ${form.name}</b> Lv.${p.level} ❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}
+        </div>
+        <div class="flex-row" style="margin-top:12px;">
+          <button class="btn" id="atkBtn" ${state.playerDefeated?'disabled':''}>⚔️攻擊</button>
+          ${skillBtns}
+          <button class="btn" id="potionBtn" ${state.playerDefeated?'disabled':''}>🧪藥水</button>
+        </div>
+        <div class="god-voice">${state.godVoice}</div>`;
+      if(state.playerDefeated) html += `<p style="color:#ff8080; text-align:center;">你已倒下，等待返回巢穴...</p>`;
+      html += `</div>`;
+      document.getElementById('main-view').innerHTML = html;
+      document.getElementById('atkBtn')?.addEventListener('click', playerAttack);
+      skills.forEach(sid => {
+        const btn = document.getElementById(`skill_${sid}`);
+        if(btn) btn.addEventListener('click', ()=>playerSkill(sid));
+      });
+      document.getElementById('potionBtn')?.addEventListener('click', usePotion);
     }
 
     function renderEvolution() {
       const form = EVOLUTION_TREE[state.player.formId];
-      const opts = form.evolutions||[];
-      let btns = opts.map(id=>`<button class="btn primary" data-evo="${id}">${EVOLUTION_TREE[id].icon} ${EVOLUTION_TREE[id].name} (${EVOLUTION_TREE[id].grade})</button>`).join('');
-      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>選擇進化</h3><div class="flex-row">${btns}</div></div>`;
-      document.querySelectorAll('[data-evo]').forEach(b=>b.addEventListener('click',(e)=>evolveTo(e.target.dataset.evo)));
+      const opts = form.evolutions || [];
+      let cards = opts.map(id => {
+        const evo = EVOLUTION_TREE[id];
+        return `<div class="evolution-card" data-evo="${id}">
+          <span style="font-size:2.5rem;">${evo.icon}</span>
+          <h4>${evo.name}</h4>
+          <p style="color:#c0a0e0;">${evo.grade}級</p>
+          <p style="font-size:0.7rem;">❤️${evo.hp} ⚔️${evo.atk} 🛡️${evo.def}</p>
+        </div>`;
+      }).join('');
+      document.getElementById('main-view').innerHTML = `
+        <div class="panel fadeIn">
+          <h3>🌟 選擇進化路線</h3>
+          <div class="flex-row">${cards}</div>
+          <button class="btn small" id="cancelEvo">取消</button>
+        </div>`;
+      document.querySelectorAll('.evolution-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const id = e.currentTarget.dataset.evo;
+          evolveTo(id);
+        });
+      });
+      document.getElementById('cancelEvo')?.addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
     }
 
     function renderStatus() {
       const p=state.player; const f=EVOLUTION_TREE[p.formId];
-      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>狀態</h3><p>${f.icon} ${f.name} (${f.grade}) Lv.${p.level}</p><p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</p><button class="btn" id="backMap">返回地圖</button></div>`;
-      document.getElementById('backMap').addEventListener('click',()=>{state.currentScene='map';renderMap();});
+      document.getElementById('main-view').innerHTML = `
+        <div class="panel fadeIn"><h3>狀態</h3><p>${f.icon} ${f.name} (${f.grade}) Lv.${p.level}</p>
+        <p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp} 💰${p.gold}</p>
+        <button class="btn" id="backMap">返回地圖</button></div>`;
+      document.getElementById('backMap').addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
     }
 
     function renderGoals() {
-      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>目標</h3><p>擊殺怪物: ${state.player.goalProgress.kill}/5</p><button class="btn" id="backMap2">返回地圖</button></div>`;
-      document.getElementById('backMap2').addEventListener('click',()=>{state.currentScene='map';renderMap();});
+      document.getElementById('main-view').innerHTML = `
+        <div class="panel fadeIn"><h3>目標</h3><p>擊殺怪物: ${state.player.goalProgress.kill}/5</p>
+        <button class="btn" id="backMap2">返回地圖</button></div>`;
+      document.getElementById('backMap2').addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
     }
 
     function setGodVoice(msg) { state.godVoice = `神之聲：${msg}`; }
 
-    // 方向鍵控制
+    // 方向鍵
     function setupControls() {
       document.getElementById('control-area').innerHTML = `
         <div class="direction-pad">
@@ -468,21 +445,17 @@
             <div class="dir-btn" id="rightBtn">→</div>
           </div>
         </div>`;
-      document.getElementById('upBtn').addEventListener('click',()=>movePlayer(0,-1));
-      document.getElementById('downBtn').addEventListener('click',()=>movePlayer(0,1));
-      document.getElementById('leftBtn').addEventListener('click',()=>movePlayer(-1,0));
-      document.getElementById('rightBtn').addEventListener('click',()=>movePlayer(1,0));
+      document.getElementById('upBtn').addEventListener('click', ()=>movePlayer(0,-1));
+      document.getElementById('downBtn').addEventListener('click', ()=>movePlayer(0,1));
+      document.getElementById('leftBtn').addEventListener('click', ()=>movePlayer(-1,0));
+      document.getElementById('rightBtn').addEventListener('click', ()=>movePlayer(1,0));
     }
 
     // 啟動
-    function start() {
-      initPlayer();
-      generateMap();
-      state.currentScene='map';
-      setupControls();
-      renderMap();
-    }
-    start();
+    initPlayer();
+    generateMap();
+    setupControls();
+    renderMap();
   })();
 </script>
 </body>
