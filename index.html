@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
-  <title>轉生龍蛋～暗影進化傳說～ 完整版</title>
+  <title>轉生龍蛋～四域探索～</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -13,7 +13,7 @@
       padding: 15px;
     }
     #game-container {
-      width: 100%; max-width: 800px; background: rgba(18,10,25,0.95);
+      width: 100%; max-width: 850px; background: rgba(18,10,25,0.95);
       border: 2px solid #7a5e8a; border-radius: 30px;
       box-shadow: 0 0 55px rgba(150,100,210,0.5), inset 0 0 20px #000;
       display: flex; flex-direction: column; overflow: hidden;
@@ -59,15 +59,16 @@
       border-radius: 12px; color: #ffe8a0; font-style: italic; margin: 8px 0;
     }
     .map-grid {
-      display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin: 10px 0;
+      display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; margin: 10px 0;
     }
     .map-cell {
       aspect-ratio: 1; background: #1b1228; border: 1px solid #4a3858;
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem; color: #ccc; transition: 0.2s;
+      border-radius: 4px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #ccc; transition: 0.1s;
     }
     .player-cell {
-      background: #6b5078; border-color: #f8d080; box-shadow: 0 0 15px #ffbb40;
+      background: #6b5078; border-color: #f8d080; box-shadow: 0 0 10px #ffbb40;
+      font-size: 1.4rem;
     }
     .direction-pad { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 8px; }
     .dir-row { display: flex; gap: 25px; }
@@ -99,8 +100,8 @@
 <div id="game-container">
   <div class="top-ornament"></div>
   <div id="header">
-    <h1>🐉 轉生龍蛋 · 暗影進化</h1>
-    <div class="subtitle">屬性克制 · 掉落 · 商店</div>
+    <h1>🐉 轉生龍蛋 · 四域探索</h1>
+    <div class="subtitle">森林 · 礦洞 · 城堡 · 龍巢</div>
   </div>
   <div id="main-view"></div>
   <div id="control-area" style="padding:8px 16px 12px; background:rgba(0,0,0,0.6); border-top:1px solid #5a4070;"></div>
@@ -108,14 +109,12 @@
 
 <script>
   (function() {
-    // ---------- 屬性定義 ----------
     const ELEMENTS = { fire:'火', water:'水', wind:'風', earth:'地', light:'光', dark:'闇' };
     const ELEMENT_WEAKNESS = {
       fire: 'wind', wind: 'earth', earth: 'water', water: 'fire',
       light: 'dark', dark: 'light'
     };
 
-    // ---------- 進化樹 ----------
     const EVOLUTION_TREE = {
       'dragon_egg': { name:'龍蛋', icon:'🥚', grade:'F', maxLv:5, hp:40,mp:20,atk:6,def:10,matk:5,mdef:8,spd:4, skills:['roll'], evolutions:['whelp','draket','hatchling'] },
       'whelp': { name:'幼龍', icon:'🐉', grade:'D', maxLv:5, hp:110,mp:45,atk:24,def:22,matk:18,mdef:20,spd:12, skills:['roll','flame_breath','dragon_scales'], evolutions:['plague_whelp','rainbow_whelp','rock_whelp'] },
@@ -142,7 +141,6 @@
       'phantom_drake':{ name:'影龍',icon:'👻',grade:'B',maxLv:100,hp:310,mp:110,atk:68,def:42,matk:80,mdef:58,spd:36,skills:['phantom_dance'], evolutions:null },
     };
 
-    // 技能 (部分帶屬性)
     const SKILLS = {
       roll:{name:'滾動',mp:4,power:1.2,attr:'phys', element:null},
       flame_breath:{name:'火焰吐息',mp:10,power:1.8,attr:'mag', element:'fire'},
@@ -159,64 +157,71 @@
       death_breath:{name:'死亡吐息',mp:25,power:2.8,attr:'mag', element:'dark'},
     };
 
-    // 怪物庫 (名稱, 屬性, 掉落物)
+    // 區域定義
+    const ZONES = {
+      forest: { name:'幽暗森林', icon:'🌲', color:'#4a6b3a', adjacent: { north:null, south:'cave', east:null, west:null } },
+      cave: { name:'廢棄礦洞', icon:'🕳️', color:'#6b5a4a', adjacent: { north:'forest', south:'castle', east:null, west:null } },
+      castle: { name:'亡靈城堡', icon:'🏰', color:'#5a4a6a', adjacent: { north:'cave', south:'dragon_lair', east:null, west:null } },
+      dragon_lair: { name:'龍之巢穴', icon:'🌋', color:'#8a4a3a', adjacent: { north:'castle', south:null, east:null, west:null } },
+    };
+
     const MONSTER_POOLS = {
       forest: [
-        {name:'哥布林',icon:'👹',element:'earth',hp:35,atk:10,def:4,exp:25,gold:15, loot:[{id:'goblin_tooth',chance:0.4}]},
-        {name:'火狐',icon:'🦊',element:'fire',hp:40,atk:14,def:5,exp:30,gold:20, loot:[{id:'fire_fur',chance:0.5}]},
-        {name:'風精靈',icon:'🧚',element:'wind',hp:30,atk:12,def:3,exp:28,gold:18, loot:[{id:'wind_essence',chance:0.4}]},
-        {name:'巨狼',icon:'🐺',element:'water',hp:55,atk:18,def:8,exp:45,gold:30, loot:[{id:'wolf_fang',chance:0.45}]},
+        {name:'哥布林',icon:'👹',element:'earth',hp:35,atk:10,def:4,exp:25,gold:15,loot:[{id:'goblin_tooth',chance:0.4}]},
+        {name:'火狐',icon:'🦊',element:'fire',hp:40,atk:14,def:5,exp:30,gold:20,loot:[{id:'fire_fur',chance:0.5}]},
+        {name:'風精靈',icon:'🧚',element:'wind',hp:30,atk:12,def:3,exp:28,gold:18,loot:[{id:'wind_essence',chance:0.4}]},
       ],
       cave: [
-        {name:'石傀儡',icon:'🗿',element:'earth',hp:100,atk:22,def:18,exp:80,gold:50, loot:[{id:'stone_core',chance:0.5}]},
-        {name:'熔岩蟲',icon:'🐛',element:'fire',hp:85,atk:20,def:14,exp:75,gold:45, loot:[{id:'lava_scale',chance:0.5}]},
-        {name:'暗影蝙蝠',icon:'🦇',element:'dark',hp:70,atk:19,def:10,exp:65,gold:40, loot:[{id:'bat_wing',chance:0.5}]},
+        {name:'石傀儡',icon:'🗿',element:'earth',hp:100,atk:22,def:18,exp:80,gold:50,loot:[{id:'stone_core',chance:0.5}]},
+        {name:'熔岩蟲',icon:'🐛',element:'fire',hp:85,atk:20,def:14,exp:75,gold:45,loot:[{id:'lava_scale',chance:0.5}]},
+        {name:'暗影蝙蝠',icon:'🦇',element:'dark',hp:70,atk:19,def:10,exp:65,gold:40,loot:[{id:'bat_wing',chance:0.5}]},
       ],
       castle: [
-        {name:'骷髏騎士',icon:'💀',element:'dark',hp:180,atk:32,def:22,exp:160,gold:90, loot:[{id:'dark_bone',chance:0.6}]},
-        {name:'聖光祭司',icon:'🧙',element:'light',hp:150,atk:28,def:18,exp:140,gold:85, loot:[{id:'holy_water',chance:0.5}]},
+        {name:'骷髏騎士',icon:'💀',element:'dark',hp:180,atk:32,def:22,exp:160,gold:90,loot:[{id:'dark_bone',chance:0.6}]},
+        {name:'聖光祭司',icon:'🧙',element:'light',hp:150,atk:28,def:18,exp:140,gold:85,loot:[{id:'holy_water',chance:0.5}]},
+      ],
+      dragon_lair: [
+        {name:'火龍',icon:'🐉',element:'fire',hp:280,atk:40,def:30,exp:300,gold:200,loot:[{id:'dragon_scale',chance:0.6}]},
+        {name:'黑暗龍',icon:'🐲',element:'dark',hp:320,atk:45,def:28,exp:350,gold:250,loot:[{id:'dark_essence',chance:0.5}]},
       ]
     };
 
-    // 掉落物定義
     const LOOT_ITEMS = {
       goblin_tooth: {name:'哥布林牙齒',icon:'🦷',sellPrice:15},
       fire_fur: {name:'火狐毛皮',icon:'🔥',sellPrice:20},
       wind_essence: {name:'風之精華',icon:'🌬️',sellPrice:18},
-      wolf_fang: {name:'狼牙',icon:'🐺',sellPrice:25},
       stone_core: {name:'石核',icon:'🪨',sellPrice:40},
       lava_scale: {name:'熔岩鱗片',icon:'🔴',sellPrice:38},
       bat_wing: {name:'蝙蝠翅膀',icon:'🦇',sellPrice:30},
       dark_bone: {name:'暗黑骨',icon:'🦴',sellPrice:60},
       holy_water: {name:'聖水',icon:'💧',sellPrice:55},
+      dragon_scale: {name:'龍鱗',icon:'🔶',sellPrice:120},
+      dark_essence: {name:'黑暗精華',icon:'🖤',sellPrice:140},
     };
 
-    // ---------- 遊戲狀態 ----------
     const state = {
       player: null,
       currentEnemy: null,
-      godVoice: "神之聲：你是龍蛋，移動探索世界吧...",
+      godVoice: "",
       battleActive: false,
       playerDefeated: false,
       currentScene: 'map',
-      playerPos: { x:3, y:3 },
-      map: [],
-      inventory: [], // 存放掉落物 {id, qty}
+      currentZone: 'forest',
+      playerPos: { x:5, y:5 },
+      maps: {},
+      inventory: [],
     };
 
     function initPlayer() {
       state.player = {
-        formId: 'dragon_egg', level:1, exp:0, gold:100,
+        formId: 'dragon_egg', level:1, exp:0, gold:150,
         hp:40, maxHp:40, mp:20, maxMp:20,
         baseAtk:6, baseDef:10, baseMatk:5, baseMdef:8, baseSpd:4,
-        titles:[], equipment:{}, potions:{hp:3, mp:2},
-        goalProgress:{kill:0}
+        potions:{hp:3, mp:2}, goalProgress:{kill:0}
       };
       applyFormStats();
       state.player.hp = state.player.maxHp;
       state.player.mp = state.player.maxMp;
-      state.playerDefeated = false;
-      state.inventory = [];
     }
 
     function applyFormStats() {
@@ -230,55 +235,76 @@
 
     function getStats() {
       let p=state.player;
-      return {atk:p.baseAtk,def:p.baseDef,matk:p.baseMatk,mdef:p.baseMdef,spd:p.baseSpd,maxHp:p.maxHp,maxMp:p.maxMp};
+      return {atk:p.baseAtk,def:p.baseDef,matk:p.baseMatk,mdef:p.baseMdef,spd:p.baseSpd};
     }
 
-    function generateMap() {
-      const terrains = ['🌳','🌲','🌿','🪨','⛰️','🌋','🏰','🌑'];
-      state.map = Array(8).fill().map(()=>Array(8).fill().map(()=>terrains[Math.floor(Math.random()*terrains.length)]));
-      state.map[3][3] = '🏡';
+    function generateAllMaps() {
+      const zones = ['forest','cave','castle','dragon_lair'];
+      zones.forEach(zoneId => {
+        const grid = Array(12).fill().map(()=>Array(12).fill('🌿'));
+        // 隨機地形
+        for(let y=0; y<12; y++) for(let x=0; x<12; x++) {
+          const r = Math.random();
+          if(zoneId==='forest') grid[y][x] = r<0.6?'🌳':r<0.8?'🌲':'🌿';
+          else if(zoneId==='cave') grid[y][x] = r<0.5?'🪨':r<0.8?'⛰️':'🕳️';
+          else if(zoneId==='castle') grid[y][x] = r<0.5?'🏰':r<0.8?'🌑':'💀';
+          else grid[y][x] = r<0.5?'🌋':r<0.8?'🔥':'🐉';
+        }
+        state.maps[zoneId] = grid;
+      });
     }
 
     function movePlayer(dx, dy) {
       if(state.battleActive || state.playerDefeated) return;
-      let nx = state.playerPos.x + dx, ny = state.playerPos.y + dy;
-      if(nx<0||nx>7||ny<0||ny>7) return;
-      state.playerPos.x = nx; state.playerPos.y = ny;
-      if(Math.random() < 0.3) startRandomEncounter();
-      else { setGodVoice(`移動到 (${nx},${ny})`); renderMap(); }
+      let nx = state.playerPos.x + dx;
+      let ny = state.playerPos.y + dy;
+      const zone = ZONES[state.currentZone];
+      // 檢查區域邊界傳送
+      if(nx < 0) {
+        if(zone.adjacent.west) { state.currentZone = zone.adjacent.west; state.playerPos = {x:11, y:ny}; setGodVoice(`進入 ${ZONES[state.currentZone].name}`); }
+        else return;
+      } else if(nx >= 12) {
+        if(zone.adjacent.east) { state.currentZone = zone.adjacent.east; state.playerPos = {x:0, y:ny}; setGodVoice(`進入 ${ZONES[state.currentZone].name}`); }
+        else return;
+      } else if(ny < 0) {
+        if(zone.adjacent.north) { state.currentZone = zone.adjacent.north; state.playerPos = {x:nx, y:11}; setGodVoice(`進入 ${ZONES[state.currentZone].name}`); }
+        else return;
+      } else if(ny >= 12) {
+        if(zone.adjacent.south) { state.currentZone = zone.adjacent.south; state.playerPos = {x:nx, y:0}; setGodVoice(`進入 ${ZONES[state.currentZone].name}`); }
+        else return;
+      } else {
+        state.playerPos.x = nx;
+        state.playerPos.y = ny;
+      }
+      if(Math.random() < 0.25) startRandomEncounter();
+      else renderMap();
     }
 
     function startRandomEncounter() {
-      const zone = state.map[state.playerPos.y][state.playerPos.x];
-      let pool = MONSTER_POOLS.forest;
-      if(zone==='🪨'||zone==='⛰️') pool = MONSTER_POOLS.cave;
-      else if(zone==='🏰'||zone==='🌑') pool = MONSTER_POOLS.castle;
+      const pool = MONSTER_POOLS[state.currentZone] || MONSTER_POOLS.forest;
       const monsterData = pool[Math.floor(Math.random()*pool.length)];
-      const enemy = {...monsterData};
-      enemy.maxHp = enemy.hp;
-      state.currentEnemy = enemy;
+      state.currentEnemy = {...monsterData, maxHp: monsterData.hp};
       state.battleActive = true;
       state.playerDefeated = false;
       state.currentScene = 'battle';
-      setGodVoice(`⚔️ ${enemy.name} (${ELEMENTS[enemy.element]}) 出現了！`);
+      setGodVoice(`⚔️ ${monsterData.name} (${ELEMENTS[monsterData.element]}) 出現了！`);
       document.getElementById('main-view').classList.add('flash');
       setTimeout(()=>document.getElementById('main-view').classList.remove('flash'), 400);
       renderBattle();
     }
 
-    function calcDamage(attackerAtk, defenderDef, skillPower=1.0, attackerElement=null, defenderElement=null) {
-      let base = Math.max(1, Math.floor(attackerAtk * skillPower) - defenderDef);
-      if(attackerElement && defenderElement) {
-        if(ELEMENT_WEAKNESS[attackerElement] === defenderElement) base = Math.floor(base * 1.3);
-        else if(ELEMENT_WEAKNESS[defenderElement] === attackerElement) base = Math.floor(base * 0.7);
+    function calcDamage(atk, def, power=1.0, atkElem=null, defElem=null) {
+      let base = Math.max(1, Math.floor(atk * power) - def);
+      if(atkElem && defElem) {
+        if(ELEMENT_WEAKNESS[atkElem] === defElem) base = Math.floor(base * 1.3);
+        else if(ELEMENT_WEAKNESS[defElem] === atkElem) base = Math.floor(base * 0.7);
       }
       return Math.max(1, base + Math.floor(Math.random()*6));
     }
 
     function playerAttack() {
       if(state.playerDefeated || !state.battleActive) return;
-      const stats = getStats();
-      const dmg = calcDamage(stats.atk, state.currentEnemy.def||0, 1.0, null, state.currentEnemy.element);
+      const dmg = calcDamage(getStats().atk, state.currentEnemy.def, 1.0, null, state.currentEnemy.element);
       state.currentEnemy.hp -= dmg;
       setGodVoice(`造成 ${dmg} 傷害`);
       document.getElementById('enemy-card')?.classList.add('shake');
@@ -291,8 +317,7 @@
       const skill = SKILLS[skillId];
       if(!skill || state.player.mp < skill.mp) return;
       state.player.mp -= skill.mp;
-      const stats = getStats();
-      const dmg = calcDamage(stats.atk, state.currentEnemy.def||0, skill.power||1.0, skill.element||null, state.currentEnemy.element);
+      const dmg = calcDamage(getStats().atk, state.currentEnemy.def, skill.power, skill.element, state.currentEnemy.element);
       state.currentEnemy.hp -= dmg;
       setGodVoice(`✨ ${skill.name}！ ${dmg} 傷害`);
       document.getElementById('enemy-card')?.classList.add('shake');
@@ -302,7 +327,7 @@
 
     function usePotion() {
       if(state.playerDefeated || !state.battleActive) return;
-      if(state.player.potions.hp === 0 && state.player.potions.mp === 0) return;
+      if(state.player.potions.hp===0 && state.player.potions.mp===0) return;
       if(state.player.potions.hp>0 && state.player.hp<state.player.maxHp){
         state.player.hp = Math.min(state.player.maxHp, state.player.hp+40);
         state.player.potions.hp--;
@@ -327,7 +352,7 @@
         state.player.hp = 0;
         state.playerDefeated = true;
         state.battleActive = false;
-        setGodVoice('你被擊倒了... 回到巢穴');
+        setGodVoice('你被擊倒了...');
         setTimeout(()=>{
           state.player.hp = Math.floor(state.player.maxHp*0.3);
           state.player.mp = Math.floor(state.player.maxMp*0.3);
@@ -344,22 +369,19 @@
     function checkBattleEnd() {
       if(state.currentEnemy.hp <= 0) {
         state.currentEnemy.hp = 0;
-        const expGain = state.currentEnemy.exp;
-        state.player.exp += expGain;
+        state.player.exp += state.currentEnemy.exp;
         state.player.gold += state.currentEnemy.gold;
         state.player.goalProgress.kill++;
-        // 掉落物處理
         if(state.currentEnemy.loot) {
           state.currentEnemy.loot.forEach(loot => {
             if(Math.random() < loot.chance) {
               const existing = state.inventory.find(i=>i.id===loot.id);
               if(existing) existing.qty++;
               else state.inventory.push({id:loot.id, qty:1});
-              setGodVoice(`獲得 ${LOOT_ITEMS[loot.id].icon} ${LOOT_ITEMS[loot.id].name}`);
             }
           });
         }
-        setGodVoice(`勝利！+${expGain}經驗`);
+        setGodVoice(`勝利！+${state.currentEnemy.exp}經驗`);
         document.getElementById('enemy-card')?.classList.add('explode');
         setTimeout(()=>{
           checkLevelUp();
@@ -375,7 +397,6 @@
     }
 
     function checkLevelUp() {
-      const form = EVOLUTION_TREE[state.player.formId];
       const needExp = 20 + state.player.level * 5;
       while(state.player.exp >= needExp) {
         state.player.exp -= needExp;
@@ -384,8 +405,6 @@
         state.player.baseAtk += 3; state.player.baseDef += 2;
         state.player.hp = state.player.maxHp; state.player.mp = state.player.maxMp;
         setGodVoice(`🎉 升級！ Lv.${state.player.level}`);
-        document.getElementById('main-view')?.classList.add('flash');
-        setTimeout(()=>document.getElementById('main-view')?.classList.remove('flash'), 500);
       }
     }
 
@@ -399,51 +418,46 @@
       renderMap();
     }
 
-    // 商店買賣
     function buyItem(type) {
       const p = state.player;
-      if(type==='hp_potion' && p.gold>=20) { p.gold-=20; p.potions.hp++; setGodVoice('購買生命藥水'); }
-      else if(type==='mp_potion' && p.gold>=15) { p.gold-=15; p.potions.mp++; setGodVoice('購買魔力藥水'); }
+      if(type==='hp_potion' && p.gold>=20) { p.gold-=20; p.potions.hp++; }
+      else if(type==='mp_potion' && p.gold>=15) { p.gold-=15; p.potions.mp++; }
       renderShop();
     }
     function sellItem(index) {
       const item = state.inventory[index];
       if(!item) return;
-      const loot = LOOT_ITEMS[item.id];
-      state.player.gold += loot.sellPrice;
+      state.player.gold += LOOT_ITEMS[item.id].sellPrice;
       item.qty--;
       if(item.qty<=0) state.inventory.splice(index,1);
-      setGodVoice(`賣出 ${loot.name} +${loot.sellPrice}G`);
       renderShop();
     }
 
     // ---------- 渲染 ----------
     function renderMap() {
+      const zone = ZONES[state.currentZone];
+      const grid = state.maps[state.currentZone];
       const form = EVOLUTION_TREE[state.player.formId];
       const canEvo = (state.player.level % 5 === 0 && form.evolutions && form.evolutions.length > 0);
-      let html = `<div class="panel fadeIn"><h3>🗺️ 世界地圖</h3><div class="map-grid">`;
-      for(let y=0; y<8; y++){
-        for(let x=0; x<8; x++){
+      let html = `<div class="panel fadeIn"><h3>${zone.icon} ${zone.name}</h3><div class="map-grid">`;
+      for(let y=0; y<12; y++) {
+        for(let x=0; x<12; x++) {
           const isPlayer = (x===state.playerPos.x && y===state.playerPos.y);
-          html += `<div class="map-cell ${isPlayer?'player-cell':''}">${isPlayer?form.icon:state.map[y][x]}</div>`;
+          html += `<div class="map-cell ${isPlayer?'player-cell':''}">${isPlayer?form.icon:grid[y][x]}</div>`;
         }
       }
       html += `</div><p><b>${form.icon} ${form.name}</b> Lv.${state.player.level} | ❤️${state.player.hp}/${state.player.maxHp} 💧${state.player.mp}/${state.player.maxMp} 💰${state.player.gold}</p>`;
       html += `<div class="god-voice">${state.godVoice}</div>`;
-      html += `<div class="flex-row">
-        <button class="btn small" id="statusBtn">📋狀態</button>
-        <button class="btn small" id="goalsBtn">🎯目標</button>
-        <button class="btn small" id="shopBtn">🛒商店</button>`;
+      html += `<div class="flex-row"><button class="btn small" id="statusBtn">📋狀態</button><button class="btn small" id="shopBtn">🛒商店</button>`;
       if(canEvo) html += `<button class="btn small primary" id="evoBtn">✨進化</button>`;
       html += `</div></div>`;
       document.getElementById('main-view').innerHTML = html;
       document.getElementById('statusBtn')?.addEventListener('click', ()=>{ state.currentScene='status'; renderStatus(); });
-      document.getElementById('goalsBtn')?.addEventListener('click', ()=>{ state.currentScene='goals'; renderGoals(); });
       document.getElementById('shopBtn')?.addEventListener('click', ()=>{ state.currentScene='shop'; renderShop(); });
       document.getElementById('evoBtn')?.addEventListener('click', ()=>{ state.currentScene='evolution'; renderEvolution(); });
     }
 
-    function renderBattle() {
+    function renderBattle() { /* 同前, 略作調整 */ 
       const e = state.currentEnemy;
       const p = state.player;
       const form = EVOLUTION_TREE[p.formId];
@@ -459,22 +473,19 @@
         <div id="enemy-card" style="display:flex;align-items:center;gap:10px;background:#2a1028;border-radius:16px;padding:10px;">
           <span style="font-size:2.5rem;">${e.icon}</span><b>${e.name}</b> <span style="color:#aaa;">(${ELEMENTS[e.element]})</span> ❤️${e.hp}/${e.maxHp}
         </div>
-        <div id="player-card" style="margin-top:8px;">
-          <b>${form.icon} ${form.name}</b> Lv.${p.level} ❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}
-        </div>
-        <div class="flex-row" style="margin-top:12px;">
+        <div id="player-card"><b>${form.icon} ${form.name}</b> Lv.${p.level} ❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</div>
+        <div class="flex-row">
           <button class="btn" id="atkBtn" ${state.playerDefeated?'disabled':''}>⚔️攻擊</button>
           ${skillBtns}
           <button class="btn" id="potionBtn" ${potionDisabled?'disabled':''}>🧪藥水</button>
         </div>
         <div class="god-voice">${state.godVoice}</div>`;
-      if(state.playerDefeated) html += `<p style="color:#ff8080; text-align:center;">你已倒下，等待返回巢穴...</p>`;
+      if(state.playerDefeated) html += `<p style="color:#ff8080;">你已倒下...</p>`;
       html += `</div>`;
       document.getElementById('main-view').innerHTML = html;
       document.getElementById('atkBtn')?.addEventListener('click', playerAttack);
       skills.forEach(sid => {
-        const btn = document.getElementById(`skill_${sid}`);
-        if(btn) btn.addEventListener('click', ()=>playerSkill(sid));
+        document.getElementById(`skill_${sid}`)?.addEventListener('click', ()=>playerSkill(sid));
       });
       document.getElementById('potionBtn')?.addEventListener('click', usePotion);
     }
@@ -484,72 +495,24 @@
       const opts = form.evolutions || [];
       let cards = opts.map(id => {
         const evo = EVOLUTION_TREE[id];
-        return `<div class="evolution-card" data-evo="${id}">
-          <span style="font-size:2.5rem;">${evo.icon}</span>
-          <h4>${evo.name}</h4>
-          <p style="color:#c0a0e0;">${evo.grade}級</p>
-          <p style="font-size:0.7rem;">❤️${evo.hp} ⚔️${evo.atk} 🛡️${evo.def}</p>
-        </div>`;
+        return `<div class="evolution-card" data-evo="${id}"><span style="font-size:2.5rem;">${evo.icon}</span><h4>${evo.name}</h4><p>${evo.grade}級</p></div>`;
       }).join('');
-      document.getElementById('main-view').innerHTML = `
-        <div class="panel fadeIn">
-          <h3>🌟 選擇進化路線</h3>
-          <div class="flex-row">${cards}</div>
-          <button class="btn small" id="cancelEvo">取消</button>
-        </div>`;
-      document.querySelectorAll('.evolution-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-          const id = e.currentTarget.dataset.evo;
-          evolveTo(id);
-        });
-      });
-      document.getElementById('cancelEvo')?.addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
+      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>進化</h3><div class="flex-row">${cards}</div></div>`;
+      document.querySelectorAll('.evolution-card').forEach(c=>c.addEventListener('click',(e)=>evolveTo(e.currentTarget.dataset.evo)));
     }
 
     function renderStatus() {
       const p=state.player; const f=EVOLUTION_TREE[p.formId];
-      document.getElementById('main-view').innerHTML = `
-        <div class="panel fadeIn"><h3>狀態</h3><p>${f.icon} ${f.name} (${f.grade}) Lv.${p.level}</p>
-        <p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp} 💰${p.gold}</p>
-        <p>藥水: ❤️${p.potions.hp} 💧${p.potions.mp}</p>
-        <button class="btn" id="backMap">返回地圖</button></div>`;
+      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>狀態</h3><p>${f.icon} ${f.name} (${f.grade}) Lv.${p.level}</p><p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</p><button class="btn" id="backMap">返回</button></div>`;
       document.getElementById('backMap').addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
     }
 
-    function renderGoals() {
-      document.getElementById('main-view').innerHTML = `
-        <div class="panel fadeIn"><h3>目標</h3><p>擊殺怪物: ${state.player.goalProgress.kill}/5</p>
-        <button class="btn" id="backMap2">返回地圖</button></div>`;
-      document.getElementById('backMap2').addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
-    }
-
     function renderShop() {
-      let invHtml = '';
-      if(state.inventory.length===0) invHtml = '<p>尚無掉落物</p>';
-      else {
-        state.inventory.forEach((item, idx) => {
-          const loot = LOOT_ITEMS[item.id];
-          invHtml += `<div class="item-row">
-            <span>${loot.icon} ${loot.name} x${item.qty}</span>
-            <span style="margin-left:auto;">💰${loot.sellPrice}</span>
-            <button class="btn small" id="sell_${idx}">賣出</button>
-          </div>`;
-        });
-      }
-      document.getElementById('main-view').innerHTML = `
-        <div class="panel fadeIn">
-          <h3>🛒 商店</h3>
-          <p>💰 金幣: ${state.player.gold}</p>
-          <div><button class="btn small" id="buyHp">❤️生命藥水 20G</button> <button class="btn small" id="buyMp">💧魔力藥水 15G</button></div>
-          <h4 style="margin-top:12px;">背包掉落物</h4>
-          ${invHtml}
-          <button class="btn small" id="closeShop">關閉</button>
-        </div>`;
+      let invHtml = state.inventory.map((item,idx)=>`<div class="item-row"><span>${LOOT_ITEMS[item.id].icon} ${LOOT_ITEMS[item.id].name} x${item.qty}</span><button class="btn small" id="sell_${idx}">賣</button></div>`).join('');
+      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>商店</h3><p>💰${state.player.gold}</p><button class="btn small" id="buyHp">❤️藥水20G</button><button class="btn small" id="buyMp">💧藥水15G</button>${invHtml}<button class="btn small" id="closeShop">關閉</button></div>`;
       document.getElementById('buyHp').addEventListener('click', ()=>buyItem('hp_potion'));
       document.getElementById('buyMp').addEventListener('click', ()=>buyItem('mp_potion'));
-      state.inventory.forEach((_, idx) => {
-        document.getElementById(`sell_${idx}`)?.addEventListener('click', ()=>sellItem(idx));
-      });
+      state.inventory.forEach((_,idx)=>document.getElementById(`sell_${idx}`)?.addEventListener('click', ()=>sellItem(idx)));
       document.getElementById('closeShop').addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
     }
 
@@ -573,8 +536,9 @@
 
     // 啟動
     initPlayer();
-    generateMap();
+    generateAllMaps();
     setupControls();
+    setGodVoice('歡迎來到四域！使用方向鍵移動探索。');
     renderMap();
   })();
 </script>
