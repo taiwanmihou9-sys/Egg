@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
+  <title>轉生龍蛋～暗影進化傳說～</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0a080c;
+      font-family: 'Noto Serif TC', 'Cinzel', 'Segoe UI', 'Microsoft JhengHei', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      background-image: radial-gradient(ellipse at top, #1e1228 0%, #030106 80%);
+    }
+    #game-container {
+      width: 100%;
+      max-width: 850px;
+      background: rgba(10, 5, 15, 0.9);
+      border: 3px solid #4a3a5a;
+      border-radius: 28px;
+      box-shadow: 0 0 60px rgba(150, 100, 200, 0.3), inset 0 0 30px rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      backdrop-filter: blur(4px);
+    }
+    .ornament {
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #c99ce0, #f0c0a0, #c99ce0, transparent);
+      opacity: 0.8;
+    }
+    #header {
+      padding: 14px 20px;
+      text-align: center;
+      border-bottom: 1px solid #3a2e44;
+      background: rgba(20, 10, 30, 0.6);
+    }
+    #header h1 {
+      font-size: 2rem;
+      letter-spacing: 4px;
+      color: #e8c8b0;
+      text-shadow: 0 0 20px #b080d0, 0 2px 4px black;
+      margin: 0;
+      font-weight: 700;
+    }
+    .subtitle {
+      font-size: 0.75rem;
+      color: #9a8ab0;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+    }
+    #main-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 12px;
+      overflow-y: auto;
+      max-height: 70vh;
+    }
+    .panel {
+      background: rgba(15, 8, 22, 0.8);
+      border: 1px solid #3c2d48;
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: inset 0 1px 4px rgba(255,255,255,0.03);
+    }
+    .flex-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: #261f30;
+      border: 1px solid #5a4a6a;
+      color: #d6cce0;
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-align: center;
+      background: linear-gradient(180deg, #362a40 0%, #1e1528 100%);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      background: #4a3b58;
+      border-color: #b89cc0;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(150,100,200,0.4);
+    }
+    .btn:active {
+      transform: translateY(0);
+      background: #1f1628;
+    }
+    .btn.primary {
+      background: #553b60;
+      border-color: #c0a0d0;
+      color: #f8e8ff;
+    }
+    .btn.danger {
+      background: #4a2028;
+      border-color: #b06060;
+      color: #ffc8c8;
+    }
+    .btn.small {
+      padding: 6px 14px;
+      font-size: 0.75rem;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #c0b0d0;
+      margin: 4px 0;
+    }
+    .hp-bar {
+      background: #2a1020;
+      border-radius: 20px;
+      height: 16px;
+      border: 1px solid #5a3a4a;
+      overflow: hidden;
+    }
+    .hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #c04050, #e05060);
+      width: 100%;
+      transition: width 0.4s;
+    }
+    .god-voice {
+      background: #1c1125;
+      border-left: 4px solid #d4af37;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-style: italic;
+      color: #f0e6b0;
+      margin: 10px 0;
+    }
+    .enemy-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1e1025;
+      border-radius: 20px;
+      padding: 12px;
+    }
+    .evolution-tree {
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: #b0a0c0;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    @media (max-width: 600px) {
+      #header h1 { font-size: 1.5rem; }
+      .btn { padding: 8px 12px; font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="game-container">
+  <div class="ornament"></div>
+  <div id="header">
+    <h1>🐉 轉生龍蛋 · 暗影進化</h1>
+    <div class="subtitle">Dragon Egg Reincarnation</div>
+  </div>
+  <div id="main-view"></div>
+  <div id="status-bar" style="padding:10px 16px; border-top:1px solid #3a2e44; background:#0f0818; display:flex; justify-content:space-around; flex-wrap:wrap; gap:8px; font-size:0.8rem;"></div>
+</div>
+<script>
+  (function() {
+    // ---------- 遊戲狀態 ----------
+    const state = {
+      player: null,
+      currentEnemy: null,
+      zone: null,
+      log: [],
+      godVoice: "神之聲：你是一顆龍蛋，開始你的旅程吧...",
+      battleActive: false,
+      evolutionOptions: null,
+      currentScene: 'village',
+    };
+
+    // 進化樹定義
+    const EVOLUTION_TREE = {
+      'dragon_egg': {
+        name: '龍蛋', icon: '🥚', grade: 'F', maxLv: 10,
+        hp: 40, mp: 20, atk: 6, def: 10, matk: 5, mdef: 8, spd: 4,
+        skills: ['roll'],
+        evolutions: ['whelp', 'draket', 'hatchling']
+      },
+      'whelp': {
+        name: '幼龍', icon: '🐉', grade: 'D', maxLv: 20,
+        hp: 110, mp: 45, atk: 24, def: 22, matk: 18, mdef: 20, spd: 12,
+        skills: ['roll','flame_breath','dragon_scales'],
+        evolutions: ['plague_whelp', 'rainbow_whelp', 'rock_whelp']
+      },
+      'draket': {
+        name: '小龍', icon: '🐲', grade: 'D', maxLv: 20,
+        hp: 90, mp: 55, atk: 30, def: 14, matk: 25, mdef: 15, spd: 16,
+        skills: ['roll','fireball','dragon_rage'],
+        evolutions: ['flame_draket', 'thunder_draket']
+      },
+      'hatchling': {
+        name: '雛龍', icon: '🐊', grade: 'D', maxLv: 20,
+        hp: 100, mp: 50, atk: 22, def: 18, matk: 20, mdef: 22, spd: 20,
+        skills: ['roll','wind_cutter','shadow_step'],
+        evolutions: ['wind_hatchling', 'shadow_hatchling']
+      },
+      'plague_whelp': { name:'厄病幼龍', icon:'☠️', grade:'C', maxLv:35, hp:200,mp:70,atk:42,def:35,matk:38,mdef:30,spd:18, skills:['toxic_breath','plague_touch'], evolutions:['calamity_drake','venom_drake'] },
+      'rainbow_whelp': { name:'小虹龍', icon:'🌈', grade:'C', maxLv:35, hp:180,mp:80,atk:36,def:32,matk:50,mdef:45,spd:20, skills:['holy_light','healing_breath'], evolutions:['sacred_drake','sky_drake'] },
+      'rock_whelp': { name:'岩石幼龍', icon:'🪨', grade:'C', maxLv:35, hp:260,mp:50,atk:38,def:55,matk:25,mdef:40,spd:10, skills:['stone_skin','earthquake'], evolutions:['earth_drake','steel_drake'] },
+      'flame_draket': { name:'炎龍幼體', icon:'🔥', grade:'C', maxLv:35, hp:160,mp:70,atk:52,def:22,matk:45,mdef:25,spd:22, skills:['inferno','blaze_armor'], evolutions:['blast_drake','magma_drake'] },
+      'thunder_draket': { name:'雷龍幼體', icon:'⚡', grade:'C', maxLv:35, hp:170,mp:75,atk:48,def:24,matk:52,mdef:28,spd:26, skills:['lightning_strike','static_field'], evolutions:['storm_drake','volt_drake'] },
+      'wind_hatchling': { name:'風龍幼體', icon:'🌪️', grade:'C', maxLv:35, hp:155,mp:65,atk:42,def:26,matk:44,mdef:30,spd:32, skills:['gale_slash','cyclone'], evolutions:['tempest_drake','sonic_drake'] },
+      'shadow_hatchling': { name:'暗龍幼體', icon:'🌑', grade:'C', maxLv:35, hp:175,mp:68,atk:46,def:28,matk:48,mdef:32,spd:25, skills:['dark_claw','void_step'], evolutions:['abyss_drake','phantom_drake'] },
+      // B級
+      'calamity_drake':{ name:'災厄龍', icon:'💀', grade:'B', maxLv:55, hp:350,mp:110,atk:68,def:52,matk:62,mdef:48,spd:28, skills:['death_breath','curse_eye'], evolutions:['final_abyss','chaos_dragon'] },
+      'venom_drake':{ name:'毒龍', icon:'🧪', grade:'B', maxLv:55, hp:310,mp:100,atk:64,def:48,matk:70,mdef:55,spd:30, skills:['venom_storm','acid_armor'], evolutions:['plague_ancient'] },
+      'sacred_drake':{ name:'聖光龍', icon:'✨', grade:'B', maxLv:55, hp:330,mp:130,atk:58,def:50,matk:80,mdef:75,spd:26, skills:['divine_judgment','holy_aura'], evolutions:['light_king'] },
+      'sky_drake':{ name:'天翼龍', icon:'🕊️', grade:'B', maxLv:55, hp:290,mp:120,atk:62,def:45,matk:72,mdef:65,spd:38, skills:['sky_dive','feather_storm'], evolutions:['sky_lord'] },
+      'earth_drake':{ name:'地龍', icon:'⛰️', grade:'B', maxLv:55, hp:420,mp:80,atk:66,def:80,matk:45,mdef:60,spd:18, skills:['titan_smash','bedrock'], evolutions:['earth_mother'] },
+      'steel_drake':{ name:'鋼龍', icon:'🛡️', grade:'B', maxLv:55, hp:380,mp:90,atk:70,def:75,matk:50,mdef:70,spd:20, skills:['steel_rend','iron_fortress'], evolutions:['immortal_steel'] },
+      'blast_drake':{ name:'爆炎龍', icon:'💥', grade:'B', maxLv:55, hp:300,mp:110,atk:82,def:40,matk:68,mdef:45,spd:32, skills:['explosion','burning_rage'], evolutions:['inferno_king'] },
+      'magma_drake':{ name:'岩漿龍', icon:'🌋', grade:'B', maxLv:55, hp:340,mp:100,atk:76,def:55,matk:64,mdef:50,spd:24, skills:['lava_flow','volcano'], evolutions:['core_dragon'] },
+      'storm_drake':{ name:'風暴龍', icon:'⛈️', grade:'B', maxLv:55, hp:280,mp:120,atk:60,def:38,matk:78,mdef:48,spd:42, skills:['thunderstorm','wind_blade'], evolutions:['hurricane_god'] },
+      'sonic_drake':{ name:'音速龍', icon:'💨', grade:'B', maxLv:55, hp:270,mp:115,atk:65,def:36,matk:70,mdef:44,spd:48, skills:['sonic_boom','time_ripple'], evolutions:['time_dragon'] },
+      'abyss_drake':{ name:'暗黑龍', icon:'🖤', grade:'B', maxLv:55, hp:360,mp:105,atk:72,def:48,matk:76,mdef:52,spd:30, skills:['abyss_gaze','shadow_bolt'], evolutions:['void_lord'] },
+      'phantom_drake':{ name:'影龍', icon:'👻', grade:'B', maxLv:55, hp:310,mp:110,atk:68,def:42,matk:80,mdef:58,spd:36, skills:['phantom_dance','eclipse'], evolutions:['nothingness'] },
+      // S級
+      'final_abyss':{ name:'終焉魔龍', icon:'👿', grade:'S', maxLv:80, hp:600,mp:180,atk:105,def:75,matk:95,mdef:70,spd:40 },
+      'chaos_dragon':{ name:'混沌龍', icon:'🌀', grade:'S', maxLv:80, hp:550,mp:200,atk:100,def:70,matk:110,mdef:80,spd:38 },
+      'plague_ancient':{ name:'瘟疫古龍', icon:'☣️', grade:'S', maxLv:80, hp:520,mp:170,atk:98,def:72,matk:108,mdef:82,spd:42 },
+      'light_king':{ name:'光之龍王', icon:'👑', grade:'S', maxLv:80, hp:580,mp:220,atk:92,def:80,matk:120,mdef:110,spd:36 },
+      'sky_lord':{ name:'天空霸主', icon:'🦅', grade:'S', maxLv:80, hp:500,mp:200,atk:96,def:68,matk:105,mdef:90,spd:55 },
+      'earth_mother':{ name:'大地之母', icon:'🌍', grade:'S', maxLv:80, hp:700,mp:150,atk:88,def:120,matk:70,mdef:95,spd:22 },
+      'immortal_steel':{ name:'不滅鋼龍', icon:'⚙️', grade:'S', maxLv:80, hp:650,mp:160,atk:102,def:110,matk:75,mdef:100,spd:26 },
+      'inferno_king':{ name:'焚世炎龍', icon:'🔥', grade:'S', maxLv:80, hp:540,mp:190,atk:115,def:62,matk:98,mdef:68,spd:44 },
+      'core_dragon':{ name:'地核巨龍', icon:'🌡️', grade:'S', maxLv:80, hp:620,mp:170,atk:108,def:85,matk:90,mdef:75,spd:30 },
+      'hurricane_god':{ name:'颶風神龍', icon:'🌬️', grade:'S', maxLv:80, hp:490,mp:210,atk:90,def:58,matk:115,mdef:72,spd:60 },
+      'time_dragon':{ name:'時空龍', icon:'⌛', grade:'S', maxLv:80, hp:510,mp:230,atk:95,def:60,matk:118,mdef:78,spd:58 },
+      'void_lord':{ name:'虛無龍', icon:'🕳️', grade:'S', maxLv:80, hp:570,mp:195,atk:104,def:72,matk:112,mdef:80,spd:46 },
+      'nothingness':{ name:'虛無', icon:'⚫', grade:'S', maxLv:80, hp:530,mp:205,atk:100,def:66,matk:120,mdef:88,spd:52 }
+    };
+
+    // 技能定義
+    const SKILLS = {
+      roll: { name:'滾動', type:'normal', mp:4, desc:'用身體撞擊', power:1.2, attr:'phys' },
+      flame_breath: { name:'火焰吐息', type:'normal', mp:10, desc:'火焰傷害', power:1.8, attr:'mag', element:'fire' },
+      dragon_scales: { name:'龍鱗', type:'trait', desc:'DEF+15%', effect: {defMul:1.15} },
+      fireball: { name:'火球術', type:'normal', mp:12, power:2.0, attr:'mag' },
+      dragon_rage: { name:'龍之怒', type:'normal', mp:15, power:2.2, attr:'phys' },
+      toxic_breath: { name:'毒息', type:'normal', mp:14, power:1.7, attr:'mag', poison:3 },
+      holy_light: { name:'聖光', type:'normal', mp:16, power:2.1, attr:'mag', heal:0.2 },
+      earthquake: { name:'地震', type:'normal', mp:18, power:2.0, attr:'phys' },
+      inferno: { name:'地獄火', type:'normal', mp:20, power:2.4, attr:'mag' },
+      lightning_strike: { name:'雷擊', type:'normal', mp:18, power:2.3, attr:'mag' },
+      gale_slash: { name:'風刃', type:'normal', mp:12, power:1.9, attr:'phys' },
+      dark_claw: { name:'暗爪', type:'normal', mp:14, power:2.0, attr:'phys' },
+    };
+
+    // 稱號系統
+    const TITLES = {
+      walking_egg: { name:'行走的蛋', desc:'經驗+50%', expMul:1.5 },
+      little_hero: { name:'小小勇者', desc:'對Boss傷害+25%', bossDmg:1.25 },
+      dragon_slayer: { name:'屠龍者', desc:'ATK+15', atk:15 },
+    };
+
+    // 目標/任務
+    const GOALS = [
+      { id:1, desc:'擊敗5隻怪物', type:'kill', count:5, reward:'exp100' },
+      { id:2, desc:'進化到D級', type:'evolve_grade', grade:'D', reward:'title_walking_egg' },
+      { id:3, desc:'擁有500金幣', type:'gold', amount:500, reward:'potion3' },
+      { id:4, desc:'擊敗區域Boss', type:'boss', count:1, reward:'title_little_hero' },
+    ];
+
+    // 初始化玩家
+    function initPlayer() {
+      state.player = {
+        formId: 'dragon_egg',
+        level: 1, exp: 0, gold: 100,
+        hp: 40, maxHp: 40, mp: 20, maxMp: 20,
+        baseAtk: 6, baseDef: 10, baseMatk: 5, baseMdef: 8, baseSpd: 4,
+        titles: [], equipment: { weapon: null, armor: null, accessory: null },
+        inventory: [], potions: { hp: 3, mp: 2 },
+        goalProgress: { kill:0, boss:0, gold:0 }
+      };
+      applyFormStats();
+      state.player.hp = state.player.maxHp;
+      state.player.mp = state.player.maxMp;
+    }
+
+    function applyFormStats() {
+      const form = EVOLUTION_TREE[state.player.formId];
+      if(!form) return;
+      state.player.maxHp = form.hp; state.player.maxMp = form.mp;
+      state.player.baseAtk = form.atk; state.player.baseDef = form.def;
+      state.player.baseMatk = form.matk; state.player.baseMdef = form.mdef;
+      state.player.baseSpd = form.spd;
+    }
+
+    function getEffectiveStats() {
+      let p = state.player;
+      let atk=p.baseAtk, def=p.baseDef, matk=p.baseMatk, mdef=p.baseMdef, spd=p.baseSpd;
+      if(p.titles.includes('dragon_slayer')) atk+=15;
+      return {atk,def,matk,mdef,spd,maxHp:p.maxHp,maxMp:p.maxMp};
+    }
+
+    // 渲染
+    const view = document.getElementById('main-view');
+    const statusBar = document.getElementById('status-bar');
+
+    function render() {
+      if(!state.player) { renderStart(); return; }
+      switch(state.currentScene) {
+        case 'village': renderVillage(); break;
+        case 'explore': renderExplore(); break;
+        case 'battle': renderBattle(); break;
+        case 'evolution': renderEvolutionChoice(); break;
+        case 'status': renderStatus(); break;
+        case 'goals': renderGoals(); break;
+        default: renderVillage();
+      }
+      updateStatusBar();
+    }
+
+    function updateStatusBar() {
+      const p = state.player;
+      if(!p) { statusBar.innerHTML=''; return; }
+      const form = EVOLUTION_TREE[p.formId];
+      statusBar.innerHTML = `
+        <span>🐉 ${form.name} Lv.${p.level}</span>
+        <span>❤️ ${p.hp}/${p.maxHp}</span>
+        <span>💧 ${p.mp}/${p.maxMp}</span>
+        <span>💰 ${p.gold}</span>
+        <span>⭐ EXP ${p.exp}/${form.maxLv*10}</span>
+      `;
+    }
+
+    function renderStart() {
+      view.innerHTML = `
+        <div class="panel" style="text-align:center">
+          <div style="font-size:4rem;">🥚</div>
+          <h2 style="color:#e0c090;">轉生龍蛋</h2>
+          <p>你轉生成了一顆龍蛋，目標是世界最強！</p>
+          <button class="btn primary" id="startBtn">開始旅程</button>
+        </div>`;
+      document.getElementById('startBtn').addEventListener('click', ()=>{
+        initPlayer();
+        state.currentScene='village';
+        setGodVoice('你是一顆龍蛋，透過戰鬥累積經驗，進化成更強的形態吧！');
+        render();
+      });
+    }
+
+    function renderVillage() {
+      state.battleActive=false;
+      const p=state.player; const form=EVOLUTION_TREE[p.formId];
+      let evoBtn = '';
+      if(p.level >= form.maxLv && form.evolutions) evoBtn = `<button class="btn primary" id="evoBtn">✨ 進化!</button>`;
+      view.innerHTML = `
+        <div class="panel">
+          <h3>🏡 龍之巢穴</h3>
+          <p>形態：${form.name} (${form.grade}級) Lv.${p.level}/${form.maxLv}</p>
+          <div class="god-voice">${state.godVoice}</div>
+          <div class="flex-row">
+            <button class="btn" id="exploreBtn">🌲 外出探索</button>
+            <button class="btn" id="statusBtn">📋 狀態</button>
+            <button class="btn" id="goalsBtn">🎯 目標</button>
+            ${evoBtn}
+          </div>
+        </div>`;
+      document.getElementById('exploreBtn')?.addEventListener('click', ()=>{ state.currentScene='explore'; render(); });
+      document.getElementById('statusBtn')?.addEventListener('click', ()=>{ state.currentScene='status'; render(); });
+      document.getElementById('goalsBtn')?.addEventListener('click', ()=>{ state.currentScene='goals'; render(); });
+      document.getElementById('evoBtn')?.addEventListener('click', ()=>{ state.currentScene='evolution'; render(); });
+    }
+
+    function renderExplore() {
+      view.innerHTML = `
+        <div class="panel">
+          <h3>🌲 選擇區域</h3>
+          <div class="flex-row">
+            <button class="btn" id="forestBtn">🌳 幽暗森林 (Lv1-10)</button>
+            <button class="btn" id="caveBtn">🕳️ 礦洞 (Lv10-25)</button>
+            <button class="btn" id="castleBtn">🏰 古城 (Lv25+)</button>
+          </div>
+          <button class="btn small" id="backBtn">返回巢穴</button>
+        </div>`;
+      document.getElementById('forestBtn').addEventListener('click', ()=> startBattle('forest'));
+      document.getElementById('caveBtn').addEventListener('click', ()=> startBattle('cave'));
+      document.getElementById('castleBtn').addEventListener('click', ()=> startBattle('castle'));
+      document.getElementById('backBtn').addEventListener('click', ()=>{ state.currentScene='village'; render(); });
+    }
+
+    function startBattle(zoneId) {
+      const monsters = {
+        forest:[{name:'哥布林',icon:'👹',hp:35,atk:10,def:4,exp:25,gold:15},{name:'巨狼',icon:'🐺',hp:55,atk:15,def:6,exp:40,gold:25}],
+        cave:[{name:'石傀儡',icon:'🗿',hp:100,atk:22,def:15,exp:80,gold:50},{name:'蝙蝠',icon:'🦇',hp:70,atk:18,def:8,exp:60,gold:35}],
+        castle:[{name:'骷髏騎士',icon:'💀',hp:180,atk:30,def:20,exp:150,gold:90}]
+      };
+      const enemy = monsters[zoneId][Math.floor(Math.random()*monsters[zoneId].length)];
+      state.currentEnemy = { ...enemy, maxHp:enemy.hp };
+      state.battleActive = true;
+      state.currentScene='battle';
+      setGodVoice(`⚔️ ${enemy.name} 出現了！`);
+      render();
+    }
+
+    function renderBattle() {
+      const e = state.currentEnemy; const p = state.player;
+      const hpPct = Math.max(0, (e.hp/e.maxHp)*100);
+      view.innerHTML = `
+        <div class="panel">
+          <div class="enemy-card">
+            <span style="font-size:2.5rem;">${e.icon||'👾'}</span>
+            <div style="flex:1"><b>${e.name}</b><div class="hp-bar"><div class="hp-fill" style="width:${hpPct}%;"></div></div></div>
+          </div>
+          <p>❤️ ${p.hp}/${p.maxHp}  💧${p.mp}/${p.maxMp}</p>
+          <div class="flex-row">
+            <button class="btn" id="atkBtn">⚔️ 攻擊</button>
+            <button class="btn" id="skill1Btn">🔥 火焰吐息</button>
+            <button class="btn" id="potionBtn">🧪 藥水</button>
+            <button class="btn danger" id="fleeBtn">🏃 逃跑</button>
+          </div>
+          <div class="god-voice" style="font-size:0.8rem;">${state.godVoice}</div>
+        </div>`;
+      document.getElementById('atkBtn').addEventListener('click', playerAttack);
+      document.getElementById('skill1Btn').addEventListener('click', ()=>playerSkill('flame_breath'));
+      document.getElementById('potionBtn').addEventListener('click', usePotion);
+      document.getElementById('fleeBtn').addEventListener('click', ()=>{ state.currentScene='village'; state.battleActive=false; render(); });
+    }
+
+    function playerAttack() {
+      const dmg = Math.max(1, getEffectiveStats().atk - (state.currentEnemy.def||0) + Math.floor(Math.random()*8));
+      state.currentEnemy.hp -= dmg;
+      setGodVoice(`你造成 ${dmg} 傷害`);
+      checkBattleEnd();
+    }
+    function playerSkill(skillId) {
+      const skill = SKILLS[skillId]; if(!skill || state.player.mp<skill.mp) return;
+      state.player.mp -= skill.mp;
+      const dmg = Math.max(1, Math.floor(getEffectiveStats().atk*skill.power) - (state.currentEnemy.def||0));
+      state.currentEnemy.hp -= dmg;
+      setGodVoice(`✨ ${skill.name}！造成 ${dmg} 傷害`);
+      checkBattleEnd();
+    }
+    function usePotion() {
+      if(state.player.potions.hp>0 && state.player.hp<state.player.maxHp){
+        state.player.hp = Math.min(state.player.maxHp, state.player.hp+40);
+        state.player.potions.hp--;
+        setGodVoice('使用生命藥水，恢復40HP');
+      }
+      enemyTurn();
+      render();
+    }
+    function enemyTurn() {
+      if(!state.currentEnemy || state.currentEnemy.hp<=0) return;
+      const dmg = Math.max(1, (state.currentEnemy.atk||10) - getEffectiveStats().def);
+      state.player.hp -= dmg;
+      setGodVoice(`${state.currentEnemy.name} 反擊造成 ${dmg} 傷害`);
+      if(state.player.hp<=0) { state.player.hp=1; state.currentScene='village'; state.battleActive=false; setGodVoice('你被擊敗了...回到巢穴'); }
+      render();
+    }
+    function checkBattleEnd() {
+      if(state.currentEnemy.hp<=0){
+        const exp = state.currentEnemy.exp; state.player.exp += exp; state.player.gold += state.currentEnemy.gold;
+        state.player.goalProgress.kill = (state.player.goalProgress.kill||0)+1;
+        setGodVoice(`勝利！獲得 ${exp}經驗 ${state.currentEnemy.gold}金幣`);
+        checkLevelUp();
+        state.currentScene='village'; state.battleActive=false;
+      } else { enemyTurn(); }
+      render();
+    }
+    function checkLevelUp() {
+      const form = EVOLUTION_TREE[state.player.formId];
+      const needExp = form.maxLv * 10;
+      while(state.player.exp >= needExp && state.player.level < form.maxLv){
+        state.player.exp -= needExp;
+        state.player.level++;
+        state.player.maxHp += 8; state.player.maxMp += 4;
+        state.player.baseAtk += 3; state.player.baseDef += 2;
+        state.player.hp = state.player.maxHp; state.player.mp = state.player.maxMp;
+        setGodVoice(`🎉 升級！Lv.${state.player.level}`);
+      }
+    }
+
+    function renderEvolutionChoice() {
+      const form = EVOLUTION_TREE[state.player.formId];
+      const options = form.evolutions || [];
+      let btns = options.map(id=>{
+        const evo = EVOLUTION_TREE[id];
+        return `<button class="btn primary" data-evo="${id}">${evo.icon} ${evo.name} (${evo.grade}級)</button>`;
+      }).join('');
+      view.innerHTML = `
+        <div class="panel">
+          <h3>🌟 選擇進化路線</h3>
+          <p>當前：${form.name} → 選擇新的形態</p>
+          <div class="flex-row">${btns}</div>
+        </div>`;
+      document.querySelectorAll('[data-evo]').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          const newId = e.target.dataset.evo;
+          evolveTo(newId);
+        });
+      });
+    }
+    function evolveTo(newFormId) {
+      state.player.formId = newFormId;
+      state.player.level = 1; state.player.exp = 0;
+      applyFormStats();
+      state.player.hp = state.player.maxHp; state.player.mp = state.player.maxMp;
+      setGodVoice(`✨ 進化成功！你變成了 ${EVOLUTION_TREE[newFormId].name}！`);
+      state.currentScene='village';
+      render();
+    }
+
+    function renderStatus() {
+      const p=state.player; const form=EVOLUTION_TREE[p.formId];
+      view.innerHTML = `
+        <div class="panel">
+          <h3>📋 龍之狀態</h3>
+          <p>${form.icon} ${form.name} (${form.grade}) Lv.${p.level}</p>
+          <p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</p>
+          <p>⚔️ATK:${getEffectiveStats().atk} 🛡️DEF:${getEffectiveStats().def}</p>
+          <button class="btn" id="backStatusBtn">返回</button>
+        </div>`;
+      document.getElementById('backStatusBtn').addEventListener('click', ()=>{ state.currentScene='village'; render(); });
+    }
+    function renderGoals() {
+      view.innerHTML = `<div class="panel"><h3>🎯 目標</h3><p>擊殺怪物: ${state.player.goalProgress.kill}/5</p><button class="btn" id="backGoalBtn">返回</button></div>`;
+      document.getElementById('backGoalBtn').addEventListener('click', ()=>{ state.currentScene='village'; render(); });
+    }
+
+    function setGodVoice(msg) { state.godVoice = `神之聲：${msg}`; }
+
+    // 啟動
+    renderStart();
+  })();
+</script>
+</body>
+</html>
