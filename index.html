@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
-  <title>轉生龍蛋～四域探索～ 介面優化</title>
+  <title>轉生龍蛋～四域探索～ 最終版</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -48,9 +48,10 @@
     .map-cell {
       aspect-ratio: 1; background: #1b1228; border: 1px solid #3a2a48;
       border-radius: 4px; display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; color: #ccc;
+      font-size: 1rem; color: #ccc; cursor: default;
     }
     .player-cell { background: #6b5078; border-color: #f8d080; box-shadow: 0 0 8px #ffbb40; }
+    .boss-cell { background: #5a2040; border-color: #ff6060; box-shadow: 0 0 8px #ff4040; }
     .direction-pad { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; }
     .dir-row { display: flex; gap: 30px; }
     .dir-btn {
@@ -130,19 +131,39 @@
       castle: { name:'亡靈城堡', icon:'🏰' }, dragon_lair: { name:'龍之巢穴', icon:'🌋' },
     };
     const START_ZONE = 'forest', START_POS = {x:5,y:5};
+    const BOSS_POS = {x:6, y:6}; // 每個區域Boss固定位置
 
     const MONSTERS = {
-      forest:[{name:'哥布林',icon:'👹',el:'earth',hp:35,atk:10,def:4,exp:25,gold:15},{name:'火狐',icon:'🦊',el:'fire',hp:40,atk:14,def:5,exp:30,gold:20}],
-      cave:[{name:'石傀儡',icon:'🗿',el:'earth',hp:100,atk:22,def:18,exp:80,gold:50},{name:'暗影蝙蝠',icon:'🦇',el:'dark',hp:70,atk:19,def:10,exp:65,gold:40}],
-      castle:[{name:'骷髏騎士',icon:'💀',el:'dark',hp:180,atk:32,def:22,exp:160,gold:90},{name:'聖光祭司',icon:'🧙',el:'light',hp:150,atk:28,def:18,exp:140,gold:85}],
-      dragon_lair:[{name:'火龍',icon:'🐉',el:'fire',hp:280,atk:40,def:30,exp:300,gold:200}]
+      forest:[
+        {name:'哥布林',icon:'👹',el:'earth',hp:30,atk:8,def:3,exp:20,gold:12},
+        {name:'火狐',icon:'🦊',el:'fire',hp:35,atk:12,def:4,exp:25,gold:18}
+      ],
+      cave:[
+        {name:'石傀儡',icon:'🗿',el:'earth',hp:90,atk:20,def:16,exp:70,gold:45},
+        {name:'暗影蝙蝠',icon:'🦇',el:'dark',hp:65,atk:17,def:9,exp:60,gold:38}
+      ],
+      castle:[
+        {name:'骷髏騎士',icon:'💀',el:'dark',hp:160,atk:30,def:20,exp:140,gold:85},
+        {name:'聖光祭司',icon:'🧙',el:'light',hp:140,atk:26,def:17,exp:130,gold:80}
+      ],
+      dragon_lair:[
+        {name:'火龍',icon:'🐉',el:'fire',hp:260,atk:38,def:28,exp:280,gold:180}
+      ]
+    };
+
+    // Boss定義
+    const BOSSES = {
+      forest: {name:'森林巨魔',icon:'👾',el:'earth',hp:120,atk:18,def:12,exp:150,gold:100, loot:[{id:'goblin_tooth',chance:0.8}]},
+      cave: {name:'礦洞之王',icon:'👿',el:'dark',hp:250,atk:28,def:22,exp:300,gold:200, loot:[{id:'stone_core',chance:0.9}]},
+      castle: {name:'亡靈領主',icon:'🧛',el:'dark',hp:380,atk:38,def:30,exp:500,gold:350, loot:[{id:'dark_bone',chance:1}]},
+      dragon_lair: {name:'遠古巨龍',icon:'🐲',el:'fire',hp:550,atk:50,def:40,exp:1000,gold:700, loot:[{id:'dragon_scale',chance:1}]},
     };
 
     const state = {
       player: null, enemy: null, voice: "", battle: false, dead: false,
       scene: 'map', zone: START_ZONE, pos: {...START_POS}, maps: {}, inv: [],
       goalIdx:0, prog:{kill:0,evo:false,collect:new Set(),explore:new Set([START_ZONE])},
-      buffs:{atk:0,spd:0}
+      buffs:{atk:0,spd:0}, bossDefeated: new Set()
     };
 
     function init() {
@@ -154,9 +175,9 @@
       };
       applyForm(); state.player.hp=state.player.maxHp; state.player.mp=state.player.maxMp;
       state.prog = {kill:0,evo:false,collect:new Set(),explore:new Set([START_ZONE])};
-      state.goalIdx=0; state.inv=[];
+      state.goalIdx=0; state.inv=[]; state.bossDefeated.clear();
       genMaps();
-      setVoice('歡迎！方向鍵移動，進化變強。死亡會回到森林起點。');
+      setVoice('方向鍵移動，Boss在(6,6)👑。死亡回森林。');
     }
 
     function applyForm() {
@@ -182,14 +203,21 @@
       if(state.battle||state.dead) return;
       let nx=state.pos.x+dx, ny=state.pos.y+dy;
       if(nx<0||nx>=12||ny<0||ny>=12) {
-        // 邊界傳送
         const adj = { forest:{south:'cave'}, cave:{north:'forest',south:'castle'}, castle:{north:'cave',south:'dragon_lair'}, dragon_lair:{north:'castle'} };
         const next = adj[state.zone]?.[dx<0?'west':dx>0?'east':dy<0?'north':dy>0?'south':null];
         if(next) { state.zone=next; state.pos={x:dx<0?11:dx>0?0:nx, y:dy<0?11:dy>0?0:ny}; state.prog.explore.add(next); }
         else return;
-      } else { state.pos.x=nx; state.pos.y=ny; }
-      if(Math.random()<0.25) startBattle();
-      else renderMap();
+      } else {
+        state.pos.x=nx; state.pos.y=ny;
+      }
+      // 檢查是否踩到Boss格
+      if(state.pos.x===BOSS_POS.x && state.pos.y===BOSS_POS.y && !state.bossDefeated.has(state.zone)) {
+        startBossBattle();
+      } else if(Math.random()<0.25) {
+        startBattle();
+      } else {
+        renderMap();
+      }
     }
 
     function startBattle() {
@@ -199,6 +227,18 @@
       state.battle=true; state.dead=false; state.scene='battle';
       state.buffs={atk:0,spd:0};
       setVoice(`⚔️ ${m.name} (${ELEMENTS[m.el]}) 出現了！`);
+      document.getElementById('game-view').classList.add('flash');
+      setTimeout(()=>document.getElementById('game-view').classList.remove('flash'),300);
+      renderBattle();
+    }
+
+    function startBossBattle() {
+      const boss = BOSSES[state.zone];
+      if(!boss) return;
+      state.enemy = {...boss, maxHp:boss.hp, el:boss.el, isBoss:true};
+      state.battle=true; state.dead=false; state.scene='battle';
+      state.buffs={atk:0,spd:0};
+      setVoice(`👑 Boss ${boss.name} 出現了！`);
       document.getElementById('game-view').classList.add('flash');
       setTimeout(()=>document.getElementById('game-view').classList.remove('flash'),300);
       renderBattle();
@@ -282,8 +322,24 @@
 
     function checkEnd() {
       if(state.enemy.hp<=0) {
-        state.enemy.hp=0; state.player.exp+=state.enemy.exp; state.player.gold+=state.enemy.gold;
+        state.enemy.hp=0;
+        state.player.exp+=state.enemy.exp; state.player.gold+=state.enemy.gold;
         state.prog.kill++;
+        // Boss擊敗標記
+        if(state.enemy.isBoss) {
+          state.bossDefeated.add(state.zone);
+          setVoice(`🏆 擊敗Boss ${state.enemy.name}！`);
+        }
+        // 掉落物
+        if(state.enemy.loot) {
+          state.enemy.loot.forEach(l=>{
+            if(Math.random()<l.chance) {
+              const existing = state.inv.find(i=>i.id===l.id);
+              if(existing) existing.qty++;
+              else state.inv.push({id:l.id, name:LOOT_ITEMS[l.id]?.name||l.id, qty:1});
+            }
+          });
+        }
         document.getElementById('enemy-card')?.classList.add('explode');
         setTimeout(()=>{
           levelUp(); state.battle=false; state.dead=false; state.scene='map'; renderMap();
@@ -328,7 +384,11 @@
       let grid='';
       for(let y=0;y<12;y++) for(let x=0;x<12;x++) {
         const isP=(x===state.pos.x&&y===state.pos.y);
-        grid+=`<div class="map-cell ${isP?'player-cell':''}">${isP?f.icon:'🌿'}</div>`;
+        const isBoss = (x===BOSS_POS.x && y===BOSS_POS.y && !state.bossDefeated.has(state.zone));
+        let cellClass = 'map-cell';
+        if(isP) cellClass += ' player-cell';
+        else if(isBoss) cellClass += ' boss-cell';
+        grid+=`<div class="${cellClass}">${isP?f.icon:(isBoss?'👑':'🌿')}</div>`;
       }
       document.getElementById('game-view').innerHTML = `
         <div class="panel">
@@ -386,13 +446,27 @@
     }
 
     function renderGoal() {
-      const goals = ['擊敗5隻怪物','進化到D級','收集3種掉落物','探索全部區域'];
-      const prog = [state.prog.kill, state.prog.evo?1:0, state.inv.length, state.prog.explore.size];
+      const p=state.player; const f=EVOLUTION_TREE[p.form];
+      const needExp = 20 + p.lv*5;
+      const nextEvoLv = Math.ceil(p.lv/5)*5;
       document.getElementById('game-view').innerHTML = `
-        <div class="panel"><h3>目標</h3>${goals.map((g,i)=>`<p>${i===state.goalIdx?'➤':''}${g} (${prog[i]}/${i===0?5:i===2?3:4})</p>`).join('')}
-        <button class="btn" id="backMap">返回</button></div>`;
+        <div class="panel">
+          <h3>📊 進度</h3>
+          <p>經驗值: ${p.exp}/${needExp} (升級Lv.${p.lv+1})</p>
+          <p>進化需求: Lv.${nextEvoLv} (目前Lv.${p.lv})</p>
+          <h4>🎯 目標</h4>
+          ${GOALS.map((g,i)=>`<p>${i===state.goalIdx?'➤':''}${g.desc} (${i===0?state.prog.kill+'/5':i===1?(state.prog.evo?'完成':'未完成'):i===2?state.inv.length+'/3':state.prog.explore.size+'/4'})</p>`).join('')}
+          <button class="btn" id="backMap">返回</button>
+        </div>`;
       document.getElementById('backMap').addEventListener('click',()=>{state.scene='map';renderMap();});
     }
+
+    const GOALS = [
+      { desc:'擊敗5隻怪物', type:'kill', target:5 },
+      { desc:'進化到D級', type:'evo' },
+      { desc:'收集3種掉落物', type:'collect', target:3 },
+      { desc:'探索全部區域', type:'explore', target:4 },
+    ];
 
     function renderShop() {
       let invHtml = state.inv.map((it,idx)=>`<div class="item-row"><span>${it.name} x${it.qty}</span><button class="btn small" id="sell_${idx}">賣</button></div>`).join('');
@@ -413,6 +487,13 @@
       document.querySelectorAll('.evolution-card').forEach(c=>c.addEventListener('click',(e)=>evolve(e.currentTarget.dataset.evo)));
     }
 
+    const LOOT_ITEMS = {
+      goblin_tooth: {name:'哥布林牙齒',icon:'🦷',sellPrice:15},
+      stone_core: {name:'石核',icon:'🪨',sellPrice:40},
+      dark_bone: {name:'暗黑骨',icon:'🦴',sellPrice:60},
+      dragon_scale: {name:'龍鱗',icon:'🔶',sellPrice:120},
+    };
+
     function setVoice(msg){ state.voice=`神之聲：${msg}`; }
 
     function setupControls(){
@@ -427,16 +508,14 @@
       document.getElementById('rightBtn').addEventListener('click',()=>move(1,0));
     }
 
-    // 開場教學
     function showTutorial() {
       document.getElementById('game-view').innerHTML = `
         <div class="panel">
           <h2>📖 遊戲說明</h2>
-          <p>🧭 <b>移動：</b>使用方向鍵探索四大地圖。</p>
-          <p>⚔️ <b>戰鬥：</b>遇到怪物時回合制對戰，使用技能或藥水。</p>
-          <p>🧬 <b>進化：</b>每5級可選擇新形態，屬性大幅提升。</p>
-          <p>🎯 <b>目標：</b>完成任務獲得獎勵。</p>
-          <p>💀 <b>死亡：</b>回到森林起點，損失部分進度。</p>
+          <p>🧭 <b>移動：</b>方向鍵探索，地圖(6,6)有Boss👑。</p>
+          <p>⚔️ <b>戰鬥：</b>回合制，技能或藥水，死亡回森林。</p>
+          <p>🧬 <b>進化：</b>每5級可選擇新形態。</p>
+          <p>🎯 <b>目標：</b>點擊目標查看經驗與進化需求。</p>
           <button class="btn primary" id="startGame">開始冒險</button>
         </div>`;
       document.getElementById('startGame').addEventListener('click',()=>{
