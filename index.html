@@ -3,543 +3,448 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
-  <title>轉生龍蛋～四域探索～</title>
+  <title>轉生龍蛋～四域探索～ 介面優化</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      background: #0a0610; font-family: 'Noto Serif TC', 'Microsoft JhengHei', serif;
+      background: #0a0610; font-family: 'Noto Serif TC', 'Microsoft JhengHei', sans-serif;
       display: flex; justify-content: center; align-items: center; min-height: 100vh;
       background-image: radial-gradient(circle at 30% 30%, #2a1a35 0%, #03010a 90%);
-      padding: 15px;
+      padding: 10px;
     }
     #game-container {
-      width: 100%; max-width: 850px; background: rgba(18,10,25,0.95);
+      width: 100%; max-width: 900px; background: rgba(18,10,25,0.95);
       border: 2px solid #7a5e8a; border-radius: 30px;
-      box-shadow: 0 0 55px rgba(150,100,210,0.5), inset 0 0 20px #000;
+      box-shadow: 0 0 55px rgba(150,100,210,0.5);
       display: flex; flex-direction: column; overflow: hidden;
+      height: 95vh;
     }
-    .top-ornament {
-      height: 4px; background: linear-gradient(90deg, transparent, #d9b3ff, #ffddaa, #d9b3ff, transparent);
-    }
+    .top-ornament { height: 4px; background: linear-gradient(90deg, transparent, #d9b3ff, #ffddaa, #d9b3ff, transparent); }
     #header {
-      padding: 12px 18px; text-align: center; border-bottom: 1px solid #5a4670;
-      background: rgba(25,12,35,0.8);
+      padding: 8px 16px; text-align: center; border-bottom: 1px solid #5a4670;
+      background: rgba(25,12,35,0.9); flex-shrink: 0;
     }
-    #header h1 {
-      font-size: 1.8rem; letter-spacing: 3px; color: #ffe8b0;
-      text-shadow: 0 0 20px #b080e0, 0 2px 5px black; font-weight: 700;
+    #header h1 { font-size: 1.5rem; color: #ffe8b0; text-shadow: 0 0 15px #b080e0; }
+    .subtitle { font-size: 0.65rem; color: #c0a0d0; letter-spacing: 3px; }
+    #status-bar {
+      display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;
+      padding: 8px 15px; background: rgba(0,0,0,0.7); border-bottom: 1px solid #4a3a55;
+      font-size: 0.8rem; color: #e0d0f0; gap: 5px; flex-shrink: 0;
     }
-    .subtitle { font-size: 0.7rem; color: #c0a0d0; letter-spacing: 4px; }
-    #main-view {
-      flex: 1; padding: 15px; display: flex; flex-direction: column; gap: 12px;
-      overflow-y: auto; max-height: 65vh;
+    #main-area {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+    }
+    #game-view {
+      flex: 1; overflow-y: auto; padding: 10px;
     }
     .panel {
-      background: rgba(12,6,18,0.9); border: 1px solid #6a4e7a;
-      border-radius: 18px; padding: 15px; box-shadow: inset 0 1px 5px rgba(255,255,255,0.08);
-      color: #f4e8ff;
-    }
-    .flex-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-    .btn {
-      background: #2f1f3a; border: 1px solid #8a6a9a; color: #f0e0ff;
-      padding: 10px 18px; border-radius: 28px; font-weight: 600; font-size: 0.9rem;
-      letter-spacing: 1px; cursor: pointer; transition: 0.2s;
-      background: linear-gradient(180deg, #3e2850 0%, #21152e 100%);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.5); display: inline-flex; align-items: center; gap: 6px;
-      text-shadow: 0 1px 2px black;
-    }
-    .btn:hover { background: #553b6a; border-color: #d0b0e0; color: #fff; transform: translateY(-2px); }
-    .btn:active { transform: scale(0.96); }
-    .btn.primary { background: #5e3e62; border-color: #d8b0c0; color: #fff0e0; }
-    .btn.danger { background: #4b1e28; border-color: #c08080; }
-    .btn.small { padding: 6px 14px; font-size: 0.8rem; }
-    .btn:disabled { opacity: 0.4; pointer-events: none; }
-    .god-voice {
-      background: #1e1028; border-left: 4px solid #e6b422; padding: 10px 14px;
-      border-radius: 12px; color: #ffe8a0; font-style: italic; margin: 8px 0;
+      background: rgba(12,6,18,0.9); border: 1px solid #6a4e7a; border-radius: 18px;
+      padding: 12px; color: #f4e8ff; margin-bottom: 8px;
     }
     .map-grid {
-      display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; margin: 10px 0;
+      display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px;
+      margin: 8px 0; background: #110a18; border-radius: 8px; padding: 4px;
     }
     .map-cell {
-      aspect-ratio: 1; background: #1b1228; border: 1px solid #4a3858;
+      aspect-ratio: 1; background: #1b1228; border: 1px solid #3a2a48;
       border-radius: 4px; display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; color: #ccc; transition: 0.1s;
+      font-size: 1rem; color: #ccc;
     }
-    .player-cell {
-      background: #6b5078; border-color: #f8d080; box-shadow: 0 0 10px #ffbb40;
-      font-size: 1.4rem;
-    }
-    .direction-pad { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 8px; }
-    .dir-row { display: flex; gap: 25px; }
+    .player-cell { background: #6b5078; border-color: #f8d080; box-shadow: 0 0 8px #ffbb40; }
+    .direction-pad { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; }
+    .dir-row { display: flex; gap: 30px; }
     .dir-btn {
       background: #372648; border: 2px solid #8a6ea0; color: #ffe0c0;
-      font-size: 2rem; width: 55px; height: 55px; border-radius: 15px;
+      font-size: 1.8rem; width: 50px; height: 50px; border-radius: 15px;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
-      box-shadow: 0 4px 8px black; user-select: none; transition: 0.1s;
+      transition: 0.1s; user-select: none;
     }
     .dir-btn:active { background: #5e4275; transform: scale(0.9); }
-    .shake { animation: shake 0.5s ease; }
-    @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-8px);} 40%{transform:translateX(8px);} 60%{transform:translateX(-5px);} 80%{transform:translateX(5px);} }
-    .flash { animation: flash 0.4s ease; }
-    @keyframes flash { 0%{opacity:0.4; background:#fff;} 100%{opacity:1;} }
-    .explode { animation: explode 0.6s ease-out; }
-    @keyframes explode { 0%{transform:scale(1); opacity:1;} 50%{transform:scale(1.4); opacity:0.5;} 100%{transform:scale(0); opacity:0;} }
-    .fadeIn { animation: fadeIn 0.3s; }
-    @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-    .evolution-card {
-      background: #1e1230; border: 2px solid #553b60; border-radius: 20px;
-      padding: 15px; text-align: center; cursor: pointer; transition: 0.25s;
-      width: 140px;
+    .btn {
+      background: #2f1f3a; border: 1px solid #8a6a9a; color: #f0e0ff;
+      padding: 8px 16px; border-radius: 24px; font-weight: 600; font-size: 0.8rem;
+      cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px;
+      background: linear-gradient(180deg, #3e2850 0%, #21152e 100%);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.5);
     }
-    .evolution-card:hover { border-color: #e0b0f0; transform: scale(1.05); box-shadow: 0 8px 20px rgba(180,120,200,0.4); }
-    .item-row { display: flex; align-items: center; gap: 8px; padding: 6px; background: rgba(255,255,255,0.05); border-radius: 8px; margin: 4px 0; }
+    .btn:hover { background: #553b6a; border-color: #d0b0e0; color: #fff; }
+    .btn.primary { background: #5e3e62; border-color: #d8b0c0; }
+    .btn.small { padding: 5px 12px; font-size: 0.7rem; }
+    .god-voice { background: #1e1028; border-left: 4px solid #e6b422; padding: 8px 12px; border-radius: 10px; color: #ffe8a0; font-style: italic; margin: 6px 0; }
+    .evolution-card { background: #1e1230; border: 2px solid #553b60; border-radius: 18px; padding: 12px; text-align: center; cursor: pointer; width: 130px; }
+    .evolution-card:hover { border-color: #e0b0f0; transform: scale(1.03); }
+    .flex-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .item-row { display: flex; align-items: center; gap: 6px; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 8px; margin: 4px 0; }
+    .shake { animation: shake 0.4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
+    .flash { animation: flash 0.3s ease; }
+    @keyframes flash { 0%{opacity:0.5; background:#fff;} 100%{opacity:1;} }
   </style>
 </head>
 <body>
 <div id="game-container">
   <div class="top-ornament"></div>
-  <div id="header">
-    <h1>🐉 轉生龍蛋 · 四域探索</h1>
-    <div class="subtitle">森林 · 礦洞 · 城堡 · 龍巢</div>
+  <div id="header"><h1>🐉 轉生龍蛋 · 四域探索</h1><div class="subtitle">森林 · 礦洞 · 城堡 · 龍巢</div></div>
+  <div id="status-bar"></div>
+  <div id="main-area">
+    <div id="game-view"></div>
+    <div id="control-area" style="padding:6px 10px; background:rgba(0,0,0,0.7); border-top:1px solid #5a4070;"></div>
   </div>
-  <div id="main-view"></div>
-  <div id="control-area" style="padding:8px 16px 12px; background:rgba(0,0,0,0.6); border-top:1px solid #5a4070;"></div>
 </div>
 
 <script>
   (function() {
-    const ELEMENTS = { fire:'火', water:'水', wind:'風', earth:'地', light:'光', dark:'闇' };
-    const ELEMENT_WEAKNESS = {
-      fire: 'wind', wind: 'earth', earth: 'water', water: 'fire',
-      light: 'dark', dark: 'light'
-    };
+    const ELEMENTS = { fire:'火', water:'水', wind:'風', earth:'地', light:'光', dark:'闇', none:'無' };
+    const ELEMENT_WEAKNESS = { fire:'wind', wind:'earth', earth:'water', water:'fire', light:'dark', dark:'light' };
 
     const EVOLUTION_TREE = {
-      'dragon_egg': { name:'龍蛋', icon:'🥚', grade:'F', maxLv:5, hp:40,mp:20,atk:6,def:10,matk:5,mdef:8,spd:4, skills:['roll'], evolutions:['whelp','draket','hatchling'] },
-      'whelp': { name:'幼龍', icon:'🐉', grade:'D', maxLv:5, hp:110,mp:45,atk:24,def:22,matk:18,mdef:20,spd:12, skills:['roll','flame_breath','dragon_scales'], evolutions:['plague_whelp','rainbow_whelp','rock_whelp'] },
-      'draket': { name:'小龍', icon:'🐲', grade:'D', maxLv:5, hp:90,mp:55,atk:30,def:14,matk:25,mdef:15,spd:16, skills:['roll','fireball','dragon_rage'], evolutions:['flame_draket','thunder_draket'] },
-      'hatchling': { name:'雛龍', icon:'🐊', grade:'D', maxLv:5, hp:100,mp:50,atk:22,def:18,matk:20,mdef:22,spd:20, skills:['roll','wind_cutter','shadow_step'], evolutions:['wind_hatchling','shadow_hatchling'] },
-      'plague_whelp':{ name:'厄病幼龍',icon:'☠️',grade:'C',maxLv:5,hp:200,mp:70,atk:42,def:35,matk:38,mdef:30,spd:18,skills:['toxic_breath'],evolutions:['calamity_drake','venom_drake']},
-      'rainbow_whelp':{ name:'小虹龍',icon:'🌈',grade:'C',maxLv:5,hp:180,mp:80,atk:36,def:32,matk:50,mdef:45,spd:20,skills:['holy_light'],evolutions:['sacred_drake','sky_drake']},
-      'rock_whelp':{ name:'岩石幼龍',icon:'🪨',grade:'C',maxLv:5,hp:260,mp:50,atk:38,def:55,matk:25,mdef:40,spd:10,skills:['stone_skin'],evolutions:['earth_drake','steel_drake']},
-      'flame_draket':{ name:'炎龍幼體',icon:'🔥',grade:'C',maxLv:5,hp:160,mp:70,atk:52,def:22,matk:45,mdef:25,spd:22,skills:['inferno'],evolutions:['blast_drake','magma_drake']},
-      'thunder_draket':{ name:'雷龍幼體',icon:'⚡',grade:'C',maxLv:5,hp:170,mp:75,atk:48,def:24,matk:52,mdef:28,spd:26,skills:['lightning_strike'],evolutions:['storm_drake','volt_drake']},
-      'wind_hatchling':{ name:'風龍幼體',icon:'🌪️',grade:'C',maxLv:5,hp:155,mp:65,atk:42,def:26,matk:44,mdef:30,spd:32,skills:['gale_slash'],evolutions:['tempest_drake','sonic_drake']},
-      'shadow_hatchling':{ name:'暗龍幼體',icon:'🌑',grade:'C',maxLv:5,hp:175,mp:68,atk:46,def:28,matk:48,mdef:32,spd:25,skills:['dark_claw'],evolutions:['abyss_drake','phantom_drake']},
-      'calamity_drake':{ name:'災厄龍',icon:'💀',grade:'B',maxLv:100,hp:350,mp:110,atk:68,def:52,matk:62,mdef:48,spd:28,skills:['death_breath'], evolutions:null },
-      'venom_drake':{ name:'毒龍',icon:'🧪',grade:'B',maxLv:100,hp:310,mp:100,atk:64,def:48,matk:70,mdef:55,spd:30,skills:['venom_storm'], evolutions:null },
-      'sacred_drake':{ name:'聖光龍',icon:'✨',grade:'B',maxLv:100,hp:330,mp:130,atk:58,def:50,matk:80,mdef:75,spd:26,skills:['divine_judgment'], evolutions:null },
-      'sky_drake':{ name:'天翼龍',icon:'🕊️',grade:'B',maxLv:100,hp:290,mp:120,atk:62,def:45,matk:72,mdef:65,spd:38,skills:['sky_dive'], evolutions:null },
-      'earth_drake':{ name:'地龍',icon:'⛰️',grade:'B',maxLv:100,hp:420,mp:80,atk:66,def:80,matk:45,mdef:60,spd:18,skills:['titan_smash'], evolutions:null },
-      'steel_drake':{ name:'鋼龍',icon:'🛡️',grade:'B',maxLv:100,hp:380,mp:90,atk:70,def:75,matk:50,mdef:70,spd:20,skills:['steel_rend'], evolutions:null },
-      'blast_drake':{ name:'爆炎龍',icon:'💥',grade:'B',maxLv:100,hp:300,mp:110,atk:82,def:40,matk:68,mdef:45,spd:32,skills:['explosion'], evolutions:null },
-      'magma_drake':{ name:'岩漿龍',icon:'🌋',grade:'B',maxLv:100,hp:340,mp:100,atk:76,def:55,matk:64,mdef:50,spd:24,skills:['lava_flow'], evolutions:null },
-      'storm_drake':{ name:'風暴龍',icon:'⛈️',grade:'B',maxLv:100,hp:280,mp:120,atk:60,def:38,matk:78,mdef:48,spd:42,skills:['thunderstorm'], evolutions:null },
-      'sonic_drake':{ name:'音速龍',icon:'💨',grade:'B',maxLv:100,hp:270,mp:115,atk:65,def:36,matk:70,mdef:44,spd:48,skills:['sonic_boom'], evolutions:null },
-      'abyss_drake':{ name:'暗黑龍',icon:'🖤',grade:'B',maxLv:100,hp:360,mp:105,atk:72,def:48,matk:76,mdef:52,spd:30,skills:['abyss_gaze'], evolutions:null },
-      'phantom_drake':{ name:'影龍',icon:'👻',grade:'B',maxLv:100,hp:310,mp:110,atk:68,def:42,matk:80,mdef:58,spd:36,skills:['phantom_dance'], evolutions:null },
+      'dragon_egg': { name:'龍蛋', icon:'🥚', grade:'F', maxLv:5, element:'none', hp:40,mp:20,atk:6,def:10,matk:5,mdef:8,spd:4, skills:['roll'], evolutions:['whelp','draket','hatchling'] },
+      'whelp': { name:'幼龍', icon:'🐉', grade:'D', maxLv:5, element:'fire', hp:110,mp:45,atk:24,def:22,matk:18,mdef:20,spd:12, skills:['roll','flame_breath'], evolutions:['plague_whelp','rainbow_whelp'] },
+      'draket': { name:'小龍', icon:'🐲', grade:'D', maxLv:5, element:'wind', hp:90,mp:55,atk:30,def:14,matk:25,mdef:15,spd:16, skills:['roll','fireball'], evolutions:['flame_draket','thunder_draket'] },
+      'hatchling': { name:'雛龍', icon:'🐊', grade:'D', maxLv:5, element:'water', hp:100,mp:50,atk:22,def:18,matk:20,mdef:22,spd:20, skills:['roll','wind_cutter'], evolutions:['wind_hatchling','shadow_hatchling'] },
+      'plague_whelp':{ name:'厄病幼龍',icon:'☠️',grade:'C',maxLv:5,element:'dark',hp:200,mp:70,atk:42,def:35,matk:38,mdef:30,spd:18,skills:['toxic_breath'],evolutions:['calamity_drake']},
+      'rainbow_whelp':{ name:'小虹龍',icon:'🌈',grade:'C',maxLv:5,element:'light',hp:180,mp:80,atk:36,def:32,matk:50,mdef:45,spd:20,skills:['holy_light'],evolutions:['sacred_drake']},
+      'flame_draket':{ name:'炎龍幼體',icon:'🔥',grade:'C',maxLv:5,element:'fire',hp:160,mp:70,atk:52,def:22,matk:45,mdef:25,spd:22,skills:['inferno'],evolutions:['blast_drake']},
+      'thunder_draket':{ name:'雷龍幼體',icon:'⚡',grade:'C',maxLv:5,element:'wind',hp:170,mp:75,atk:48,def:24,matk:52,mdef:28,spd:26,skills:['lightning_strike'],evolutions:['storm_drake']},
+      'wind_hatchling':{ name:'風龍幼體',icon:'🌪️',grade:'C',maxLv:5,element:'wind',hp:155,mp:65,atk:42,def:26,matk:44,mdef:30,spd:32,skills:['gale_slash'],evolutions:['tempest_drake']},
+      'shadow_hatchling':{ name:'暗龍幼體',icon:'🌑',grade:'C',maxLv:5,element:'dark',hp:175,mp:68,atk:46,def:28,matk:48,mdef:32,spd:25,skills:['dark_claw'],evolutions:['abyss_drake']},
+      'calamity_drake':{ name:'災厄龍',icon:'💀',grade:'B',maxLv:100,element:'dark',hp:350,mp:110,atk:68,def:52,matk:62,mdef:48,spd:28,skills:['death_breath'], evolutions:null },
+      'sacred_drake':{ name:'聖光龍',icon:'✨',grade:'B',maxLv:100,element:'light',hp:330,mp:130,atk:58,def:50,matk:80,mdef:75,spd:26,skills:['divine_judgment'], evolutions:null },
+      'blast_drake':{ name:'爆炎龍',icon:'💥',grade:'B',maxLv:100,element:'fire',hp:300,mp:110,atk:82,def:40,matk:68,mdef:45,spd:32,skills:['explosion'], evolutions:null },
+      'storm_drake':{ name:'風暴龍',icon:'⛈️',grade:'B',maxLv:100,element:'wind',hp:280,mp:120,atk:60,def:38,matk:78,mdef:48,spd:42,skills:['thunderstorm'], evolutions:null },
+      'tempest_drake':{ name:'颶風龍',icon:'🌪️',grade:'B',maxLv:100,element:'wind',hp:260,mp:115,atk:55,def:35,matk:82,mdef:50,spd:48,skills:['sonic_boom'], evolutions:null },
+      'abyss_drake':{ name:'暗黑龍',icon:'🖤',grade:'B',maxLv:100,element:'dark',hp:360,mp:105,atk:72,def:48,matk:76,mdef:52,spd:30,skills:['abyss_gaze'], evolutions:null },
     };
 
     const SKILLS = {
-      roll:{name:'滾動',mp:4,power:1.2,attr:'phys', element:null},
-      flame_breath:{name:'火焰吐息',mp:10,power:1.8,attr:'mag', element:'fire'},
-      dragon_scales:{name:'龍鱗',type:'trait'},
-      fireball:{name:'火球術',mp:12,power:2.0,attr:'mag', element:'fire'},
-      dragon_rage:{name:'龍之怒',mp:15,power:2.2,attr:'phys', element:null},
-      toxic_breath:{name:'毒息',mp:14,power:1.7,attr:'mag', element:'dark'},
-      holy_light:{name:'聖光',mp:16,power:2.1,attr:'mag', element:'light'},
-      earthquake:{name:'地震',mp:18,power:2.0,attr:'phys', element:'earth'},
-      inferno:{name:'地獄火',mp:20,power:2.4,attr:'mag', element:'fire'},
-      lightning_strike:{name:'雷擊',mp:18,power:2.3,attr:'mag', element:'wind'},
-      gale_slash:{name:'風刃',mp:12,power:1.9,attr:'phys', element:'wind'},
-      dark_claw:{name:'暗爪',mp:14,power:2.0,attr:'phys', element:'dark'},
-      death_breath:{name:'死亡吐息',mp:25,power:2.8,attr:'mag', element:'dark'},
+      roll:{name:'滾動',mp:4,power:1.2,attr:'phys'}, flame_breath:{name:'火焰吐息',mp:10,power:1.8,attr:'mag',element:'fire'},
+      fireball:{name:'火球術',mp:12,power:2.0,attr:'mag',element:'fire'}, wind_cutter:{name:'風刃',mp:8,power:1.5,attr:'phys',element:'wind'},
+      toxic_breath:{name:'毒息',mp:14,power:1.7,attr:'mag',element:'dark'}, holy_light:{name:'聖光',mp:16,power:2.1,attr:'mag',element:'light'},
+      inferno:{name:'地獄火',mp:20,power:2.4,attr:'mag',element:'fire'}, lightning_strike:{name:'雷擊',mp:18,power:2.3,attr:'mag',element:'wind'},
+      gale_slash:{name:'風刃',mp:12,power:1.9,attr:'phys',element:'wind'}, dark_claw:{name:'暗爪',mp:14,power:2.0,attr:'phys',element:'dark'},
+      death_breath:{name:'死亡吐息',mp:25,power:2.8,attr:'mag',element:'dark'}, divine_judgment:{name:'神聖審判',mp:20,power:2.5,attr:'mag',element:'light'},
     };
 
-    // 區域定義
     const ZONES = {
-      forest: { name:'幽暗森林', icon:'🌲', color:'#4a6b3a', adjacent: { north:null, south:'cave', east:null, west:null } },
-      cave: { name:'廢棄礦洞', icon:'🕳️', color:'#6b5a4a', adjacent: { north:'forest', south:'castle', east:null, west:null } },
-      castle: { name:'亡靈城堡', icon:'🏰', color:'#5a4a6a', adjacent: { north:'cave', south:'dragon_lair', east:null, west:null } },
-      dragon_lair: { name:'龍之巢穴', icon:'🌋', color:'#8a4a3a', adjacent: { north:'castle', south:null, east:null, west:null } },
+      forest: { name:'幽暗森林', icon:'🌲' }, cave: { name:'廢棄礦洞', icon:'🕳️' },
+      castle: { name:'亡靈城堡', icon:'🏰' }, dragon_lair: { name:'龍之巢穴', icon:'🌋' },
     };
+    const START_ZONE = 'forest', START_POS = {x:5,y:5};
 
-    const MONSTER_POOLS = {
-      forest: [
-        {name:'哥布林',icon:'👹',element:'earth',hp:35,atk:10,def:4,exp:25,gold:15,loot:[{id:'goblin_tooth',chance:0.4}]},
-        {name:'火狐',icon:'🦊',element:'fire',hp:40,atk:14,def:5,exp:30,gold:20,loot:[{id:'fire_fur',chance:0.5}]},
-        {name:'風精靈',icon:'🧚',element:'wind',hp:30,atk:12,def:3,exp:28,gold:18,loot:[{id:'wind_essence',chance:0.4}]},
-      ],
-      cave: [
-        {name:'石傀儡',icon:'🗿',element:'earth',hp:100,atk:22,def:18,exp:80,gold:50,loot:[{id:'stone_core',chance:0.5}]},
-        {name:'熔岩蟲',icon:'🐛',element:'fire',hp:85,atk:20,def:14,exp:75,gold:45,loot:[{id:'lava_scale',chance:0.5}]},
-        {name:'暗影蝙蝠',icon:'🦇',element:'dark',hp:70,atk:19,def:10,exp:65,gold:40,loot:[{id:'bat_wing',chance:0.5}]},
-      ],
-      castle: [
-        {name:'骷髏騎士',icon:'💀',element:'dark',hp:180,atk:32,def:22,exp:160,gold:90,loot:[{id:'dark_bone',chance:0.6}]},
-        {name:'聖光祭司',icon:'🧙',element:'light',hp:150,atk:28,def:18,exp:140,gold:85,loot:[{id:'holy_water',chance:0.5}]},
-      ],
-      dragon_lair: [
-        {name:'火龍',icon:'🐉',element:'fire',hp:280,atk:40,def:30,exp:300,gold:200,loot:[{id:'dragon_scale',chance:0.6}]},
-        {name:'黑暗龍',icon:'🐲',element:'dark',hp:320,atk:45,def:28,exp:350,gold:250,loot:[{id:'dark_essence',chance:0.5}]},
-      ]
-    };
-
-    const LOOT_ITEMS = {
-      goblin_tooth: {name:'哥布林牙齒',icon:'🦷',sellPrice:15},
-      fire_fur: {name:'火狐毛皮',icon:'🔥',sellPrice:20},
-      wind_essence: {name:'風之精華',icon:'🌬️',sellPrice:18},
-      stone_core: {name:'石核',icon:'🪨',sellPrice:40},
-      lava_scale: {name:'熔岩鱗片',icon:'🔴',sellPrice:38},
-      bat_wing: {name:'蝙蝠翅膀',icon:'🦇',sellPrice:30},
-      dark_bone: {name:'暗黑骨',icon:'🦴',sellPrice:60},
-      holy_water: {name:'聖水',icon:'💧',sellPrice:55},
-      dragon_scale: {name:'龍鱗',icon:'🔶',sellPrice:120},
-      dark_essence: {name:'黑暗精華',icon:'🖤',sellPrice:140},
+    const MONSTERS = {
+      forest:[{name:'哥布林',icon:'👹',el:'earth',hp:35,atk:10,def:4,exp:25,gold:15},{name:'火狐',icon:'🦊',el:'fire',hp:40,atk:14,def:5,exp:30,gold:20}],
+      cave:[{name:'石傀儡',icon:'🗿',el:'earth',hp:100,atk:22,def:18,exp:80,gold:50},{name:'暗影蝙蝠',icon:'🦇',el:'dark',hp:70,atk:19,def:10,exp:65,gold:40}],
+      castle:[{name:'骷髏騎士',icon:'💀',el:'dark',hp:180,atk:32,def:22,exp:160,gold:90},{name:'聖光祭司',icon:'🧙',el:'light',hp:150,atk:28,def:18,exp:140,gold:85}],
+      dragon_lair:[{name:'火龍',icon:'🐉',el:'fire',hp:280,atk:40,def:30,exp:300,gold:200}]
     };
 
     const state = {
-      player: null,
-      currentEnemy: null,
-      godVoice: "",
-      battleActive: false,
-      playerDefeated: false,
-      currentScene: 'map',
-      currentZone: 'forest',
-      playerPos: { x:5, y:5 },
-      maps: {},
-      inventory: [],
+      player: null, enemy: null, voice: "", battle: false, dead: false,
+      scene: 'map', zone: START_ZONE, pos: {...START_POS}, maps: {}, inv: [],
+      goalIdx:0, prog:{kill:0,evo:false,collect:new Set(),explore:new Set([START_ZONE])},
+      buffs:{atk:0,spd:0}
     };
 
-    function initPlayer() {
+    function init() {
       state.player = {
-        formId: 'dragon_egg', level:1, exp:0, gold:150,
+        form:'dragon_egg', lv:1, exp:0, gold:150,
         hp:40, maxHp:40, mp:20, maxMp:20,
-        baseAtk:6, baseDef:10, baseMatk:5, baseMdef:8, baseSpd:4,
-        potions:{hp:3, mp:2}, goalProgress:{kill:0}
+        atk:6, def:10, matk:5, mdef:8, spd:4,
+        potions:{hp:3,mp:2,speed:1,atk:1,weak:1}
       };
-      applyFormStats();
-      state.player.hp = state.player.maxHp;
-      state.player.mp = state.player.maxMp;
+      applyForm(); state.player.hp=state.player.maxHp; state.player.mp=state.player.maxMp;
+      state.prog = {kill:0,evo:false,collect:new Set(),explore:new Set([START_ZONE])};
+      state.goalIdx=0; state.inv=[];
+      genMaps();
+      setVoice('歡迎！方向鍵移動，進化變強。死亡會回到森林起點。');
     }
 
-    function applyFormStats() {
-      const f = EVOLUTION_TREE[state.player.formId];
-      if(!f) return;
+    function applyForm() {
+      const f=EVOLUTION_TREE[state.player.form]; if(!f) return;
       state.player.maxHp=f.hp; state.player.maxMp=f.mp;
-      state.player.baseAtk=f.atk; state.player.baseDef=f.def;
-      state.player.baseMatk=f.matk; state.player.baseMdef=f.mdef;
-      state.player.baseSpd=f.spd;
+      state.player.atk=f.atk; state.player.def=f.def;
+      state.player.matk=f.matk; state.player.mdef=f.mdef;
+      state.player.spd=f.spd;
     }
 
-    function getStats() {
+    function stats() {
       let p=state.player;
-      return {atk:p.baseAtk,def:p.baseDef,matk:p.baseMatk,mdef:p.baseMdef,spd:p.baseSpd};
+      return {atk:p.atk+state.buffs.atk, def:p.def, spd:p.spd+state.buffs.spd};
     }
 
-    function generateAllMaps() {
-      const zones = ['forest','cave','castle','dragon_lair'];
-      zones.forEach(zoneId => {
-        const grid = Array(12).fill().map(()=>Array(12).fill('🌿'));
-        // 隨機地形
-        for(let y=0; y<12; y++) for(let x=0; x<12; x++) {
-          const r = Math.random();
-          if(zoneId==='forest') grid[y][x] = r<0.6?'🌳':r<0.8?'🌲':'🌿';
-          else if(zoneId==='cave') grid[y][x] = r<0.5?'🪨':r<0.8?'⛰️':'🕳️';
-          else if(zoneId==='castle') grid[y][x] = r<0.5?'🏰':r<0.8?'🌑':'💀';
-          else grid[y][x] = r<0.5?'🌋':r<0.8?'🔥':'🐉';
-        }
-        state.maps[zoneId] = grid;
-      });
-    }
-
-    function movePlayer(dx, dy) {
-      if(state.battleActive || state.playerDefeated) return;
-      let nx = state.playerPos.x + dx;
-      let ny = state.playerPos.y + dy;
-      const zone = ZONES[state.currentZone];
-      // 檢查區域邊界傳送
-      if(nx < 0) {
-        if(zone.adjacent.west) { state.currentZone = zone.adjacent.west; state.playerPos = {x:11, y:ny}; setGodVoice(`進入 ${ZONES[state.currentZone].name}`); }
-        else return;
-      } else if(nx >= 12) {
-        if(zone.adjacent.east) { state.currentZone = zone.adjacent.east; state.playerPos = {x:0, y:ny}; setGodVoice(`進入 ${ZONES[state.currentZone].name}`); }
-        else return;
-      } else if(ny < 0) {
-        if(zone.adjacent.north) { state.currentZone = zone.adjacent.north; state.playerPos = {x:nx, y:11}; setGodVoice(`進入 ${ZONES[state.currentZone].name}`); }
-        else return;
-      } else if(ny >= 12) {
-        if(zone.adjacent.south) { state.currentZone = zone.adjacent.south; state.playerPos = {x:nx, y:0}; setGodVoice(`進入 ${ZONES[state.currentZone].name}`); }
-        else return;
-      } else {
-        state.playerPos.x = nx;
-        state.playerPos.y = ny;
+    function genMaps() {
+      for(let z of Object.keys(ZONES)) {
+        state.maps[z] = Array(12).fill().map(()=>Array(12).fill('🌿'));
       }
-      if(Math.random() < 0.25) startRandomEncounter();
+    }
+
+    function move(dx,dy) {
+      if(state.battle||state.dead) return;
+      let nx=state.pos.x+dx, ny=state.pos.y+dy;
+      if(nx<0||nx>=12||ny<0||ny>=12) {
+        // 邊界傳送
+        const adj = { forest:{south:'cave'}, cave:{north:'forest',south:'castle'}, castle:{north:'cave',south:'dragon_lair'}, dragon_lair:{north:'castle'} };
+        const next = adj[state.zone]?.[dx<0?'west':dx>0?'east':dy<0?'north':dy>0?'south':null];
+        if(next) { state.zone=next; state.pos={x:dx<0?11:dx>0?0:nx, y:dy<0?11:dy>0?0:ny}; state.prog.explore.add(next); }
+        else return;
+      } else { state.pos.x=nx; state.pos.y=ny; }
+      if(Math.random()<0.25) startBattle();
       else renderMap();
     }
 
-    function startRandomEncounter() {
-      const pool = MONSTER_POOLS[state.currentZone] || MONSTER_POOLS.forest;
-      const monsterData = pool[Math.floor(Math.random()*pool.length)];
-      state.currentEnemy = {...monsterData, maxHp: monsterData.hp};
-      state.battleActive = true;
-      state.playerDefeated = false;
-      state.currentScene = 'battle';
-      setGodVoice(`⚔️ ${monsterData.name} (${ELEMENTS[monsterData.element]}) 出現了！`);
-      document.getElementById('main-view').classList.add('flash');
-      setTimeout(()=>document.getElementById('main-view').classList.remove('flash'), 400);
+    function startBattle() {
+      const pool = MONSTERS[state.zone]||MONSTERS.forest;
+      const m = pool[Math.floor(Math.random()*pool.length)];
+      state.enemy = {...m, maxHp:m.hp, el:m.el};
+      state.battle=true; state.dead=false; state.scene='battle';
+      state.buffs={atk:0,spd:0};
+      setVoice(`⚔️ ${m.name} (${ELEMENTS[m.el]}) 出現了！`);
+      document.getElementById('game-view').classList.add('flash');
+      setTimeout(()=>document.getElementById('game-view').classList.remove('flash'),300);
       renderBattle();
     }
 
-    function calcDamage(atk, def, power=1.0, atkElem=null, defElem=null) {
-      let base = Math.max(1, Math.floor(atk * power) - def);
-      if(atkElem && defElem) {
-        if(ELEMENT_WEAKNESS[atkElem] === defElem) base = Math.floor(base * 1.3);
-        else if(ELEMENT_WEAKNESS[defElem] === atkElem) base = Math.floor(base * 0.7);
+    function dmgCalc(atk,def,power=1,atkEl,defEl) {
+      let base = Math.max(1, Math.floor(atk*power)-def);
+      if(atkEl&&defEl&&atkEl!=='none'&&defEl!=='none') {
+        if(ELEMENT_WEAKNESS[atkEl]===defEl) base=Math.floor(base*1.3);
+        else if(ELEMENT_WEAKNESS[defEl]===atkEl) base=Math.floor(base*0.7);
       }
-      return Math.max(1, base + Math.floor(Math.random()*6));
+      return Math.max(1, base+Math.floor(Math.random()*6));
     }
 
-    function playerAttack() {
-      if(state.playerDefeated || !state.battleActive) return;
-      const dmg = calcDamage(getStats().atk, state.currentEnemy.def, 1.0, null, state.currentEnemy.element);
-      state.currentEnemy.hp -= dmg;
-      setGodVoice(`造成 ${dmg} 傷害`);
+    function playerAtk() {
+      if(state.dead||!state.battle) return;
+      const dmg = dmgCalc(stats().atk, state.enemy.def, 1, EVOLUTION_TREE[state.player.form].element, state.enemy.el);
+      state.enemy.hp-=dmg; setVoice(`造成 ${dmg} 傷害`);
       document.getElementById('enemy-card')?.classList.add('shake');
-      setTimeout(()=>document.getElementById('enemy-card')?.classList.remove('shake'), 500);
-      checkBattleEnd();
+      setTimeout(()=>document.getElementById('enemy-card')?.classList.remove('shake'),400);
+      checkEnd();
     }
 
-    function playerSkill(skillId) {
-      if(state.playerDefeated || !state.battleActive) return;
-      const skill = SKILLS[skillId];
-      if(!skill || state.player.mp < skill.mp) return;
-      state.player.mp -= skill.mp;
-      const dmg = calcDamage(getStats().atk, state.currentEnemy.def, skill.power, skill.element, state.currentEnemy.element);
-      state.currentEnemy.hp -= dmg;
-      setGodVoice(`✨ ${skill.name}！ ${dmg} 傷害`);
+    function playerSkill(id) {
+      if(state.dead||!state.battle) return;
+      const sk=SKILLS[id]; if(!sk||state.player.mp<sk.mp) return;
+      state.player.mp-=sk.mp;
+      const dmg = dmgCalc(stats().atk, state.enemy.def, sk.power, sk.element, state.enemy.el);
+      state.enemy.hp-=dmg; setVoice(`✨ ${sk.name}！ ${dmg} 傷害`);
       document.getElementById('enemy-card')?.classList.add('shake');
-      setTimeout(()=>document.getElementById('enemy-card')?.classList.remove('shake'), 500);
-      checkBattleEnd();
+      setTimeout(()=>document.getElementById('enemy-card')?.classList.remove('shake'),400);
+      checkEnd();
     }
 
-    function usePotion() {
-      if(state.playerDefeated || !state.battleActive) return;
-      if(state.player.potions.hp===0 && state.player.potions.mp===0) return;
-      if(state.player.potions.hp>0 && state.player.hp<state.player.maxHp){
-        state.player.hp = Math.min(state.player.maxHp, state.player.hp+40);
-        state.player.potions.hp--;
-        setGodVoice('使用生命藥水 +40HP');
-      } else if(state.player.potions.mp>0 && state.player.mp<state.player.maxMp){
-        state.player.mp = Math.min(state.player.maxMp, state.player.mp+25);
-        state.player.potions.mp--;
-        setGodVoice('使用魔力藥水 +25MP');
-      }
-      enemyTurn();
+    function showPotions() {
+      let p=state.player; let html=`<div class="panel"><h3>🧪 藥水</h3>`;
+      const add=(lab,key,q)=>{ if(q>0) html+=`<button class="btn small" id="use_${key}">${lab} (${q})</button>`; };
+      add('❤️生命','hp',p.potions.hp); add('💧魔力','mp',p.potions.mp);
+      add('💨速度','speed',p.potions.speed); add('⚔️攻擊','atk',p.potions.atk); add('☠️虛弱','weak',p.potions.weak);
+      html+=`<button class="btn small" id="cancelPotion">取消</button></div>`;
+      document.getElementById('game-view').innerHTML=html;
+      ['hp','mp','speed','atk','weak'].forEach(k=>document.getElementById(`use_${k}`)?.addEventListener('click',()=>usePotion(k)));
+      document.getElementById('cancelPotion').addEventListener('click',()=>renderBattle());
+    }
+
+    function usePotion(type) {
+      let p=state.player;
+      if(type==='hp'){ p.hp=Math.min(p.maxHp,p.hp+40); p.potions.hp--; }
+      else if(type==='mp'){ p.mp=Math.min(p.maxMp,p.mp+25); p.potions.mp--; }
+      else if(type==='speed'){ state.buffs.spd+=20; p.potions.speed--; }
+      else if(type==='atk'){ state.buffs.atk+=20; p.potions.atk--; }
+      else if(type==='weak'&&state.enemy){ state.enemy.atk=Math.floor(state.enemy.atk*0.8); state.enemy.hp=Math.floor(state.enemy.hp*0.85); p.potions.weak--; }
+      setVoice('藥水生效');
+      renderBattle();
     }
 
     function enemyTurn() {
-      if(!state.currentEnemy || state.currentEnemy.hp<=0) return;
-      if(state.playerDefeated) return;
-      const dmg = calcDamage(state.currentEnemy.atk, getStats().def, 1.0, state.currentEnemy.element, null);
+      if(!state.enemy||state.enemy.hp<=0) return;
+      if(state.dead) return;
+      const dodge = 0.05 + stats().spd/200;
+      if(Math.random()<dodge) { setVoice('✨ 閃避！'); renderBattle(); return; }
+      const dmg = dmgCalc(state.enemy.atk, stats().def, 1, state.enemy.el, EVOLUTION_TREE[state.player.form].element);
       state.player.hp -= dmg;
-      setGodVoice(`${state.currentEnemy.name} 反擊 ${dmg} 傷害`);
+      setVoice(`${state.enemy.name} 造成 ${dmg} 傷害`);
       document.getElementById('player-card')?.classList.add('shake');
-      setTimeout(()=>document.getElementById('player-card')?.classList.remove('shake'), 500);
-      if(state.player.hp <= 0) {
-        state.player.hp = 0;
-        state.playerDefeated = true;
-        state.battleActive = false;
-        setGodVoice('你被擊倒了...');
+      setTimeout(()=>document.getElementById('player-card')?.classList.remove('shake'),400);
+      if(state.player.hp<=0) {
+        state.player.hp=0; state.dead=true; state.battle=false;
+        setVoice('被擊倒…返回森林起點');
         setTimeout(()=>{
-          state.player.hp = Math.floor(state.player.maxHp*0.3);
-          state.player.mp = Math.floor(state.player.maxMp*0.3);
-          state.playerDefeated = false;
-          state.currentScene = 'map';
-          renderMap();
-        }, 1500);
+          state.player.hp=Math.floor(state.player.maxHp*0.3);
+          state.player.mp=Math.floor(state.player.maxMp*0.3);
+          state.dead=false; state.zone=START_ZONE; state.pos={...START_POS};
+          state.scene='map'; renderMap();
+        },1500);
         renderBattle();
         return;
       }
       renderBattle();
     }
 
-    function checkBattleEnd() {
-      if(state.currentEnemy.hp <= 0) {
-        state.currentEnemy.hp = 0;
-        state.player.exp += state.currentEnemy.exp;
-        state.player.gold += state.currentEnemy.gold;
-        state.player.goalProgress.kill++;
-        if(state.currentEnemy.loot) {
-          state.currentEnemy.loot.forEach(loot => {
-            if(Math.random() < loot.chance) {
-              const existing = state.inventory.find(i=>i.id===loot.id);
-              if(existing) existing.qty++;
-              else state.inventory.push({id:loot.id, qty:1});
-            }
-          });
-        }
-        setGodVoice(`勝利！+${state.currentEnemy.exp}經驗`);
+    function checkEnd() {
+      if(state.enemy.hp<=0) {
+        state.enemy.hp=0; state.player.exp+=state.enemy.exp; state.player.gold+=state.enemy.gold;
+        state.prog.kill++;
         document.getElementById('enemy-card')?.classList.add('explode');
         setTimeout(()=>{
-          checkLevelUp();
-          state.battleActive = false;
-          state.playerDefeated = false;
-          state.currentScene = 'map';
-          renderMap();
-        }, 600);
+          levelUp(); state.battle=false; state.dead=false; state.scene='map'; renderMap();
+        },500);
         renderBattle();
-      } else {
-        enemyTurn();
+      } else enemyTurn();
+    }
+
+    function levelUp() {
+      const need=20+state.player.lv*5;
+      while(state.player.exp>=need) {
+        state.player.exp-=need; state.player.lv++;
+        state.player.maxHp+=12; state.player.maxMp+=6;
+        state.player.atk+=3; state.player.def+=2;
+        state.player.hp=state.player.maxHp; state.player.mp=state.player.maxMp;
+        setVoice(`🎉 升級 Lv.${state.player.lv}`);
       }
     }
 
-    function checkLevelUp() {
-      const needExp = 20 + state.player.level * 5;
-      while(state.player.exp >= needExp) {
-        state.player.exp -= needExp;
-        state.player.level++;
-        state.player.maxHp += 12; state.player.maxMp += 6;
-        state.player.baseAtk += 3; state.player.baseDef += 2;
-        state.player.hp = state.player.maxHp; state.player.mp = state.player.maxMp;
-        setGodVoice(`🎉 升級！ Lv.${state.player.level}`);
-      }
+    function evolve(id) {
+      state.player.form=id; state.player.lv=1; state.player.exp=0;
+      applyForm(); state.player.hp=state.player.maxHp; state.player.mp=state.player.maxMp;
+      setVoice(`進化！${EVOLUTION_TREE[id].name}`);
+      state.scene='map'; renderMap();
     }
 
-    function evolveTo(newId) {
-      state.player.formId = newId;
-      state.player.level = 1; state.player.exp = 0;
-      applyFormStats();
-      state.player.hp = state.player.maxHp; state.player.mp = state.player.maxMp;
-      setGodVoice(`進化！${EVOLUTION_TREE[newId].name}`);
-      state.currentScene = 'map';
-      renderMap();
+    function updateStatusBar() {
+      const p=state.player; const f=EVOLUTION_TREE[p.form];
+      document.getElementById('status-bar').innerHTML = `
+        <span>${f.icon} ${f.name} Lv.${p.lv}</span>
+        <span>❤️${p.hp}/${p.maxHp}</span>
+        <span>💧${p.mp}/${p.maxMp}</span>
+        <span>💰${p.gold}</span>
+        <span>屬性:${ELEMENTS[f.element]}</span>`;
     }
 
-    function buyItem(type) {
-      const p = state.player;
-      if(type==='hp_potion' && p.gold>=20) { p.gold-=20; p.potions.hp++; }
-      else if(type==='mp_potion' && p.gold>=15) { p.gold-=15; p.potions.mp++; }
-      renderShop();
-    }
-    function sellItem(index) {
-      const item = state.inventory[index];
-      if(!item) return;
-      state.player.gold += LOOT_ITEMS[item.id].sellPrice;
-      item.qty--;
-      if(item.qty<=0) state.inventory.splice(index,1);
-      renderShop();
-    }
-
-    // ---------- 渲染 ----------
     function renderMap() {
-      const zone = ZONES[state.currentZone];
-      const grid = state.maps[state.currentZone];
-      const form = EVOLUTION_TREE[state.player.formId];
-      const canEvo = (state.player.level % 5 === 0 && form.evolutions && form.evolutions.length > 0);
-      let html = `<div class="panel fadeIn"><h3>${zone.icon} ${zone.name}</h3><div class="map-grid">`;
-      for(let y=0; y<12; y++) {
-        for(let x=0; x<12; x++) {
-          const isPlayer = (x===state.playerPos.x && y===state.playerPos.y);
-          html += `<div class="map-cell ${isPlayer?'player-cell':''}">${isPlayer?form.icon:grid[y][x]}</div>`;
-        }
+      updateStatusBar();
+      const f=EVOLUTION_TREE[state.player.form];
+      const canEvo = (state.player.lv%5===0 && f.evolutions?.length);
+      const nextLv = Math.ceil(state.player.lv/5)*5;
+      let grid='';
+      for(let y=0;y<12;y++) for(let x=0;x<12;x++) {
+        const isP=(x===state.pos.x&&y===state.pos.y);
+        grid+=`<div class="map-cell ${isP?'player-cell':''}">${isP?f.icon:'🌿'}</div>`;
       }
-      html += `</div><p><b>${form.icon} ${form.name}</b> Lv.${state.player.level} | ❤️${state.player.hp}/${state.player.maxHp} 💧${state.player.mp}/${state.player.maxMp} 💰${state.player.gold}</p>`;
-      html += `<div class="god-voice">${state.godVoice}</div>`;
-      html += `<div class="flex-row"><button class="btn small" id="statusBtn">📋狀態</button><button class="btn small" id="shopBtn">🛒商店</button>`;
-      if(canEvo) html += `<button class="btn small primary" id="evoBtn">✨進化</button>`;
-      html += `</div></div>`;
-      document.getElementById('main-view').innerHTML = html;
-      document.getElementById('statusBtn')?.addEventListener('click', ()=>{ state.currentScene='status'; renderStatus(); });
-      document.getElementById('shopBtn')?.addEventListener('click', ()=>{ state.currentScene='shop'; renderShop(); });
-      document.getElementById('evoBtn')?.addEventListener('click', ()=>{ state.currentScene='evolution'; renderEvolution(); });
+      document.getElementById('game-view').innerHTML = `
+        <div class="panel">
+          <h3>${ZONES[state.zone].icon} ${ZONES[state.zone].name}</h3>
+          <div class="map-grid">${grid}</div>
+          <p>下一進化：${canEvo?'可進化！':`Lv.${nextLv} (差${nextLv-state.player.lv}級)`}</p>
+          <div class="god-voice">${state.voice}</div>
+          <div class="flex-row">
+            <button class="btn small" id="statusBtn">📋</button>
+            <button class="btn small" id="goalBtn">🎯</button>
+            <button class="btn small" id="shopBtn">🛒</button>
+            ${canEvo?`<button class="btn small primary" id="evoBtn">✨進化</button>`:''}
+          </div>
+        </div>`;
+      document.getElementById('statusBtn').addEventListener('click',()=>{state.scene='status';renderStatus();});
+      document.getElementById('goalBtn').addEventListener('click',()=>{state.scene='goal';renderGoal();});
+      document.getElementById('shopBtn').addEventListener('click',()=>{state.scene='shop';renderShop();});
+      document.getElementById('evoBtn')?.addEventListener('click',()=>{state.scene='evo';renderEvo();});
     }
 
-    function renderBattle() { /* 同前, 略作調整 */ 
-      const e = state.currentEnemy;
-      const p = state.player;
-      const form = EVOLUTION_TREE[p.formId];
-      const skills = form.skills || [];
-      let skillBtns = skills.map(sid => {
-        const sk = SKILLS[sid];
-        if(!sk || sk.type==='trait') return '';
-        const disabled = p.mp < sk.mp || state.playerDefeated ? 'disabled' : '';
-        return `<button class="btn small" ${disabled} id="skill_${sid}">✨${sk.name} (${sk.mp}MP)</button>`;
+    function renderBattle() {
+      updateStatusBar();
+      const e=state.enemy, p=state.player, f=EVOLUTION_TREE[p.form];
+      const skills = f.skills||[];
+      let skillBtns = skills.map(sid=>{
+        const sk=SKILLS[sid]; if(!sk) return '';
+        return `<button class="btn small" ${p.mp<sk.mp||state.dead?'disabled':''} id="sk_${sid}">${sk.name}(${sk.mp}MP)</button>`;
       }).join('');
-      const potionDisabled = (p.potions.hp===0 && p.potions.mp===0) || state.playerDefeated;
-      let html = `<div class="panel fadeIn">
-        <div id="enemy-card" style="display:flex;align-items:center;gap:10px;background:#2a1028;border-radius:16px;padding:10px;">
-          <span style="font-size:2.5rem;">${e.icon}</span><b>${e.name}</b> <span style="color:#aaa;">(${ELEMENTS[e.element]})</span> ❤️${e.hp}/${e.maxHp}
-        </div>
-        <div id="player-card"><b>${form.icon} ${form.name}</b> Lv.${p.level} ❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</div>
-        <div class="flex-row">
-          <button class="btn" id="atkBtn" ${state.playerDefeated?'disabled':''}>⚔️攻擊</button>
-          ${skillBtns}
-          <button class="btn" id="potionBtn" ${potionDisabled?'disabled':''}>🧪藥水</button>
-        </div>
-        <div class="god-voice">${state.godVoice}</div>`;
-      if(state.playerDefeated) html += `<p style="color:#ff8080;">你已倒下...</p>`;
-      html += `</div>`;
-      document.getElementById('main-view').innerHTML = html;
-      document.getElementById('atkBtn')?.addEventListener('click', playerAttack);
-      skills.forEach(sid => {
-        document.getElementById(`skill_${sid}`)?.addEventListener('click', ()=>playerSkill(sid));
-      });
-      document.getElementById('potionBtn')?.addEventListener('click', usePotion);
-    }
-
-    function renderEvolution() {
-      const form = EVOLUTION_TREE[state.player.formId];
-      const opts = form.evolutions || [];
-      let cards = opts.map(id => {
-        const evo = EVOLUTION_TREE[id];
-        return `<div class="evolution-card" data-evo="${id}"><span style="font-size:2.5rem;">${evo.icon}</span><h4>${evo.name}</h4><p>${evo.grade}級</p></div>`;
-      }).join('');
-      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>進化</h3><div class="flex-row">${cards}</div></div>`;
-      document.querySelectorAll('.evolution-card').forEach(c=>c.addEventListener('click',(e)=>evolveTo(e.currentTarget.dataset.evo)));
+      const potDisabled = Object.values(p.potions).every(v=>v===0)||state.dead;
+      document.getElementById('game-view').innerHTML = `
+        <div class="panel">
+          <div id="enemy-card" style="display:flex;align-items:center;gap:8px;background:#2a1028;border-radius:12px;padding:8px;">
+            <span style="font-size:2rem;">${e.icon}</span><b>${e.name}</b> (${ELEMENTS[e.el]}) ❤️${e.hp}/${e.maxHp}
+          </div>
+          <div id="player-card" style="margin:8px 0;"><b>${f.icon} ${f.name}</b> Lv.${p.lv} ❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</div>
+          <div class="flex-row">
+            <button class="btn" id="atkBtn" ${state.dead?'disabled':''}>⚔️攻擊</button>
+            ${skillBtns}
+            <button class="btn" id="potBtn" ${potDisabled?'disabled':''}>🧪藥水</button>
+          </div>
+          <div class="god-voice">${state.voice}</div>
+          ${state.dead?'<p style="color:#ff8080;">倒下中…</p>':''}
+        </div>`;
+      document.getElementById('atkBtn').addEventListener('click',playerAtk);
+      skills.forEach(sid=>document.getElementById(`sk_${sid}`)?.addEventListener('click',()=>playerSkill(sid)));
+      document.getElementById('potBtn').addEventListener('click',showPotions);
     }
 
     function renderStatus() {
-      const p=state.player; const f=EVOLUTION_TREE[p.formId];
-      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>狀態</h3><p>${f.icon} ${f.name} (${f.grade}) Lv.${p.level}</p><p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</p><button class="btn" id="backMap">返回</button></div>`;
-      document.getElementById('backMap').addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
+      const p=state.player, f=EVOLUTION_TREE[p.form];
+      document.getElementById('game-view').innerHTML = `
+        <div class="panel"><h3>狀態</h3><p>${f.icon} ${f.name} (${f.grade}) Lv.${p.lv} ${ELEMENTS[f.element]}</p>
+        <p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</p><button class="btn" id="backMap">返回</button></div>`;
+      document.getElementById('backMap').addEventListener('click',()=>{state.scene='map';renderMap();});
+    }
+
+    function renderGoal() {
+      const goals = ['擊敗5隻怪物','進化到D級','收集3種掉落物','探索全部區域'];
+      const prog = [state.prog.kill, state.prog.evo?1:0, state.inv.length, state.prog.explore.size];
+      document.getElementById('game-view').innerHTML = `
+        <div class="panel"><h3>目標</h3>${goals.map((g,i)=>`<p>${i===state.goalIdx?'➤':''}${g} (${prog[i]}/${i===0?5:i===2?3:4})</p>`).join('')}
+        <button class="btn" id="backMap">返回</button></div>`;
+      document.getElementById('backMap').addEventListener('click',()=>{state.scene='map';renderMap();});
     }
 
     function renderShop() {
-      let invHtml = state.inventory.map((item,idx)=>`<div class="item-row"><span>${LOOT_ITEMS[item.id].icon} ${LOOT_ITEMS[item.id].name} x${item.qty}</span><button class="btn small" id="sell_${idx}">賣</button></div>`).join('');
-      document.getElementById('main-view').innerHTML = `<div class="panel"><h3>商店</h3><p>💰${state.player.gold}</p><button class="btn small" id="buyHp">❤️藥水20G</button><button class="btn small" id="buyMp">💧藥水15G</button>${invHtml}<button class="btn small" id="closeShop">關閉</button></div>`;
-      document.getElementById('buyHp').addEventListener('click', ()=>buyItem('hp_potion'));
-      document.getElementById('buyMp').addEventListener('click', ()=>buyItem('mp_potion'));
-      state.inventory.forEach((_,idx)=>document.getElementById(`sell_${idx}`)?.addEventListener('click', ()=>sellItem(idx)));
-      document.getElementById('closeShop').addEventListener('click', ()=>{ state.currentScene='map'; renderMap(); });
+      let invHtml = state.inv.map((it,idx)=>`<div class="item-row"><span>${it.name} x${it.qty}</span><button class="btn small" id="sell_${idx}">賣</button></div>`).join('');
+      document.getElementById('game-view').innerHTML = `
+        <div class="panel"><h3>商店</h3><p>💰${state.player.gold}</p>
+        <button class="btn small" id="buyHp">❤️20G</button><button class="btn small" id="buyMp">💧15G</button>
+        <button class="btn small" id="buySpd">💨30G</button><button class="btn small" id="buyAtk">⚔️30G</button><button class="btn small" id="buyWeak">☠️25G</button>
+        ${invHtml}<button class="btn" id="closeShop">關閉</button></div>`;
+      document.getElementById('buyHp').addEventListener('click',()=>{if(state.player.gold>=20){state.player.gold-=20;state.player.potions.hp++;renderShop();}});
+      document.getElementById('buyMp').addEventListener('click',()=>{if(state.player.gold>=15){state.player.gold-=15;state.player.potions.mp++;renderShop();}});
+      document.getElementById('closeShop').addEventListener('click',()=>{state.scene='map';renderMap();});
     }
 
-    function setGodVoice(msg) { state.godVoice = `神之聲：${msg}`; }
+    function renderEvo() {
+      const opts = EVOLUTION_TREE[state.player.form].evolutions||[];
+      document.getElementById('game-view').innerHTML = `
+        <div class="panel"><h3>進化</h3><div class="flex-row">${opts.map(id=>`<div class="evolution-card" data-evo="${id}"><span style="font-size:2rem;">${EVOLUTION_TREE[id].icon}</span><h4>${EVOLUTION_TREE[id].name}</h4></div>`).join('')}</div></div>`;
+      document.querySelectorAll('.evolution-card').forEach(c=>c.addEventListener('click',(e)=>evolve(e.currentTarget.dataset.evo)));
+    }
 
-    function setupControls() {
+    function setVoice(msg){ state.voice=`神之聲：${msg}`; }
+
+    function setupControls(){
       document.getElementById('control-area').innerHTML = `
         <div class="direction-pad">
           <div class="dir-row"><div class="dir-btn" id="upBtn">↑</div></div>
-          <div class="dir-row">
-            <div class="dir-btn" id="leftBtn">←</div>
-            <div class="dir-btn" id="downBtn">↓</div>
-            <div class="dir-btn" id="rightBtn">→</div>
-          </div>
+          <div class="dir-row"><div class="dir-btn" id="leftBtn">←</div><div class="dir-btn" id="downBtn">↓</div><div class="dir-btn" id="rightBtn">→</div></div>
         </div>`;
-      document.getElementById('upBtn').addEventListener('click', ()=>movePlayer(0,-1));
-      document.getElementById('downBtn').addEventListener('click', ()=>movePlayer(0,1));
-      document.getElementById('leftBtn').addEventListener('click', ()=>movePlayer(-1,0));
-      document.getElementById('rightBtn').addEventListener('click', ()=>movePlayer(1,0));
+      document.getElementById('upBtn').addEventListener('click',()=>move(0,-1));
+      document.getElementById('downBtn').addEventListener('click',()=>move(0,1));
+      document.getElementById('leftBtn').addEventListener('click',()=>move(-1,0));
+      document.getElementById('rightBtn').addEventListener('click',()=>move(1,0));
     }
 
-    // 啟動
-    initPlayer();
-    generateAllMaps();
-    setupControls();
-    setGodVoice('歡迎來到四域！使用方向鍵移動探索。');
-    renderMap();
+    // 開場教學
+    function showTutorial() {
+      document.getElementById('game-view').innerHTML = `
+        <div class="panel">
+          <h2>📖 遊戲說明</h2>
+          <p>🧭 <b>移動：</b>使用方向鍵探索四大地圖。</p>
+          <p>⚔️ <b>戰鬥：</b>遇到怪物時回合制對戰，使用技能或藥水。</p>
+          <p>🧬 <b>進化：</b>每5級可選擇新形態，屬性大幅提升。</p>
+          <p>🎯 <b>目標：</b>完成任務獲得獎勵。</p>
+          <p>💀 <b>死亡：</b>回到森林起點，損失部分進度。</p>
+          <button class="btn primary" id="startGame">開始冒險</button>
+        </div>`;
+      document.getElementById('startGame').addEventListener('click',()=>{
+        state.scene='map'; renderMap();
+      });
+    }
+
+    init(); setupControls(); showTutorial();
   })();
 </script>
 </body>
