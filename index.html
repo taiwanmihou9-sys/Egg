@@ -3,324 +3,1776 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0, viewport-fit=cover">
-    <title>轉生龍蛋～四域探索～ 2D沉浸升級版</title>
+    <title>轉生龍蛋 · 終極3A沉浸版</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background: #0a0610; font-family: 'Noto Serif TC', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 30% 30%, #2a1a35 0%, #03010a 90%); padding: 8px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-        #game-container { width: 100%; max-width: 960px; background: rgba(18,10,25,0.95); border: 2px solid #7a5e8a; border-radius: 28px; box-shadow: 0 0 55px rgba(150,100,210,0.5); display: flex; flex-direction: column; overflow: hidden; height: 96vh; }
-        .top-ornament { height: 4px; background: linear-gradient(90deg, transparent, #d9b3ff, #ffddaa, #d9b3ff, transparent); }
-        #header { padding: 6px 14px; text-align: center; border-bottom: 1px solid #5a4670; background: rgba(25,12,35,0.9); }
-        #header h1 { font-size: 1.2rem; color: #ffe8b0; text-shadow: 0 0 15px #b080e0; }
-        .subtitle { font-size: 0.6rem; color: #c0a0d0; }
-        #status-bar { display: flex; justify-content: space-around; padding: 7px 12px; background: rgba(0,0,0,0.75); border-bottom: 1px solid #4a3a55; font-size: 0.75rem; color: #e0d0f0; }
-        #main-area { flex:1; display: flex; flex-direction: column; overflow: hidden; }
-        #game-view { flex:1; overflow-y: auto; padding: 8px; -webkit-overflow-scrolling: touch; }
-        .panel { background: rgba(12,6,18,0.9); border: 1px solid #6a4e7a; border-radius: 16px; padding: 10px; color: #f4e8ff; margin-bottom: 6px; }
-        .map-grid { display: grid; grid-template-columns: repeat(10,1fr); gap:2px; background: #110a18; border-radius:8px; padding:3px; }
-        .map-cell { aspect-ratio:1; background:#1b1228; border:1px solid #3a2a48; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.9rem; color:#ccc; cursor:pointer; }
-        .player-cell { background:#6b5078; border-color:#f8d080; box-shadow:0 0 10px #ffbb40; }
-        .boss-cell { background:#5a2040; border-color:#ff6060; animation:bossPulse 1.5s infinite; }
-        .boss-disabled { background:#2a1a28; border-color:#666; }
-        .chest-cell { background:#4a3a20; border-color:#ffd700; }
-        .merchant-cell { background:#2a4a3a; border-color:#80e0a0; }
-        .portal-cell { background:#2a2a4a; border-color:#8080ff; }
-        @keyframes bossPulse { 0%{box-shadow:0 0 10px #ff4040;} 50%{box-shadow:0 0 28px #ff8080;} 100%{box-shadow:0 0 10px #ff4040;} }
-        .direction-pad { display:flex; flex-direction:column; align-items:center; gap:4px; }
-        .dir-row { display:flex; gap:28px; }
-        .dir-btn { background:#372648; border:2px solid #8a6ea0; color:#ffe0c0; font-size:1.8rem; width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,0.5); }
-        .dir-btn:active { background:#5e4275; transform:scale(0.88); }
-        .btn { background: linear-gradient(180deg, #3e2850 0%, #21152e 100%); border:1px solid #8a6a9a; color:#f0e0ff; padding:7px 14px; border-radius:22px; font-weight:600; font-size:0.75rem; cursor:pointer; box-shadow:0 3px 6px rgba(0,0,0,0.5); }
-        .btn:active { transform:scale(0.93); }
-        .btn.primary { background:#5e3e62; border-color:#d8b0c0; }
-        .btn.small { padding:4px 10px; font-size:0.68rem; }
-        .btn:disabled { opacity:0.4; pointer-events:none; }
-        .god-voice { background:#1e1028; border-left:4px solid #e6b422; padding:7px; border-radius:10px; color:#ffe8a0; font-style:italic; margin:5px 0; }
-        .race-card, .evolution-card { background:#1e1230; border:2px solid #553b60; border-radius:16px; padding:12px; text-align:center; cursor:pointer; width:130px; transition:0.2s; }
-        .race-card:hover, .evolution-card:hover { border-color:#e0b0f0; transform:scale(1.03); }
-        .flex-row { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
-        .shop-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap:8px; margin:8px 0; }
-        .shop-card { background:#1e1230; border:1px solid #4a3a60; border-radius:12px; padding:8px; text-align:center; font-size:0.72rem; }
-        .hp-bar { width:100%; height:16px; background:#2a1028; border-radius:8px; overflow:hidden; border:1px solid #aa5588; }
-        .hp-fill { height:100%; background:linear-gradient(90deg, #ff4466, #ff8866); border-radius:8px; transition:width 0.3s; }
+        :root {
+            --bg: #0a0610;
+            --panel: rgba(10, 5, 18, 0.92);
+            --gold: #ffd700;
+            --accent: #c0a0f0;
+            --danger: #ff4d6a;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: radial-gradient(ellipse at 40% 40%, #1e1028 0%, #03010a 80%);
+            font-family: 'Segoe UI', 'Noto Serif TC', 'Microsoft JhengHei', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+        }
+        /* 動態粒子背景 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="20" cy="30" r="2" fill="%23ffffff22"/><circle cx="150" cy="80" r="1.5" fill="%23ffd70033"/><circle cx="70" cy="160" r="2.5" fill="%23c0a0f022"/><circle cx="180" cy="140" r="1" fill="%23ffffff22"/></svg>');
+            background-size: 200px 200px;
+            animation: particleMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes particleMove {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(-50px, -50px);
+            }
+        }
+        #game-container {
+            width: 100%;
+            max-width: 960px;
+            background: rgba(12, 6, 20, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid #7a5e8a;
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(100, 60, 160, 0.4), inset 0 0 30px rgba(255, 200, 150, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 95vh;
+            max-height: 900px;
+            position: relative;
+            z-index: 1;
+        }
+        .top-ornament {
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #d9b3ff, #ffddaa, #d9b3ff, transparent);
+            flex-shrink: 0;
+        }
+        #header {
+            padding: 8px 16px;
+            text-align: center;
+            border-bottom: 1px solid #5a4670;
+            background: rgba(15, 8, 22, 0.9);
+            flex-shrink: 0;
+        }
+        #header h1 {
+            font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+            color: #ffe8b0;
+            text-shadow: 0 0 20px #b080e0, 0 0 8px #ffbb40;
+            letter-spacing: 2px;
+        }
+        .subtitle {
+            font-size: 0.65rem;
+            color: #c0a0d0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #a060c0;
+        }
+        #status-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid #4a3a55;
+            font-size: 0.8rem;
+            color: #e0d0f0;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        #main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+        #game-view {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            position: relative;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        .panel {
+            background: rgba(10, 4, 16, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid #7a5e8a;
+            border-radius: 20px;
+            padding: 14px;
+            color: #f4e8ff;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 200, 150, 0.05);
+            transition: transform 0.2s ease;
+        }
+        .panel:hover {
+            transform: translateY(-2px);
+        }
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            margin: 10px 0;
+            background: #110a18;
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+        .map-cell {
+            aspect-ratio: 1;
+            background: #1b1228;
+            border: 1px solid #3a2a48;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.65rem, 1.5vw, 1rem);
+            color: #ccc;
+            transition: all 0.2s;
+            cursor: pointer;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 0 4px #fff5;
+        }
+        .map-cell:active {
+            transform: scale(0.9);
+            background: #3a2a55;
+        }
+        .player-cell {
+            background: #6b5078;
+            border-color: #f8d080;
+            box-shadow: 0 0 20px #ffbb40, inset 0 0 10px #ffdd8080;
+            animation: playerGlow 1.5s infinite alternate;
+            font-size: 1.2rem;
+            z-index: 2;
+        }
+        @keyframes playerGlow {
+            0% {
+                box-shadow: 0 0 10px #ffbb40;
+            }
+            100% {
+                box-shadow: 0 0 30px #ffdd70, 0 0 60px #ffaa2060;
+            }
+        }
+        .boss-cell {
+            background: #4a1530;
+            border-color: #ff6060;
+            box-shadow: 0 0 25px #ff4040;
+            animation: bossPulse 1.2s infinite;
+        }
+        @keyframes bossPulse {
+            0% {
+                box-shadow: 0 0 15px #ff4040;
+            }
+            50% {
+                box-shadow: 0 0 35px #ff8080;
+            }
+            100% {
+                box-shadow: 0 0 15px #ff4040;
+            }
+        }
+        .boss-disabled {
+            background: #2a1a28;
+            border-color: #555;
+        }
+        .chest-cell {
+            background: #3a3018;
+            border-color: #ffd700;
+        }
+        .merchant-cell {
+            background: #1e3a2a;
+            border-color: #80e0a0;
+        }
+        .portal-cell {
+            background: #1e1e3a;
+            border-color: #8080ff;
+        }
+        #control-area {
+            padding: 8px 10px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #5a4070;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .direction-pad {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .dir-row {
+            display: flex;
+            gap: 30px;
+        }
+        .dir-btn {
+            background: radial-gradient(circle at 30% 30%, #5a3e72, #2a1a3a);
+            border: 2px solid #a080c0;
+            color: #ffe0c0;
+            font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+            width: clamp(48px, 12vw, 65px);
+            height: clamp(48px, 12vw, 65px);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+            transition: all 0.1s;
+            text-shadow: 0 0 8px #ffdd80;
+        }
+        .dir-btn:active {
+            background: radial-gradient(circle at 40% 40%, #7a5ea0, #4a2e5a);
+            transform: scale(0.9);
+            border-color: #ffd080;
+            box-shadow: 0 0 25px #c080ff;
+        }
+        .btn {
+            background: linear-gradient(180deg, #3e2850 0%, #21152e 100%);
+            border: 1px solid #8a6a9a;
+            color: #f0e0ff;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn:hover {
+            background: #553b6a;
+            border-color: #d0b0e0;
+            color: #fff;
+            box-shadow: 0 6px 15px rgba(150, 100, 200, 0.5);
+        }
+        .btn:active {
+            transform: scale(0.95);
+            background: #6a4e80;
+        }
+        .btn.primary {
+            background: linear-gradient(180deg, #6e406e, #3a1e3a);
+            border-color: #e0b0d0;
+        }
+        .btn.small {
+            padding: 5px 12px;
+            font-size: 0.7rem;
+        }
+        .btn:disabled {
+            opacity: 0.35;
+            pointer-events: none;
+            filter: grayscale(0.6);
+        }
+        .god-voice {
+            background: #1e1028;
+            border-left: 5px solid #e6b422;
+            padding: 8px 12px;
+            border-radius: 12px;
+            color: #ffe8a0;
+            font-style: italic;
+            margin: 8px 0;
+            font-size: 0.85rem;
+            box-shadow: 0 0 15px rgba(230, 180, 34, 0.3);
+        }
+        .race-card,
+        .evolution-card {
+            background: rgba(30, 18, 48, 0.9);
+            backdrop-filter: blur(5px);
+            border: 2px solid #553b60;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            width: 140px;
+            transition: all 0.25s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        .race-card:hover,
+        .evolution-card:hover {
+            border-color: #e0b0f0;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(150, 80, 200, 0.4);
+        }
+        .flex-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .shop-card {
+            background: #1e1230;
+            border: 1px solid #4a3a60;
+            border-radius: 14px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+        .hp-bar {
+            width: 100%;
+            height: 18px;
+            background: #2a1028;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #aa5588;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4466, #ff8866);
+            border-radius: 10px;
+            transition: width 0.4s;
+            box-shadow: 0 0 12px #ff4466aa;
+        }
+        .shake {
+            animation: shake 0.4s ease;
+        }
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-10px);
+            }
+            40% {
+                transform: translateX(10px);
+            }
+            60% {
+                transform: translateX(-6px);
+            }
+            80% {
+                transform: translateX(6px);
+            }
+        }
+        .pop-damage {
+            animation: pop 0.7s ease-out;
+            position: absolute;
+            color: var(--danger);
+            font-weight: bold;
+            font-size: 1.4rem;
+            pointer-events: none;
+            z-index: 10;
+            top: 5px;
+            right: 10px;
+            text-shadow: 0 0 8px black;
+        }
+        @keyframes pop {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-35px);
+            }
+        }
+        .death-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(200, 0, 0, 0.5);
+            z-index: 99;
+            animation: deathFlash 1.2s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes deathFlash {
+            0% {
+                opacity: 0.9;
+            }
+            50% {
+                opacity: 0.4;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        /* 適應手機 */
+        @media (max-width: 600px) {
+            #game-container {
+                height: 98vh;
+                max-height: none;
+                border-radius: 20px;
+            }
+            .race-card {
+                width: 110px;
+                padding: 12px;
+            }
+            .dir-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 1.4rem;
+            }
+        }
     </style>
 </head>
 <body>
-<div id="game-container">
-    <div class="top-ornament"></div>
-    <div id="header"><h1>🐉 轉生龍蛋 · 四域探索</h1><div class="subtitle">森林 · 礦洞 · 城堡 · 龍巢 · 海域 · 天堂</div></div>
-    <div id="status-bar"></div>
-    <div id="main-area"><div id="game-view"></div><div id="control-area" style="padding:5px; background:rgba(0,0,0,0.75); border-top:1px solid #5a4070;"></div></div>
-</div>
-<script>
-(function(){
-const ELEMENTS = {fire:'火',water:'水',wind:'風',earth:'地',light:'光',dark:'闇',none:'無'};
-const ELEMENT_WEAKNESS = {fire:'wind', wind:'earth', earth:'water', water:'fire', light:'dark', dark:'light'};
+    <div id="game-container">
+        <div class="top-ornament"></div>
+        <div id="header"><h1>🐉 轉生龍蛋 · 終極版</h1><div class="subtitle">森林 · 礦洞 · 城堡 · 龍巢 · 海域 · 天堂</div></div>
+        <div id="status-bar"></div>
+        <div id="main-area"><div id="game-view"></div><div id="control-area"></div></div>
+    </div>
+    <script>
+        (function() {
+            // ==================== 資料定義 ====================
+            const ELEMENTS = { fire: '火', water: '水', wind: '風', earth: '地', light: '光', dark: '闇', none: '無' };
+            const ELEMENT_WEAKNESS = { fire: 'wind', wind: 'earth', earth: 'water', water: 'fire', light: 'dark',
+            dark: 'light' };
+            const LOOT_RARITY = { common: '普通', uncommon: '罕見', rare: '稀有', epic: '史詩', legendary: '傳說' };
 
-// 種族數值強化
-const RACES = {
-    human:{name:'人族',icon:'🧑',desc:'均衡·金幣+30%',baseHP:90,baseMP:40,atk:16,def:12,matk:12,mdef:11,spd:11,element:'none',passive:'gold'},
-    demon:{name:'魔族',icon:'👿',desc:'高攻·傷害+20%',baseHP:78,baseMP:46,atk:20,def:9,matk:15,mdef:9,spd:14,element:'dark',passive:'dmg'},
-    god:{name:'神族',icon:'👼',desc:'魔精·藥水強化',baseHP:100,baseMP:55,atk:11,def:15,matk:16,mdef:16,spd:9,element:'light',passive:'potion'},
-    dragon:{name:'龍族',icon:'🐉',desc:'體魄·血魔+35%',baseHP:75,baseMP:30,atk:13,def:14,matk:10,mdef:12,spd:7,element:'none',passive:'bulk'}
-};
+            const RACES = {
+                human: { name: '人族', icon: '🧑', desc: '均衡·金幣+30%', baseHP: 90, baseMP: 40, atk: 16, def: 12, matk: 12,
+                    mdef: 11, spd: 11, element: 'none', passive: 'gold' },
+                demon: { name: '魔族', icon: '👿', desc: '高攻·傷害+20%', baseHP: 78, baseMP: 46, atk: 20, def: 9, matk: 15,
+                    mdef: 9, spd: 14, element: 'dark', passive: 'dmg' },
+                god: { name: '神族', icon: '👼', desc: '魔精·藥水強化', baseHP: 100, baseMP: 55, atk: 11, def: 15, matk: 16,
+                    mdef: 16, spd: 9, element: 'light', passive: 'potion' },
+                dragon: { name: '龍族', icon: '🐉', desc: '體魄·血魔+35%', baseHP: 75, baseMP: 30, atk: 13, def: 14, matk: 10,
+                    mdef: 12, spd: 7, element: 'none', passive: 'bulk' }
+            };
 
-// 擴展進化樹（人族、魔族、神族大幅擴充）
-const EVOLUTION_TREE = {
-    dragon: {
-        'dragon_egg':{name:'龍蛋',icon:'🥚',grade:'F',maxLv:5,element:'none',hp:75,mp:30,atk:13,def:14,matk:10,mdef:12,spd:6,skills:['roll'],evolutions:['whelp','draket','hatchling']},
-        'whelp':{name:'幼龍',icon:'🐉',grade:'D',maxLv:5,element:'fire',hp:175,mp:60,atk:38,def:32,matk:28,mdef:28,spd:14,skills:['roll','flame_breath'],evolutions:['plague_whelp','rainbow_whelp']},
-        'draket':{name:'小龍',icon:'🐲',grade:'D',maxLv:5,element:'wind',hp:150,mp:72,atk:46,def:24,matk:38,mdef:24,spd:18,skills:['roll','fireball'],evolutions:['flame_draket','thunder_draket']},
-        'hatchling':{name:'雛龍',icon:'🐊',grade:'D',maxLv:5,element:'water',hp:160,mp:66,atk:36,def:28,matk:32,mdef:30,spd:22,skills:['roll','wind_cutter'],evolutions:['wind_hatchling','shadow_hatchling']},
-        'plague_whelp':{name:'厄病幼龍',icon:'☠️',grade:'C',maxLv:5,element:'dark',hp:280,mp:90,atk:60,def:46,matk:52,mdef:40,spd:20,skills:['toxic_breath'],evolutions:['calamity_drake']},
-        'rainbow_whelp':{name:'小虹龍',icon:'🌈',grade:'C',maxLv:5,element:'light',hp:250,mp:105,atk:52,def:42,matk:68,mdef:58,spd:22,skills:['holy_light'],evolutions:['sacred_drake']},
-        'flame_draket':{name:'炎龍幼體',icon:'🔥',grade:'C',maxLv:5,element:'fire',hp:240,mp:90,atk:72,def:34,matk:60,mdef:36,spd:24,skills:['inferno'],evolutions:['blast_drake']},
-        'thunder_draket':{name:'雷龍幼體',icon:'⚡',grade:'C',maxLv:5,element:'wind',hp:245,mp:95,atk:66,def:36,matk:68,mdef:40,spd:28,skills:['lightning_strike'],evolutions:['storm_drake']},
-        'wind_hatchling':{name:'風龍幼體',icon:'🌪️',grade:'C',maxLv:5,element:'wind',hp:225,mp:85,atk:58,def:38,matk:58,mdef:42,spd:35,skills:['gale_slash'],evolutions:['tempest_drake']},
-        'shadow_hatchling':{name:'暗龍幼體',icon:'🌑',grade:'C',maxLv:5,element:'dark',hp:260,mp:90,atk:64,def:40,matk:64,mdef:44,spd:27,skills:['dark_claw'],evolutions:['abyss_drake']},
-        'calamity_drake':{name:'災厄龍',icon:'💀',grade:'B',maxLv:100,element:'dark',hp:460,mp:130,atk:88,def:66,matk:80,mdef:60,spd:30,skills:['death_breath'],evolutions:null},
-        'sacred_drake':{name:'聖光龍',icon:'✨',grade:'B',maxLv:100,element:'light',hp:430,mp:155,atk:76,def:64,matk:100,mdef:92,spd:28,skills:['divine_judgment'],evolutions:null},
-        'blast_drake':{name:'爆炎龍',icon:'💥',grade:'B',maxLv:100,element:'fire',hp:410,mp:135,atk:108,def:54,matk:86,mdef:56,spd:33,skills:['explosion'],evolutions:null},
-        'storm_drake':{name:'風暴龍',icon:'⛈️',grade:'B',maxLv:100,element:'wind',hp:380,mp:150,atk:80,def:50,matk:98,mdef:60,spd:44,skills:['thunderstorm'],evolutions:null},
-        'tempest_drake':{name:'颶風龍',icon:'🌪️',grade:'B',maxLv:100,element:'wind',hp:350,mp:145,atk:72,def:46,matk:105,mdef:64,spd:50,skills:['sonic_boom'],evolutions:null},
-        'abyss_drake':{name:'暗黑龍',icon:'🖤',grade:'B',maxLv:100,element:'dark',hp:490,mp:130,atk:96,def:62,matk:96,mdef:66,spd:32,skills:['abyss_gaze'],evolutions:null}
-    },
-    human: {
-        'human_start':{name:'見習者',icon:'🧑',grade:'F',maxLv:5,element:'none',hp:90,mp:40,atk:16,def:12,matk:12,mdef:11,spd:10,skills:['slash','heal'],evolutions:['knight','mage','rogue']},
-        'knight':{name:'騎士',icon:'🛡️',grade:'D',maxLv:5,element:'earth',hp:210,mp:52,atk:38,def:36,matk:16,mdef:22,spd:13,skills:['shield_bash','holy_strike'],evolutions:['paladin','dark_knight','champion']},
-        'mage':{name:'法師',icon:'🧙',grade:'D',maxLv:5,element:'wind',hp:140,mp:95,atk:20,def:18,matk:48,mdef:40,spd:15,skills:['fireball','ice_spike'],evolutions:['archmage','warlock','sorcerer']},
-        'rogue':{name:'盜賊',icon:'🗡️',grade:'D',maxLv:5,element:'wind',hp:160,mp:60,atk:44,def:22,matk:18,mdef:16,spd:24,skills:['shadow_strike','poison_blade'],evolutions:['assassin_human','trickster']},
-        'paladin':{name:'聖騎士',icon:'⚜️',grade:'C',maxLv:5,element:'light',hp:340,mp:78,atk:54,def:58,matk:28,mdef:46,spd:15,skills:['divine_slash','healing_light'],evolutions:['holy_guardian']},
-        'dark_knight':{name:'黑騎士',icon:'🗡️',grade:'C',maxLv:5,element:'dark',hp:290,mp:66,atk:66,def:46,matk:34,mdef:34,spd:20,skills:['dark_slash','curse'],evolutions:['death_knight']},
-        'champion':{name:'鬥士',icon:'⚔️',grade:'C',maxLv:5,element:'fire',hp:380,mp:55,atk:68,def:42,matk:14,mdef:26,spd:18,skills:['slash','flame_breath'],evolutions:['gladiator']},
-        'archmage':{name:'大法師',icon:'🔮',grade:'C',maxLv:5,element:'water',hp:190,mp:125,atk:22,def:26,matk:74,mdef:58,spd:19,skills:['meteor','blizzard'],evolutions:['grand_sorcerer']},
-        'warlock':{name:'術士',icon:'🕯️',grade:'C',maxLv:5,element:'fire',hp:165,mp:118,atk:26,def:22,matk:66,mdef:52,spd:22,skills:['chaos_bolt','soul_drain'],evolutions:['demonologist']},
-        'sorcerer':{name:'巫師',icon:'✨',grade:'C',maxLv:5,element:'wind',hp:175,mp:110,atk:24,def:24,matk:70,mdef:55,spd:21,skills:['lightning_strike','gale_slash'],evolutions:['stormcaller']},
-        'assassin_human':{name:'刺客',icon:'🗡️',grade:'C',maxLv:5,element:'dark',hp:210,mp:75,atk:64,def:28,matk:22,mdef:20,spd:30,skills:['death_mark','vanish'],evolutions:['shadow_master']},
-        'trickster':{name:'詭術師',icon:'🎭',grade:'C',maxLv:5,element:'water',hp:190,mp:85,atk:42,def:25,matk:44,mdef:38,spd:26,skills:['chaos_bolt','heal'],evolutions:['illusionist']},
-        'holy_guardian':{name:'神聖守衛',icon:'🛡️',grade:'B',maxLv:100,element:'light',hp:480,mp:100,atk:68,def:72,matk:36,mdef:58,spd:16,skills:['guardian','divine_judgment'],evolutions:null},
-        'death_knight':{name:'死亡騎士',icon:'💀',grade:'B',maxLv:100,element:'dark',hp:420,mp:85,atk:82,def:58,matk:46,mdef:42,spd:22,skills:['dark_slash','death_breath'],evolutions:null},
-        'gladiator':{name:'角鬥士',icon:'🏛️',grade:'B',maxLv:100,element:'earth',hp:520,mp:70,atk:84,def:54,matk:20,mdef:34,spd:20,skills:['shield_bash','explosion'],evolutions:null},
-        'grand_sorcerer':{name:'大巫師',icon:'🧙‍♂️',grade:'B',maxLv:100,element:'water',hp:280,mp:155,atk:28,def:34,matk:98,mdef:74,spd:21,skills:['blizzard','meteor'],evolutions:null},
-        'demonologist':{name:'惡魔學者',icon:'👿',grade:'B',maxLv:100,element:'dark',hp:250,mp:145,atk:32,def:28,matk:88,mdef:66,spd:24,skills:['apocalypse','summon'],evolutions:null},
-        'stormcaller':{name:'風暴召喚者',icon:'🌪️',grade:'B',maxLv:100,element:'wind',hp:260,mp:140,atk:30,def:30,matk:92,mdef:68,spd:23,skills:['thunderstorm','sonic_boom'],evolutions:null},
-        'shadow_master':{name:'暗影大師',icon:'🌑',grade:'B',maxLv:100,element:'dark',hp:310,mp:100,atk:88,def:36,matk:30,mdef:28,spd:34,skills:['abyss_gaze','vanish'],evolutions:null},
-        'illusionist':{name:'幻術師',icon:'🎲',grade:'B',maxLv:100,element:'water',hp:270,mp:120,atk:48,def:32,matk:68,mdef:52,spd:28,skills:['curse','healing_light'],evolutions:null}
-    },
-    demon: {
-        'demon_start':{name:'小惡魔',icon:'👿',grade:'F',maxLv:5,element:'dark',hp:78,mp:46,atk:20,def:9,matk:15,mdef:9,spd:12,skills:['claw','dark_bolt'],evolutions:['assassin','warlock_demon','brute']},
-        'assassin':{name:'暗殺者',icon:'🗡️',grade:'D',maxLv:5,element:'wind',hp:180,mp:72,atk:52,def:24,matk:26,mdef:20,spd:26,skills:['shadow_strike','poison_blade'],evolutions:['night_lord','demon_blade']},
-        'warlock_demon':{name:'惡魔術士',icon:'👹',grade:'D',maxLv:5,element:'fire',hp:155,mp:92,atk:34,def:20,matk:54,mdef:40,spd:17,skills:['fire_rain','life_steal'],evolutions:['demon_lord','inferno_mage']},
-        'brute':{name:'惡魔蠻兵',icon:'💪',grade:'D',maxLv:5,element:'earth',hp:250,mp:40,atk:48,def:32,matk:12,mdef:15,spd:10,skills:['claw','shield_bash'],evolutions:['juggernaut']},
-        'night_lord':{name:'夜之王',icon:'🌑',grade:'C',maxLv:5,element:'dark',hp:310,mp:105,atk:74,def:38,matk:42,mdef:34,spd:30,skills:['death_mark','vanish'],evolutions:['abyss_lord']},
-        'demon_blade':{name:'魔刃',icon:'⚔️',grade:'C',maxLv:5,element:'dark',hp:280,mp:85,atk:80,def:34,matk:30,mdef:26,spd:32,skills:['dark_slash','poison_blade'],evolutions:['blade_master']},
-        'demon_lord':{name:'惡魔領主',icon:'😈',grade:'C',maxLv:5,element:'dark',hp:270,mp:118,atk:54,def:34,matk:78,mdef:54,spd:22,skills:['apocalypse','summon'],evolutions:['archdemon']},
-        'inferno_mage':{name:'煉獄法師',icon:'🔥',grade:'C',maxLv:5,element:'fire',hp:220,mp:125,atk:38,def:22,matk:82,mdef:48,spd:20,skills:['inferno','explosion'],evolutions:['phoenix_mage']},
-        'juggernaut':{name:'攻城獸',icon:'🦍',grade:'C',maxLv:5,element:'earth',hp:400,mp:55,atk:68,def:50,matk:18,mdef:22,spd:12,skills:['shield_bash','guardian'],evolutions:['behemoth']},
-        'abyss_lord':{name:'深淵領主',icon:'🖤',grade:'B',maxLv:100,element:'dark',hp:450,mp:140,atk:96,def:52,matk:60,mdef:46,spd:32,skills:['abyss_gaze','death_breath'],evolutions:null},
-        'blade_master':{name:'劍聖',icon:'⚔️',grade:'B',maxLv:100,element:'wind',hp:380,mp:110,atk:104,def:44,matk:38,mdef:34,spd:36,skills:['gale_slash','shadow_strike'],evolutions:null},
-        'archdemon':{name:'大惡魔',icon:'👿',grade:'B',maxLv:100,element:'dark',hp:420,mp:150,atk:72,def:46,matk:100,mdef:70,spd:24,skills:['apocalypse','chaos_bolt'],evolutions:null},
-        'phoenix_mage':{name:'鳳凰法師',icon:'🐦‍🔥',grade:'B',maxLv:100,element:'fire',hp:340,mp:160,atk:52,def:30,matk:112,mdef:66,spd:22,skills:['inferno','resurrection'],evolutions:null},
-        'behemoth':{name:'巨獸',icon:'🦣',grade:'B',maxLv:100,element:'earth',hp:560,mp:70,atk:88,def:68,matk:24,mdef:30,spd:14,skills:['guardian','explosion'],evolutions:null}
-    },
-    god: {
-        'god_start':{name:'小天使',icon:'👼',grade:'F',maxLv:5,element:'light',hp:100,mp:55,atk:11,def:15,matk:16,mdef:16,spd:8,skills:['heal','holy_arrow'],evolutions:['priest','paladin_god','herald']},
-        'priest':{name:'祭司',icon:'✝️',grade:'D',maxLv:5,element:'water',hp:230,mp:105,atk:16,def:26,matk:54,mdef:56,spd:11,skills:['divine_heal','holy_light'],evolutions:['saint','prophet']},
-        'paladin_god':{name:'神騎士',icon:'🛡️',grade:'D',maxLv:5,element:'earth',hp:270,mp:72,atk:42,def:44,matk:24,mdef:34,spd:13,skills:['shield_of_faith','smite'],evolutions:['god_knight','crusader']},
-        'herald':{name:'先驅者',icon:'📯',grade:'D',maxLv:5,element:'wind',hp:210,mp:85,atk:28,def:24,matk:44,mdef:42,spd:18,skills:['holy_arrow','gale_slash'],evolutions:['seraph']},
-        'saint':{name:'聖人',icon:'🌟',grade:'C',maxLv:5,element:'light',hp:320,mp:155,atk:20,def:36,matk:74,mdef:78,spd:13,skills:['resurrection','judgment'],evolutions:['divine_saint']},
-        'prophet':{name:'先知',icon:'🔮',grade:'C',maxLv:5,element:'water',hp:280,mp:140,atk:18,def:30,matk:82,mdef:70,spd:15,skills:['divine_judgment','healing_light'],evolutions:['oracle']},
-        'god_knight':{name:'神騎士',icon:'👑',grade:'C',maxLv:5,element:'light',hp:400,mp:90,atk:62,def:62,matk:30,mdef:46,spd:15,skills:['holy_slash','guardian'],evolutions:['archangel']},
-        'crusader':{name:'十字軍',icon:'⚔️',grade:'C',maxLv:5,element:'fire',hp:380,mp:80,atk:64,def:48,matk:34,mdef:40,spd:17,skills:['smite','holy_strike'],evolutions:['inquisitor']},
-        'seraph':{name:'熾天使',icon:'👼',grade:'C',maxLv:5,element:'wind',hp:300,mp:120,atk:36,def:32,matk:68,mdef:62,spd:22,skills:['holy_light','thunderstorm'],evolutions:['celestial']},
-        'divine_saint':{name:'神聖者',icon:'🌟',grade:'B',maxLv:100,element:'light',hp:460,mp:190,atk:28,def:46,matk:98,mdef:100,spd:15,skills:['resurrection','divine_judgment'],evolutions:null},
-        'oracle':{name:'神諭者',icon:'🔮',grade:'B',maxLv:100,element:'water',hp:400,mp:175,atk:24,def:38,matk:108,mdef:88,spd:17,skills:['blizzard','judgment'],evolutions:null},
-        'archangel':{name:'大天使',icon:'👼',grade:'B',maxLv:100,element:'light',hp:540,mp:110,atk:76,def:74,matk:42,mdef:58,spd:18,skills:['holy_slash','guardian'],evolutions:null},
-        'inquisitor':{name:'審判官',icon:'🔥',grade:'B',maxLv:100,element:'fire',hp:520,mp:95,atk:78,def:60,matk:46,mdef:52,spd:19,skills:['smite','inferno'],evolutions:null},
-        'celestial':{name:'天人',icon:'☁️',grade:'B',maxLv:100,element:'wind',hp:430,mp:150,atk:48,def:40,matk:86,mdef:76,spd:24,skills:['sonic_boom','holy_light'],evolutions:null}
-    }
-};
+            const EVOLUTION_TREE = {
+                dragon: {
+                    'dragon_egg': { name: '龍蛋', icon: '🥚', grade: 'F', maxLv: 5, element: 'none', hp: 75, mp: 30,
+                        atk: 13, def: 14, matk: 10, mdef: 12, spd: 6, skills: ['roll'],
+                    evolutions: ['whelp', 'draket', 'hatchling'] },
+                    'whelp': { name: '幼龍', icon: '🐉', grade: 'D', maxLv: 5, element: 'fire', hp: 175, mp: 60, atk: 38,
+                        def: 32, matk: 28, mdef: 28, spd: 14, skills: ['roll', 'flame_breath'],
+                    evolutions: ['plague_whelp', 'rainbow_whelp'] },
+                    'draket': { name: '小龍', icon: '🐲', grade: 'D', maxLv: 5, element: 'wind', hp: 150, mp: 72, atk: 46,
+                        def: 24, matk: 38, mdef: 24, spd: 18, skills: ['roll', 'fireball'],
+                    evolutions: ['flame_draket', 'thunder_draket'] },
+                    'hatchling': { name: '雛龍', icon: '🐊', grade: 'D', maxLv: 5, element: 'water', hp: 160, mp: 66,
+                        atk: 36, def: 28, matk: 32, mdef: 30, spd: 22, skills: ['roll', 'wind_cutter'],
+                    evolutions: ['wind_hatchling', 'shadow_hatchling'] },
+                    'plague_whelp': { name: '厄病幼龍', icon: '☠️', grade: 'C', maxLv: 5, element: 'dark', hp: 280, mp: 90,
+                        atk: 60, def: 46, matk: 52, mdef: 40, spd: 20, skills: ['toxic_breath'],
+                    evolutions: ['calamity_drake'] },
+                    'rainbow_whelp': { name: '小虹龍', icon: '🌈', grade: 'C', maxLv: 5, element: 'light', hp: 250, mp: 105,
+                        atk: 52, def: 42, matk: 68, mdef: 58, spd: 22, skills: ['holy_light'],
+                    evolutions: ['sacred_drake'] },
+                    'flame_draket': { name: '炎龍幼體', icon: '🔥', grade: 'C', maxLv: 5, element: 'fire', hp: 240, mp: 90,
+                        atk: 72, def: 34, matk: 60, mdef: 36, spd: 24, skills: ['inferno'],
+                    evolutions: ['blast_drake'] },
+                    'thunder_draket': { name: '雷龍幼體', icon: '⚡', grade: 'C', maxLv: 5, element: 'wind', hp: 245,
+                        mp: 95, atk: 66, def: 36, matk: 68, mdef: 40, spd: 28, skills: ['lightning_strike'],
+                    evolutions: ['storm_drake'] },
+                    'wind_hatchling': { name: '風龍幼體', icon: '🌪️', grade: 'C', maxLv: 5, element: 'wind', hp: 225,
+                        mp: 85, atk: 58, def: 38, matk: 58, mdef: 42, spd: 35, skills: ['gale_slash'],
+                    evolutions: ['tempest_drake'] },
+                    'shadow_hatchling': { name: '暗龍幼體', icon: '🌑', grade: 'C', maxLv: 5, element: 'dark', hp: 260,
+                        mp: 90, atk: 64, def: 40, matk: 64, mdef: 44, spd: 27, skills: ['dark_claw'],
+                    evolutions: ['abyss_drake'] },
+                    'calamity_drake': { name: '災厄龍', icon: '💀', grade: 'B', maxLv: 100, element: 'dark', hp: 460,
+                        mp: 130, atk: 88, def: 66, matk: 80, mdef: 60, spd: 30, skills: ['death_breath'],
+                    evolutions: null },
+                    'sacred_drake': { name: '聖光龍', icon: '✨', grade: 'B', maxLv: 100, element: 'light', hp: 430,
+                        mp: 155, atk: 76, def: 64, matk: 100, mdef: 92, spd: 28, skills: ['divine_judgment'],
+                    evolutions: null },
+                    'blast_drake': { name: '爆炎龍', icon: '💥', grade: 'B', maxLv: 100, element: 'fire', hp: 410,
+                        mp: 135, atk: 108, def: 54, matk: 86, mdef: 56, spd: 33, skills: ['explosion'],
+                    evolutions: null },
+                    'storm_drake': { name: '風暴龍', icon: '⛈️', grade: 'B', maxLv: 100, element: 'wind', hp: 380,
+                        mp: 150, atk: 80, def: 50, matk: 98, mdef: 60, spd: 44, skills: ['thunderstorm'],
+                    evolutions: null },
+                    'tempest_drake': { name: '颶風龍', icon: '🌪️', grade: 'B', maxLv: 100, element: 'wind', hp: 350,
+                        mp: 145, atk: 72, def: 46, matk: 105, mdef: 64, spd: 50, skills: ['sonic_boom'],
+                    evolutions: null },
+                    'abyss_drake': { name: '暗黑龍', icon: '🖤', grade: 'B', maxLv: 100, element: 'dark', hp: 490,
+                        mp: 130, atk: 96, def: 62, matk: 96, mdef: 66, spd: 32, skills: ['abyss_gaze'],
+                    evolutions: null },
+                },
+                human: {
+                    'human_start': { name: '見習者', icon: '🧑', grade: 'F', maxLv: 5, element: 'none', hp: 90, mp: 40,
+                        atk: 16, def: 12, matk: 12, mdef: 11, spd: 10, skills: ['slash', 'heal'],
+                    evolutions: ['knight', 'mage', 'rogue'] },
+                    'knight': { name: '騎士', icon: '🛡️', grade: 'D', maxLv: 5, element: 'earth', hp: 210, mp: 52,
+                        atk: 38, def: 36, matk: 16, mdef: 22, spd: 13, skills: ['shield_bash', 'holy_strike'],
+                    evolutions: ['paladin', 'dark_knight', 'champion'] },
+                    'mage': { name: '法師', icon: '🧙', grade: 'D', maxLv: 5, element: 'wind', hp: 140, mp: 95, atk: 20,
+                        def: 18, matk: 48, mdef: 40, spd: 15, skills: ['fireball', 'ice_spike'],
+                    evolutions: ['archmage', 'warlock', 'sorcerer'] },
+                    'rogue': { name: '盜賊', icon: '🗡️', grade: 'D', maxLv: 5, element: 'wind', hp: 160, mp: 60, atk: 44,
+                        def: 22, matk: 18, mdef: 16, spd: 24, skills: ['shadow_strike', 'poison_blade'],
+                    evolutions: ['assassin_human', 'trickster'] },
+                    'paladin': { name: '聖騎士', icon: '⚜️', grade: 'C', maxLv: 5, element: 'light', hp: 340, mp: 78,
+                        atk: 54, def: 58, matk: 28, mdef: 46, spd: 15, skills: ['divine_slash', 'healing_light'],
+                    evolutions: ['holy_guardian'] },
+                    'dark_knight': { name: '黑騎士', icon: '🗡️', grade: 'C', maxLv: 5, element: 'dark', hp: 290, mp: 66,
+                        atk: 66, def: 46, matk: 34, mdef: 34, spd: 20, skills: ['dark_slash', 'curse'],
+                    evolutions: ['death_knight'] },
+                    'champion': { name: '鬥士', icon: '⚔️', grade: 'C', maxLv: 5, element: 'fire', hp: 380, mp: 55,
+                        atk: 68, def: 42, matk: 14, mdef: 26, spd: 18, skills: ['slash', 'flame_breath'],
+                    evolutions: ['gladiator'] },
+                    'archmage': { name: '大法師', icon: '🔮', grade: 'C', maxLv: 5, element: 'water', hp: 190, mp: 125,
+                        atk: 22, def: 26, matk: 74, mdef: 58, spd: 19, skills: ['meteor', 'blizzard'],
+                    evolutions: ['grand_sorcerer'] },
+                    'warlock': { name: '術士', icon: '🕯️', grade: 'C', maxLv: 5, element: 'fire', hp: 165, mp: 118,
+                        atk: 26, def: 22, matk: 66, mdef: 52, spd: 22, skills: ['chaos_bolt', 'soul_drain'],
+                    evolutions: ['demonologist'] },
+                    'sorcerer': { name: '巫師', icon: '✨', grade: 'C', maxLv: 5, element: 'wind', hp: 175, mp: 110,
+                        atk: 24, def: 24, matk: 70, mdef: 55, spd: 21, skills: ['lightning_strike', 'gale_slash'],
+                    evolutions: ['stormcaller'] },
+                    'assassin_human': { name: '刺客', icon: '🗡️', grade: 'C', maxLv: 5, element: 'dark', hp: 210, mp: 75,
+                        atk: 64, def: 28, matk: 22, mdef: 20, spd: 30, skills: ['death_mark', 'vanish'],
+                    evolutions: ['shadow_master'] },
+                    'trickster': { name: '詭術師', icon: '🎭', grade: 'C', maxLv: 5, element: 'water', hp: 190, mp: 85,
+                        atk: 42, def: 25, matk: 44, mdef: 38, spd: 26, skills: ['chaos_bolt', 'heal'],
+                    evolutions: ['illusionist'] },
+                    'holy_guardian': { name: '神聖守衛', icon: '🛡️', grade: 'B', maxLv: 100, element: 'light', hp: 480,
+                        mp: 100, atk: 68, def: 72, matk: 36, mdef: 58, spd: 16, skills: ['guardian',
+                        'divine_judgment'], evolutions: null },
+                    'death_knight': { name: '死亡騎士', icon: '💀', grade: 'B', maxLv: 100, element: 'dark', hp: 420,
+                        mp: 85, atk: 82, def: 58, matk: 46, mdef: 42, spd: 22, skills: ['dark_slash',
+                        'death_breath'], evolutions: null },
+                    'gladiator': { name: '角鬥士', icon: '🏛️', grade: 'B', maxLv: 100, element: 'earth', hp: 520, mp: 70,
+                        atk: 84, def: 54, matk: 20, mdef: 34, spd: 20, skills: ['shield_bash', 'explosion'],
+                    evolutions: null },
+                    'grand_sorcerer': { name: '大巫師', icon: '🧙‍♂️', grade: 'B', maxLv: 100, element: 'water', hp: 280,
+                        mp: 155, atk: 28, def: 34, matk: 98, mdef: 74, spd: 21, skills: ['blizzard', 'meteor'],
+                    evolutions: null },
+                    'demonologist': { name: '惡魔學者', icon: '👿', grade: 'B', maxLv: 100, element: 'dark', hp: 250,
+                        mp: 145, atk: 32, def: 28, matk: 88, mdef: 66, spd: 24, skills: ['apocalypse', 'summon'],
+                    evolutions: null },
+                    'stormcaller': { name: '風暴召喚者', icon: '🌪️', grade: 'B', maxLv: 100, element: 'wind', hp: 260,
+                        mp: 140, atk: 30, def: 30, matk: 92, mdef: 68, spd: 23, skills: ['thunderstorm',
+                        'sonic_boom'], evolutions: null },
+                    'shadow_master': { name: '暗影大師', icon: '🌑', grade: 'B', maxLv: 100, element: 'dark', hp: 310,
+                        mp: 100, atk: 88, def: 36, matk: 30, mdef: 28, spd: 34, skills: ['abyss_gaze', 'vanish'],
+                    evolutions: null },
+                    'illusionist': { name: '幻術師', icon: '🎲', grade: 'B', maxLv: 100, element: 'water', hp: 270,
+                        mp: 120, atk: 48, def: 32, matk: 68, mdef: 52, spd: 28, skills: ['curse', 'healing_light'],
+                    evolutions: null }
+                },
+                demon: {
+                    'demon_start': { name: '小惡魔', icon: '👿', grade: 'F', maxLv: 5, element: 'dark', hp: 78, mp: 46,
+                        atk: 20, def: 9, matk: 15, mdef: 9, spd: 12, skills: ['claw', 'dark_bolt'],
+                    evolutions: ['assassin', 'warlock_demon', 'brute'] },
+                    'assassin': { name: '暗殺者', icon: '🗡️', grade: 'D', maxLv: 5, element: 'wind', hp: 180, mp: 72,
+                        atk: 52, def: 24, matk: 26, mdef: 20, spd: 26, skills: ['shadow_strike', 'poison_blade'],
+                    evolutions: ['night_lord', 'demon_blade'] },
+                    'warlock_demon': { name: '惡魔術士', icon: '👹', grade: 'D', maxLv: 5, element: 'fire', hp: 155,
+                        mp: 92, atk: 34, def: 20, matk: 54, mdef: 40, spd: 17, skills: ['fire_rain', 'life_steal'],
+                    evolutions: ['demon_lord', 'inferno_mage'] },
+                    'brute': { name: '惡魔蠻兵', icon: '💪', grade: 'D', maxLv: 5, element: 'earth', hp: 250, mp: 40,
+                        atk: 48, def: 32, matk: 12, mdef: 15, spd: 10, skills: ['claw', 'shield_bash'],
+                    evolutions: ['juggernaut'] },
+                    'night_lord': { name: '夜之王', icon: '🌑', grade: 'C', maxLv: 5, element: 'dark', hp: 310, mp: 105,
+                        atk: 74, def: 38, matk: 42, mdef: 34, spd: 30, skills: ['death_mark', 'vanish'],
+                    evolutions: ['abyss_lord'] },
+                    'demon_blade': { name: '魔刃', icon: '⚔️', grade: 'C', maxLv: 5, element: 'dark', hp: 280, mp: 85,
+                        atk: 80, def: 34, matk: 30, mdef: 26, spd: 32, skills: ['dark_slash', 'poison_blade'],
+                    evolutions: ['blade_master'] },
+                    'demon_lord': { name: '惡魔領主', icon: '😈', grade: 'C', maxLv: 5, element: 'dark', hp: 270, mp: 118,
+                        atk: 54, def: 34, matk: 78, mdef: 54, spd: 22, skills: ['apocalypse', 'summon'],
+                    evolutions: ['archdemon'] },
+                    'inferno_mage': { name: '煉獄法師', icon: '🔥', grade: 'C', maxLv: 5, element: 'fire', hp: 220,
+                        mp: 125, atk: 38, def: 22, matk: 82, mdef: 48, spd: 20, skills: ['inferno', 'explosion'],
+                    evolutions: ['phoenix_mage'] },
+                    'juggernaut': { name: '攻城獸', icon: '🦍', grade: 'C', maxLv: 5, element: 'earth', hp: 400, mp: 55,
+                        atk: 68, def: 50, matk: 18, mdef: 22, spd: 12, skills: ['shield_bash', 'guardian'],
+                    evolutions: ['behemoth'] },
+                    'abyss_lord': { name: '深淵領主', icon: '🖤', grade: 'B', maxLv: 100, element: 'dark', hp: 450,
+                        mp: 140, atk: 96, def: 52, matk: 60, mdef: 46, spd: 32, skills: ['abyss_gaze',
+                        'death_breath'], evolutions: null },
+                    'blade_master': { name: '劍聖', icon: '⚔️', grade: 'B', maxLv: 100, element: 'wind', hp: 380,
+                        mp: 110, atk: 104, def: 44, matk: 38, mdef: 34, spd: 36, skills: ['gale_slash',
+                        'shadow_strike'], evolutions: null },
+                    'archdemon': { name: '大惡魔', icon: '👿', grade: 'B', maxLv: 100, element: 'dark', hp: 420, mp: 150,
+                        atk: 72, def: 46, matk: 100, mdef: 70, spd: 24, skills: ['apocalypse', 'chaos_bolt'],
+                    evolutions: null },
+                    'phoenix_mage': { name: '鳳凰法師', icon: '🐦‍🔥', grade: 'B', maxLv: 100, element: 'fire', hp: 340,
+                        mp: 160, atk: 52, def: 30, matk: 112, mdef: 66, spd: 22, skills: ['inferno',
+                        'resurrection'], evolutions: null },
+                    'behemoth': { name: '巨獸', icon: '🦣', grade: 'B', maxLv: 100, element: 'earth', hp: 560, mp: 70,
+                        atk: 88, def: 68, matk: 24, mdef: 30, spd: 14, skills: ['guardian', 'explosion'],
+                    evolutions: null }
+                },
+                god: {
+                    'god_start': { name: '小天使', icon: '👼', grade: 'F', maxLv: 5, element: 'light', hp: 100, mp: 55,
+                        atk: 11, def: 15, matk: 16, mdef: 16, spd: 8, skills: ['heal', 'holy_arrow'],
+                    evolutions: ['priest', 'paladin_god', 'herald'] },
+                    'priest': { name: '祭司', icon: '✝️', grade: 'D', maxLv: 5, element: 'water', hp: 230, mp: 105,
+                        atk: 16, def: 26, matk: 54, mdef: 56, spd: 11, skills: ['divine_heal', 'holy_light'],
+                    evolutions: ['saint', 'prophet'] },
+                    'paladin_god': { name: '神騎士', icon: '🛡️', grade: 'D', maxLv: 5, element: 'earth', hp: 270, mp: 72,
+                        atk: 42, def: 44, matk: 24, mdef: 34, spd: 13, skills: ['shield_of_faith', 'smite'],
+                    evolutions: ['god_knight', 'crusader'] },
+                    'herald': { name: '先驅者', icon: '📯', grade: 'D', maxLv: 5, element: 'wind', hp: 210, mp: 85,
+                        atk: 28, def: 24, matk: 44, mdef: 42, spd: 18, skills: ['holy_arrow', 'gale_slash'],
+                    evolutions: ['seraph'] },
+                    'saint': { name: '聖人', icon: '🌟', grade: 'C', maxLv: 5, element: 'light', hp: 320, mp: 155,
+                        atk: 20, def: 36, matk: 74, mdef: 78, spd: 13, skills: ['resurrection', 'judgment'],
+                    evolutions: ['divine_saint'] },
+                    'prophet': { name: '先知', icon: '🔮', grade: 'C', maxLv: 5, element: 'water', hp: 280, mp: 140,
+                        atk: 18, def: 30, matk: 82, mdef: 70, spd: 15, skills: ['divine_judgment',
+                        'healing_light'], evolutions: ['oracle'] },
+                    'god_knight': { name: '神騎士', icon: '👑', grade: 'C', maxLv: 5, element: 'light', hp: 400, mp: 90,
+                        atk: 62, def: 62, matk: 30, mdef: 46, spd: 15, skills: ['holy_slash', 'guardian'],
+                    evolutions: ['archangel'] },
+                    'crusader': { name: '十字軍', icon: '⚔️', grade: 'C', maxLv: 5, element: 'fire', hp: 380, mp: 80,
+                        atk: 64, def: 48, matk: 34, mdef: 40, spd: 17, skills: ['smite', 'holy_strike'],
+                    evolutions: ['inquisitor'] },
+                    'seraph': { name: '熾天使', icon: '👼', grade: 'C', maxLv: 5, element: 'wind', hp: 300, mp: 120,
+                        atk: 36, def: 32, matk: 68, mdef: 62, spd: 22, skills: ['holy_light', 'thunderstorm'],
+                    evolutions: ['celestial'] },
+                    'divine_saint': { name: '神聖者', icon: '🌟', grade: 'B', maxLv: 100, element: 'light', hp: 460,
+                        mp: 190, atk: 28, def: 46, matk: 98, mdef: 100, spd: 15, skills: ['resurrection',
+                        'divine_judgment'], evolutions: null },
+                    'oracle': { name: '神諭者', icon: '🔮', grade: 'B', maxLv: 100, element: 'water', hp: 400, mp: 175,
+                        atk: 24, def: 38, matk: 108, mdef: 88, spd: 17, skills: ['blizzard', 'judgment'],
+                    evolutions: null },
+                    'archangel': { name: '大天使', icon: '👼', grade: 'B', maxLv: 100, element: 'light', hp: 540, mp: 110,
+                        atk: 76, def: 74, matk: 42, mdef: 58, spd: 18, skills: ['holy_slash', 'guardian'],
+                    evolutions: null },
+                    'inquisitor': { name: '審判官', icon: '🔥', grade: 'B', maxLv: 100, element: 'fire', hp: 520, mp: 95,
+                        atk: 78, def: 60, matk: 46, mdef: 52, spd: 19, skills: ['smite', 'inferno'],
+                    evolutions: null },
+                    'celestial': { name: '天人', icon: '☁️', grade: 'B', maxLv: 100, element: 'wind', hp: 430, mp: 150,
+                        atk: 48, def: 40, matk: 86, mdef: 76, spd: 24, skills: ['sonic_boom', 'holy_light'],
+                    evolutions: null }
+                }
+            };
 
-const SKILLS = { /* 保持原有技能不變 */ };
-// ... (原有技能定義，此處為節省空間省略，實際代碼中保留完整)
+            const SKILLS = {
+                roll: { name: '滾動', mp: 4, power: 1.2, attr: 'phys' },
+                flame_breath: { name: '火焰吐息', mp: 10, power: 1.8, attr: 'mag', element: 'fire' },
+                fireball: { name: '火球術', mp: 12, power: 2.0, attr: 'mag', element: 'fire' },
+                wind_cutter: { name: '風刃', mp: 8, power: 1.5, attr: 'phys', element: 'wind' },
+                toxic_breath: { name: '毒息', mp: 14, power: 1.7, attr: 'mag', element: 'dark' },
+                holy_light: { name: '聖光', mp: 16, power: 2.1, attr: 'mag', element: 'light' },
+                inferno: { name: '地獄火', mp: 20, power: 2.4, attr: 'mag', element: 'fire' },
+                lightning_strike: { name: '雷擊', mp: 18, power: 2.3, attr: 'mag', element: 'wind' },
+                gale_slash: { name: '風刃', mp: 12, power: 1.9, attr: 'phys', element: 'wind' },
+                dark_claw: { name: '暗爪', mp: 14, power: 2.0, attr: 'phys', element: 'dark' },
+                death_breath: { name: '死亡吐息', mp: 25, power: 2.8, attr: 'mag', element: 'dark' },
+                divine_judgment: { name: '神聖審判', mp: 20, power: 2.5, attr: 'mag', element: 'light' },
+                explosion: { name: '爆炸', mp: 22, power: 2.6, attr: 'mag', element: 'fire' },
+                thunderstorm: { name: '雷暴', mp: 20, power: 2.4, attr: 'mag', element: 'wind' },
+                sonic_boom: { name: '音爆', mp: 18, power: 2.2, attr: 'phys', element: 'wind' },
+                abyss_gaze: { name: '深淵凝視', mp: 24, power: 2.7, attr: 'mag', element: 'dark' },
+                slash: { name: '斬擊', mp: 5, power: 1.3, attr: 'phys' },
+                heal: { name: '治癒', mp: 5, heal: 18 },
+                shield_bash: { name: '盾擊', mp: 12, power: 1.6, attr: 'phys' },
+                holy_strike: { name: '神聖打擊', mp: 15, power: 2.0, attr: 'mag', element: 'light' },
+                ice_spike: { name: '冰刺', mp: 14, power: 1.8, attr: 'mag', element: 'water' },
+                divine_slash: { name: '聖劍', mp: 18, power: 2.2, attr: 'phys', element: 'light' },
+                healing_light: { name: '治癒光', mp: 20, heal: 65 },
+                dark_slash: { name: '暗黑斬', mp: 16, power: 2.1, attr: 'phys', element: 'dark' },
+                curse: { name: '詛咒', mp: 12, power: 0.5, attr: 'mag', element: 'dark' },
+                meteor: { name: '隕石', mp: 25, power: 2.8, attr: 'mag', element: 'fire' },
+                blizzard: { name: '暴風雪', mp: 22, power: 2.5, attr: 'mag', element: 'water' },
+                chaos_bolt: { name: '混沌箭', mp: 20, power: 2.4, attr: 'mag', element: 'dark' },
+                soul_drain: { name: '靈魂吸取', mp: 18, power: 1.5, attr: 'mag', element: 'dark' },
+                claw: { name: '爪擊', mp: 5, power: 1.3, attr: 'phys' },
+                dark_bolt: { name: '黑暗彈', mp: 10, power: 1.7, attr: 'mag', element: 'dark' },
+                shadow_strike: { name: '影襲', mp: 14, power: 2.0, attr: 'phys', element: 'dark' },
+                poison_blade: { name: '毒刃', mp: 12, power: 1.6, attr: 'phys' },
+                fire_rain: { name: '火雨', mp: 18, power: 2.1, attr: 'mag', element: 'fire' },
+                life_steal: { name: '生命吸取', mp: 15, power: 1.4, attr: 'mag', element: 'dark' },
+                death_mark: { name: '死亡標記', mp: 20, power: 2.4, attr: 'phys', element: 'dark' },
+                vanish: { name: '消失', mp: 10, attr: 'buff' },
+                apocalypse: { name: '啟示錄', mp: 30, power: 3.0, attr: 'mag', element: 'dark' },
+                summon: { name: '召喚', mp: 25, attr: 'mag' },
+                holy_arrow: { name: '聖光箭', mp: 10, power: 1.7, attr: 'mag', element: 'light' },
+                divine_heal: { name: '神聖治癒', mp: 18, heal: 78 },
+                shield_of_faith: { name: '信仰盾', mp: 12, attr: 'buff' },
+                smite: { name: '懲戒', mp: 16, power: 2.2, attr: 'mag', element: 'light' },
+                resurrection: { name: '復活', mp: 30, attr: 'revive' },
+                judgment: { name: '審判', mp: 25, power: 2.6, attr: 'mag', element: 'light' },
+                holy_slash: { name: '聖刃', mp: 18, power: 2.0, attr: 'phys', element: 'light' },
+                guardian: { name: '守護', mp: 15, attr: 'buff' },
+            };
 
-// 掉落物系統：區分普通怪和Boss，並設定稀有度
-const LOOT_RARITY = { common:'普通', uncommon:'罕見', rare:'稀有', epic:'史詩', legendary:'傳說' };
-const LOOT_ITEMS = {
-    // 普通怪物掉落 (common, uncommon)
-    goblin_tooth:{name:'哥布林牙齒',icon:'🦷',rarity:'common'},
-    fire_fur:{name:'火狐毛皮',icon:'🔥',rarity:'common'},
-    snake_scale:{name:'蛇鱗',icon:'🐍',rarity:'common'},
-    stone_core:{name:'石核',icon:'🪨',rarity:'common'},
-    bat_wing:{name:'蝙蝠翅膀',icon:'🦇',rarity:'common'},
-    worm_essence:{name:'蟲之精華',icon:'✨',rarity:'common'},
-    dark_bone:{name:'暗黑骨',icon:'🦴',rarity:'uncommon'},
-    holy_water:{name:'聖水',icon:'💧',rarity:'uncommon'},
-    ghost_essence:{name:'幽靈精華',icon:'👻',rarity:'uncommon'},
-    sea_pearl:{name:'海珍珠',icon:'🫧',rarity:'uncommon'},
-    // Boss專屬掉落 (rare, epic, legendary)
-    dragon_scale:{name:'龍鱗',icon:'🔶',rarity:'rare'},
-    magma_core:{name:'岩漿核心',icon:'❤️‍🔥',rarity:'rare'},
-    shark_tooth:{name:'鯊魚牙',icon:'🦈',rarity:'rare'},
-    heaven_feather:{name:'天堂羽毛',icon:'🪶',rarity:'rare'},
-    unicorn_horn:{name:'獨角獸角',icon:'🦄',rarity:'epic'},
-    dark_crystal:{name:'暗影水晶',icon:'🖤',rarity:'epic'},
-    phoenix_feather:{name:'鳳凰羽毛',icon:'🔥',rarity:'legendary'},
-    divine_essence:{name:'神聖精華',icon:'✨',rarity:'legendary'},
-    world_core:{name:'世界核心',icon:'🌍',rarity:'legendary'}
-};
+            const ZONES = {
+                forest: { name: '幽暗森林', icon: '🌲', terrains: ['🌳', '🌲', '🌿', '🍄'] },
+                cave: { name: '廢棄礦洞', icon: '🕳️', terrains: ['🪨', '⛰️', '🕳️', '💎'] },
+                castle: { name: '亡靈城堡', icon: '🏰', terrains: ['🏰', '💀', '🌑', '🕯️'] },
+                dragon_lair: { name: '龍之巢穴', icon: '🌋', terrains: ['🌋', '🔥', '🐉', '🌑'] },
+                sea: { name: '深邃海域', icon: '🌊', terrains: ['🌊', '🐚', '🦀', '🐠'] },
+                heaven: { name: '天空聖殿', icon: '☁️', terrains: ['☁️', '✨', '🌟', '🕊️'] },
+            };
 
-// 怪物與Boss的掉落池區分
-const MONSTERS = {
-    forest:[
-        {name:'哥布林',icon:'👹',el:'earth',hp:42,atk:11,def:6,exp:18,goldMin:30,goldMax:45,loot:[{id:'goblin_tooth',chance:0.7}]},
-        {name:'火狐',icon:'🦊',el:'fire',hp:44,atk:12,def:7,exp:22,goldMin:30,goldMax:45,loot:[{id:'fire_fur',chance:0.6}]},
-        {name:'毒蛇',icon:'🐍',el:'water',hp:38,atk:13,def:5,exp:20,goldMin:30,goldMax:45,loot:[{id:'snake_scale',chance:0.65}]}
-    ],
-    cave:[
-        {name:'石傀儡',icon:'🗿',el:'earth',hp:110,atk:23,def:17,exp:45,goldMin:35,goldMax:50,loot:[{id:'stone_core',chance:0.7}]},
-        {name:'暗影蝙蝠',icon:'🦇',el:'dark',hp:88,atk:21,def:11,exp:40,goldMin:35,goldMax:50,loot:[{id:'bat_wing',chance:0.65}]},
-        {name:'礦脈蟲',icon:'🪱',el:'wind',hp:95,atk:19,def:14,exp:42,goldMin:35,goldMax:50,loot:[{id:'worm_essence',chance:0.6}]}
-    ],
-    castle:[
-        {name:'骷髏騎士',icon:'💀',el:'dark',hp:195,atk:34,def:23,exp:65,goldMin:35,goldMax:50,loot:[{id:'dark_bone',chance:0.7}]},
-        {name:'聖光祭司',icon:'🧙',el:'light',hp:175,atk:30,def:21,exp:60,goldMin:35,goldMax:50,loot:[{id:'holy_water',chance:0.65}]},
-        {name:'幽靈',icon:'👻',el:'dark',hp:150,atk:28,def:16,exp:55,goldMin:35,goldMax:50,loot:[{id:'ghost_essence',chance:0.6}]}
-    ],
-    dragon_lair:[
-        {name:'火龍',icon:'🐉',el:'fire',hp:300,atk:44,def:32,exp:90,goldMin:40,goldMax:50,loot:[{id:'dragon_scale',chance:0.3},{id:'magma_core',chance:0.3}]},
-        {name:'岩漿元素',icon:'🔥',el:'fire',hp:280,atk:40,def:30,exp:85,goldMin:40,goldMax:50,loot:[{id:'magma_core',chance:0.4}]}
-    ],
-    sea:[
-        {name:'人魚戰士',icon:'🧜',el:'water',hp:350,atk:48,def:34,exp:100,goldMin:45,goldMax:55,loot:[{id:'sea_pearl',chance:0.5}]},
-        {name:'海獸',icon:'🦈',el:'water',hp:380,atk:52,def:36,exp:110,goldMin:45,goldMax:55,loot:[{id:'shark_tooth',chance:0.4}]}
-    ],
-    heaven:[
-        {name:'天使斥候',icon:'👼',el:'light',hp:420,atk:56,def:40,exp:130,goldMin:50,goldMax:60,loot:[{id:'heaven_feather',chance:0.5}]},
-        {name:'聖獸',icon:'🦄',el:'light',hp:450,atk:60,def:42,exp:140,goldMin:50,goldMax:60,loot:[{id:'unicorn_horn',chance:0.3}]}
-    ]
-};
-const BOSSES = {
-    forest:{name:'森林巨魔',icon:'👾',el:'earth',hp:220,atk:30,def:22,exp:120,goldMin:300,goldMax:400,loot:[{id:'dark_crystal',chance:0.5},{id:'dragon_scale',chance:0.3}]},
-    cave:{name:'礦洞之王',icon:'👿',el:'dark',hp:400,atk:42,def:32,exp:220,goldMin:300,goldMax:400,loot:[{id:'dark_crystal',chance:0.6},{id:'phoenix_feather',chance:0.2}]},
-    castle:{name:'亡靈領主',icon:'🧛',el:'dark',hp:600,atk:54,def:44,exp:350,goldMin:300,goldMax:400,loot:[{id:'divine_essence',chance:0.4},{id:'world_core',chance:0.1}]},
-    dragon_lair:{name:'遠古巨龍',icon:'🐲',el:'fire',hp:850,atk:68,def:56,exp:520,goldMin:300,goldMax:400,loot:[{id:'phoenix_feather',chance:0.5},{id:'world_core',chance:0.2}]},
-    sea:{name:'海妖',icon:'🧜‍♀️',el:'water',hp:1000,atk:78,def:62,exp:650,goldMin:300,goldMax:400,loot:[{id:'divine_essence',chance:0.5},{id:'phoenix_feather',chance:0.3}]},
-    heaven:{name:'宙斯',icon:'⚡',el:'light',hp:1200,atk:88,def:70,exp:800,goldMin:300,goldMax:400,loot:[{id:'world_core',chance:0.4},{id:'divine_essence',chance:0.4}]}
-};
+            const LOOT_ITEMS = {
+                goblin_tooth: { name: '哥布林牙齒', icon: '🦷', rarity: 'common' },
+                fire_fur: { name: '火狐毛皮', icon: '🔥', rarity: 'common' },
+                snake_scale: { name: '蛇鱗', icon: '🐍', rarity: 'common' },
+                stone_core: { name: '石核', icon: '🪨', rarity: 'common' },
+                bat_wing: { name: '蝙蝠翅膀', icon: '🦇', rarity: 'common' },
+                worm_essence: { name: '蟲之精華', icon: '✨', rarity: 'common' },
+                dark_bone: { name: '暗黑骨', icon: '🦴', rarity: 'uncommon' },
+                holy_water: { name: '聖水', icon: '💧', rarity: 'uncommon' },
+                ghost_essence: { name: '幽靈精華', icon: '👻', rarity: 'uncommon' },
+                sea_pearl: { name: '海珍珠', icon: '🫧', rarity: 'uncommon' },
+                dragon_scale: { name: '龍鱗', icon: '🔶', rarity: 'rare' },
+                magma_core: { name: '岩漿核心', icon: '❤️‍🔥', rarity: 'rare' },
+                shark_tooth: { name: '鯊魚牙', icon: '🦈', rarity: 'rare' },
+                heaven_feather: { name: '天堂羽毛', icon: '🪶', rarity: 'rare' },
+                unicorn_horn: { name: '獨角獸角', icon: '🦄', rarity: 'epic' },
+                dark_crystal: { name: '暗影水晶', icon: '🖤', rarity: 'epic' },
+                phoenix_feather: { name: '鳳凰羽毛', icon: '🔥', rarity: 'legendary' },
+                divine_essence: { name: '神聖精華', icon: '✨', rarity: 'legendary' },
+                world_core: { name: '世界核心', icon: '🌍', rarity: 'legendary' }
+            };
 
-// 鍛造配方系統：根據材料稀有度決定可打造等級
-const CRAFT_RECIPES = {
-    D:{needs:{common:3},cost:50},
-    C:{needs:{common:5,uncommon:2},cost:120},
-    B:{needs:{uncommon:4,rare:2},cost:250},
-    A:{needs:{rare:5,epic:1},cost:400},
-    S:{needs:{epic:3,legendary:1},cost:600},
-    SS:{needs:{legendary:3},cost:1000}
-};
+            const MONSTERS = {
+                forest: [
+                    { name: '哥布林', icon: '👹', el: 'earth', hp: 42, atk: 11, def: 6, exp: 18, goldMin: 30, goldMax: 45,
+                        loot: [{ id: 'goblin_tooth', chance: 0.7 }] },
+                    { name: '火狐', icon: '🦊', el: 'fire', hp: 44, atk: 12, def: 7, exp: 22, goldMin: 30, goldMax: 45,
+                        loot: [{ id: 'fire_fur', chance: 0.6 }] },
+                    { name: '毒蛇', icon: '🐍', el: 'water', hp: 38, atk: 13, def: 5, exp: 20, goldMin: 30, goldMax: 45,
+                        loot: [{ id: 'snake_scale', chance: 0.65 }] }
+                ],
+                cave: [
+                    { name: '石傀儡', icon: '🗿', el: 'earth', hp: 110, atk: 23, def: 17, exp: 45, goldMin: 35,
+                    goldMax: 50, loot: [{ id: 'stone_core', chance: 0.7 }] },
+                    { name: '暗影蝙蝠', icon: '🦇', el: 'dark', hp: 88, atk: 21, def: 11, exp: 40, goldMin: 35,
+                    goldMax: 50, loot: [{ id: 'bat_wing', chance: 0.65 }] },
+                    { name: '礦脈蟲', icon: '🪱', el: 'wind', hp: 95, atk: 19, def: 14, exp: 42, goldMin: 35, goldMax: 50,
+                        loot: [{ id: 'worm_essence', chance: 0.6 }] }
+                ],
+                castle: [
+                    { name: '骷髏騎士', icon: '💀', el: 'dark', hp: 195, atk: 34, def: 23, exp: 65, goldMin: 35,
+                    goldMax: 50, loot: [{ id: 'dark_bone', chance: 0.7 }] },
+                    { name: '聖光祭司', icon: '🧙', el: 'light', hp: 175, atk: 30, def: 21, exp: 60, goldMin: 35,
+                        goldMax: 50, loot: [{ id: 'holy_water', chance: 0.65 }] },
+                    { name: '幽靈', icon: '👻', el: 'dark', hp: 150, atk: 28, def: 16, exp: 55, goldMin: 35, goldMax: 50,
+                        loot: [{ id: 'ghost_essence', chance: 0.6 }] }
+                ],
+                dragon_lair: [
+                    { name: '火龍', icon: '🐉', el: 'fire', hp: 300, atk: 44, def: 32, exp: 90, goldMin: 40, goldMax: 50,
+                        loot: [{ id: 'dragon_scale', chance: 0.3 }, { id: 'magma_core', chance: 0.3 }] },
+                    { name: '岩漿元素', icon: '🔥', el: 'fire', hp: 280, atk: 40, def: 30, exp: 85, goldMin: 40,
+                    goldMax: 50, loot: [{ id: 'magma_core', chance: 0.4 }] }
+                ],
+                sea: [
+                    { name: '人魚戰士', icon: '🧜', el: 'water', hp: 350, atk: 48, def: 34, exp: 100, goldMin: 45,
+                        goldMax: 55, loot: [{ id: 'sea_pearl', chance: 0.5 }] },
+                    { name: '海獸', icon: '🦈', el: 'water', hp: 380, atk: 52, def: 36, exp: 110, goldMin: 45,
+                    goldMax: 55, loot: [{ id: 'shark_tooth', chance: 0.4 }] }
+                ],
+                heaven: [
+                    { name: '天使斥候', icon: '👼', el: 'light', hp: 420, atk: 56, def: 40, exp: 130, goldMin: 50,
+                        goldMax: 60, loot: [{ id: 'heaven_feather', chance: 0.5 }] },
+                    { name: '聖獸', icon: '🦄', el: 'light', hp: 450, atk: 60, def: 42, exp: 140, goldMin: 50,
+                    goldMax: 60, loot: [{ id: 'unicorn_horn', chance: 0.3 }] }
+                ]
+            };
+            const BOSSES = {
+                forest: { name: '森林巨魔', icon: '👾', el: 'earth', hp: 220, atk: 30, def: 22, exp: 120, goldMin: 300,
+                    goldMax: 400, loot: [{ id: 'dark_crystal', chance: 0.5 }, { id: 'dragon_scale', chance: 0.3 }] },
+                cave: { name: '礦洞之王', icon: '👿', el: 'dark', hp: 400, atk: 42, def: 32, exp: 220, goldMin: 300,
+                    goldMax: 400, loot: [{ id: 'dark_crystal', chance: 0.6 }, { id: 'phoenix_feather', chance: 0.2 }] },
+                castle: { name: '亡靈領主', icon: '🧛', el: 'dark', hp: 600, atk: 54, def: 44, exp: 350, goldMin: 300,
+                    goldMax: 400, loot: [{ id: 'divine_essence', chance: 0.4 }, { id: 'world_core', chance: 0.1 }] },
+                dragon_lair: { name: '遠古巨龍', icon: '🐲', el: 'fire', hp: 850, atk: 68, def: 56, exp: 520, goldMin: 300,
+                    goldMax: 400, loot: [{ id: 'phoenix_feather', chance: 0.5 }, { id: 'world_core', chance: 0.2 }] },
+                sea: { name: '海妖', icon: '🧜‍♀️', el: 'water', hp: 1000, atk: 78, def: 62, exp: 650, goldMin: 300,
+                    goldMax: 400, loot: [{ id: 'divine_essence', chance: 0.5 }, { id: 'phoenix_feather',
+                    chance: 0.3 }] },
+                heaven: { name: '宙斯', icon: '⚡', el: 'light', hp: 1200, atk: 88, def: 70, exp: 800, goldMin: 300,
+                    goldMax: 400, loot: [{ id: 'world_core', chance: 0.4 }, { id: 'divine_essence', chance: 0.4 }] }
+            };
 
-// 裝備池（加成已大幅提升）
-const EQUIPMENT_POOL = {
-    weapon:[
-        {id:'w_d',name:'木劍',grade:'D',atk:6},{id:'w_c',name:'鐵劍',grade:'C',atk:14},{id:'w_b',name:'鋼刃',grade:'B',atk:24},
-        {id:'w_a',name:'龍牙',grade:'A',atk:36},{id:'w_s',name:'惡魔之牙',grade:'S',atk:50,element:'dark'},{id:'w_ss',name:'聖光槍',grade:'SS',atk:68,element:'light'}
-    ],
-    armor:[
-        {id:'a_d',name:'皮甲',grade:'D',def:5},{id:'a_c',name:'鎖子甲',grade:'C',def:11},{id:'a_b',name:'板甲',grade:'B',def:18},
-        {id:'a_a',name:'龍鱗甲',grade:'A',def:27},{id:'a_s',name:'暗影斗篷',grade:'S',def:22,spd:15},{id:'a_ss',name:'神聖長袍',grade:'SS',def:32,mdef:15}
-    ],
-    accessory:[
-        {id:'ac_d',name:'力量戒指',grade:'D',atk:4},{id:'ac_d2',name:'敏捷戒指',grade:'D',spd:4},
-        {id:'ac_c',name:'疾風護符',grade:'C',spd:14},{id:'ac_c2',name:'智力護符',grade:'C',matk:8},
-        {id:'ac_b',name:'賢者之石',grade:'B',matk:12},{id:'ac_b2',name:'生命寶珠',grade:'B',hp:35},
-        {id:'ac_a',name:'龍心',grade:'A',hp:65},{id:'ac_a2',name:'魔法水晶',grade:'A',matk:14},
-        {id:'ac_s',name:'暗夜之星',grade:'S',atk:14,matk:14},{id:'ac_s2',name:'疾風之羽',grade:'S',spd:20},
-        {id:'ac_ss',name:'神之淚',grade:'SS',all:10},{id:'ac_ss2',name:'永恆之戒',grade:'SS',hp:80,mp:40}
-    ]
-};
+            const EQUIPMENT_POOL = {
+                weapon: [
+                    { id: 'w_d', name: '木劍', grade: 'D', atk: 6 }, { id: 'w_c', name: '鐵劍', grade: 'C', atk: 14 },
+                    { id: 'w_b', name: '鋼刃', grade: 'B', atk: 24 }, { id: 'w_a', name: '龍牙', grade: 'A', atk: 36 },
+                    { id: 'w_s', name: '惡魔之牙', grade: 'S', atk: 50, element: 'dark' }, { id: 'w_ss', name: '聖光槍',
+                        grade: 'SS', atk: 68, element: 'light' }
+                ],
+                armor: [
+                    { id: 'a_d', name: '皮甲', grade: 'D', def: 5 }, { id: 'a_c', name: '鎖子甲', grade: 'C', def: 11 },
+                    { id: 'a_b', name: '板甲', grade: 'B', def: 18 }, { id: 'a_a', name: '龍鱗甲', grade: 'A', def: 27 },
+                    { id: 'a_s', name: '暗影斗篷', grade: 'S', def: 22, spd: 15 }, { id: 'a_ss', name: '神聖長袍',
+                        grade: 'SS', def: 32, mdef: 15 }
+                ],
+                accessory: [
+                    { id: 'ac_d', name: '力量戒指', grade: 'D', atk: 4 }, { id: 'ac_d2', name: '敏捷戒指', grade: 'D',
+                    spd: 4 },
+                    { id: 'ac_c', name: '疾風護符', grade: 'C', spd: 14 }, { id: 'ac_c2', name: '智力護符', grade: 'C',
+                    matk: 8 },
+                    { id: 'ac_b', name: '賢者之石', grade: 'B', matk: 12 }, { id: 'ac_b2', name: '生命寶珠', grade: 'B',
+                    hp: 35 },
+                    { id: 'ac_a', name: '龍心', grade: 'A', hp: 65 }, { id: 'ac_a2', name: '魔法水晶', grade: 'A',
+                    matk: 14 },
+                    { id: 'ac_s', name: '暗夜之星', grade: 'S', atk: 14, matk: 14 }, { id: 'ac_s2', name: '疾風之羽',
+                        grade: 'S', spd: 20 },
+                    { id: 'ac_ss', name: '神之淚', grade: 'SS', all: 10 }, { id: 'ac_ss2', name: '永恆之戒', grade: 'SS',
+                        hp: 80, mp: 40 }
+                ]
+            };
 
-// 遊戲狀態（其餘代碼邏輯與之前版本一致，僅在掉落、鍛造、進化部分修改）
-// ... (此處省略大部分原有邏輯，實際代碼中會包含完整實現)
-// 為了保持簡潔，以下僅展示修改後的關鍵函數
+            const ZONE_MERCHANT_GRADES = {
+                forest: ['D', 'C'],
+                cave: ['D', 'C', 'B'],
+                castle: ['C', 'B', 'A'],
+                dragon_lair: ['B', 'A', 'S'],
+                sea: ['A', 'S'],
+                heaven: ['S', 'SS']
+            };
 
-function dropLootFromPool(pool) {
-    if(!pool || !pool.length) return;
-    for(let entry of pool) {
-        if(Math.random() < entry.chance) {
-            addToInv(entry.id);
-            setVoice(`獲得 ${LOOT_ITEMS[entry.id].name} [${LOOT_RARITY[LOOT_ITEMS[entry.id].rarity]}]`);
-            break;
-        }
-    }
-}
+            const CRAFT_RECIPES = {
+                D: { needs: { common: 3 }, cost: 50 },
+                C: { needs: { common: 5, uncommon: 2 }, cost: 120 },
+                B: { needs: { uncommon: 4, rare: 2 }, cost: 250 },
+                A: { needs: { rare: 5, epic: 1 }, cost: 400 },
+                S: { needs: { epic: 3, legendary: 1 }, cost: 600 },
+                SS: { needs: { legendary: 3 }, cost: 1000 }
+            };
 
-function checkEnd() {
-    if(state.enemy.hp <= 0) {
-        state.enemy.hp = 0;
-        let gold = Math.floor(Math.random()*(state.enemy.goldMax-state.enemy.goldMin+1))+state.enemy.goldMin;
-        if(state.race==='human') gold = Math.floor(gold*1.30);
-        state.player.gold += gold;
-        // 掉落區分
-        if(state.enemy.isBoss) {
-            dropLootFromPool(state.enemy.loot);
-            // 額外裝備掉落
-            if(Math.random()<0.5) {
-                const grades = [['C','B'],['B','A'],['A','S'],['S','SS'],['S','SS'],['SS']][['forest','cave','castle','dragon_lair','sea','heaven'].indexOf(state.zone)];
-                addEquip(['weapon','armor','accessory'][Math.floor(Math.random()*3)], grades[Math.floor(Math.random()*grades.length)]);
+            const LEVEL_CONDITIONS = [
+                { type: 'kill', target: 5, desc: '擊敗5隻怪物' },
+                { type: 'collect', target: 3, desc: '收集3個任意掉落物' },
+                { type: 'boss', target: 1, desc: '擊敗任意Boss' },
+                { type: 'explore', target: 2, desc: '探索2個不同區域' }
+            ];
+
+            const START_ZONE = 'forest',
+                START_POS = { x: 0, y: 0 },
+                BOSS_POS = { x: 5, y: 5 };
+
+            // ==================== 遊戲狀態 ====================
+            const state = {
+                race: null,
+                player: null,
+                enemy: null,
+                voice: "",
+                battle: false,
+                dead: false,
+                scene: 'tutorial',
+                zone: START_ZONE,
+                pos: { ...START_POS },
+                maps: {},
+                inv: [],
+                buffs: { atk: 0, spd: 0, def: 0, shield: 0, weakDebuff: false },
+                bossDefeated: new Set(),
+                levelCondition: null,
+                conditionProgress: 0,
+                bossCooldown: 0,
+                equipment: { weapon: null, armor: null, accessory: null },
+                equipInv: [],
+                escapeCounter: 0,
+                altarReturn: null,
+                merchantBuyCount: 0,
+            };
+
+            // ==================== 核心邏輯 ====================
+            function initPlayer(raceKey) {
+                const race = RACES[raceKey];
+                state.race = raceKey;
+                const startForm = Object.keys(EVOLUTION_TREE[raceKey])[0];
+                state.player = {
+                    form: startForm,
+                    lv: 1,
+                    exp: 0,
+                    gold: 150,
+                    hp: race.baseHP,
+                    maxHp: race.baseHP,
+                    mp: race.baseMP,
+                    maxMp: race.baseMP,
+                    atk: race.atk,
+                    def: race.def,
+                    matk: race.matk,
+                    mdef: race.mdef,
+                    spd: race.spd,
+                    potions: { hp: 3, mp: 2, speed: 1, atk: 1, weak: 1 }
+                };
+                if (raceKey === 'dragon') {
+                    state.player.maxHp = Math.floor(state.player.maxHp * 1.35);
+                    state.player.maxMp = Math.floor(state.player.maxMp * 1.35);
+                }
+                applyForm();
+                state.player.hp = state.player.maxHp;
+                state.player.mp = state.player.maxMp;
+                generateLevelCondition();
             }
-            state.bossDefeated.add(state.zone);
-            state.bossCooldown = 12;
-        } else {
-            dropLootFromPool(state.enemy.loot);
-            if(Math.random()<0.2) addEquip(['weapon','armor','accessory'][Math.floor(Math.random()*3)],'D');
-        }
-        updateConditionProgress();
-        levelUp();
-        state.battle = false; state.dead = false; state.scene='map';
-        setTimeout(()=>renderMap(),500);
-    } else enemyTurn();
-}
 
-function renderCraft() {
-    const invCounts = {}; state.inv.forEach(i=>{ const r=LOOT_ITEMS[i.id].rarity; invCounts[r]=(invCounts[r]||0)+i.qty; });
-    let html = '<div class="panel"><h3>🔨 鍛造 (材料分級)</h3><p>材料統計: ';
-    for(let r in LOOT_RARITY) html += `${LOOT_RARITY[r]}:${invCounts[r]||0} `;
-    html += `| 💰${state.player.gold}</p><div class="flex-row">`;
-    for(let grade in CRAFT_RECIPES) {
-        const rec = CRAFT_RECIPES[grade];
-        let canCraft = true, missing=[];
-        for(let r in rec.needs) { if((invCounts[r]||0) < rec.needs[r]) { canCraft=false; missing.push(`${LOOT_RARITY[r]}缺${rec.needs[r]-(invCounts[r]||0)}`); } }
-        if(state.player.gold < rec.cost) { canCraft=false; missing.push('金幣不足'); }
-        html += `<button class="btn small craftGrade" data-grade="${grade}" ${!canCraft?'disabled':''}>${grade}級 ${rec.cost}G ${missing.length?'('+missing.join(',')+')':''}</button>`;
-    }
-    html += '</div><button class="btn" id="closeCraft">返回</button></div>';
-    document.getElementById('game-view').innerHTML = html;
-    document.querySelectorAll('.craftGrade').forEach(b=>b.addEventListener('click',e=>{
-        const grade = e.target.dataset.grade;
-        const rec = CRAFT_RECIPES[grade];
-        if(state.player.gold < rec.cost) return;
-        for(let r in rec.needs) {
-            let need = rec.needs[r];
-            for(let i=state.inv.length-1;i>=0 && need>0;i--) {
-                if(LOOT_ITEMS[state.inv[i].id].rarity === r) {
-                    let take = Math.min(state.inv[i].qty, need);
-                    state.inv[i].qty -= take; need -= take;
-                    if(state.inv[i].qty<=0) state.inv.splice(i,1);
+            function applyForm() {
+                const f = EVOLUTION_TREE[state.race][state.player.form];
+                if (!f) return;
+                Object.assign(state.player, {
+                    maxHp: f.hp,
+                    maxMp: f.mp,
+                    atk: f.atk,
+                    def: f.def,
+                    matk: f.matk,
+                    mdef: f.mdef,
+                    spd: f.spd
+                });
+            }
+
+            function stats() {
+                const p = state.player;
+                const eq = { atk: 0, def: 0, spd: 0, matk: 0, mdef: 0, hp: 0, mp: 0 };
+                Object.values(state.equipment).forEach(e => {
+                    if (!e) return;
+                    if (e.atk) eq.atk += e.atk;
+                    if (e.def) eq.def += e.def;
+                    if (e.spd) eq.spd += e.spd;
+                    if (e.matk) eq.matk += e.matk;
+                    if (e.mdef) eq.mdef += e.mdef;
+                    if (e.hp) eq.hp += e.hp;
+                    if (e.mp) eq.mp += e.mp;
+                    if (e.all) {
+                        eq.atk += e.all;
+                        eq.def += e.all;
+                        eq.spd += e.all;
+                        eq.matk += e.all;
+                        eq.mdef += e.all;
+                    }
+                });
+                return {
+                    atk: p.atk + state.buffs.atk + eq.atk,
+                    def: p.def + state.buffs.def + eq.def,
+                    spd: p.spd + state.buffs.spd + eq.spd,
+                    matk: p.matk + eq.matk,
+                    mdef: p.mdef + eq.mdef,
+                    maxHp: p.maxHp + eq.hp,
+                    maxMp: p.maxMp + eq.mp
+                };
+            }
+
+            function generateLevelCondition() {
+                state.levelCondition = { ...LEVEL_CONDITIONS[Math.floor(Math.random() * LEVEL_CONDITIONS.length)] };
+                state.conditionProgress = 0;
+                setVoice(`升級條件：${state.levelCondition.desc}`);
+            }
+
+            function genMaps() {
+                for (let z of Object.keys(ZONES)) {
+                    state.maps[z] = {
+                        grid: Array(10).fill().map(() => Array(10).fill().map(() => ZONES[z].terrains[Math.floor(Math
+                            .random() * 4)])),
+                        special: {}
+                    };
+                    for (let i = 0; i < 3; i++) {
+                        let sx, sy;
+                        do {
+                            sx = Math.floor(Math.random() * 10);
+                            sy = Math.floor(Math.random() * 10);
+                        } while ((sx === BOSS_POS.x && sy === BOSS_POS.y) || (sx === START_POS.x && sy === START_POS
+                            .y));
+                        state.maps[z].special[`${sx},${sy}`] = ['chest', 'merchant', 'portal'][Math.floor(Math.random() *
+                            3)];
+                    }
                 }
             }
-            if(need>0) return;
-        }
-        state.player.gold -= rec.cost;
-        const type = ['weapon','armor','accessory'][Math.floor(Math.random()*3)];
-        addEquip(type, grade);
-        renderCraft();
-    }));
-    document.getElementById('closeCraft').addEventListener('click',()=>{state.scene='map';renderMap();});
-}
 
-// 其餘函數（移動、戰鬥、地圖等）保持與之前相同，但需要適配新的進化樹和掉落系統
-// 完整代碼請見下方完整HTML
+            function move(dx, dy) {
+                if (state.battle || state.dead || state.scene !== 'map') return;
+                let nx = state.pos.x + dx,
+                    ny = state.pos.y + dy;
+                if (nx < 0 || nx >= 10 || ny < 0 || ny >= 10) {
+                    const adj = { forest: { south: 'cave' }, cave: { north: 'forest', south: 'castle' }, castle: { north: 'cave',
+                            south: 'dragon_lair' }, dragon_lair: { north: 'castle', south: 'sea' }, sea: { north: 'dragon_lair',
+                            south: 'heaven' }, heaven: { north: 'sea' } };
+                    const next = adj[state.zone]?.[dx < 0 ? 'west' : dx > 0 ? 'east' : dy < 0 ? 'north' : dy > 0 ?
+                    'south' : null];
+                    if (next) {
+                        state.zone = next;
+                        state.pos = { x: dx < 0 ? 9 : dx > 0 ? 0 : nx, y: dy < 0 ? 9 : dy > 0 ? 0 : ny };
+                    } else return;
+                } else { state.pos.x = nx;
+                    state.pos.y = ny; }
+                if (state.bossCooldown > 0) state.bossCooldown--;
+                const key = `${state.pos.x},${state.pos.y}`;
+                if (state.pos.x === BOSS_POS.x && state.pos.y === BOSS_POS.y) {
+                    if (!state.bossDefeated.has(state.zone) || state.bossCooldown <= 0) startBoss();
+                    else renderMap();
+                } else if (state.maps[state.zone].special[key]) handleSpecial(state.maps[state.zone].special[key]);
+                else if (Math.random() < 0.28) startBattle();
+                else if (Math.random() < 0.18) triggerEvent();
+                else renderMap();
+            }
 
-// ... 整合所有代碼的完整腳本
-</script>
+            function handleSpecial(type) {
+                if (type === 'chest') {
+                    state.player.gold += Math.floor(Math.random() * 60) + 40;
+                    addEquip('weapon', 'D');
+                    setVoice('📦 打開寶箱！獲得金幣與裝備');
+                    delete state.maps[state.zone].special[`${state.pos.x},${state.pos.y}`];
+                } else if (type === 'merchant') {
+                    state.merchantBuyCount = 0;
+                    setVoice('遇到流浪商人(85折)');
+                    state.scene = 'merchantShop';
+                    renderMerchantShop();
+                    return;
+                } else if (type === 'portal') {
+                    state.altarReturn = { zone: state.zone, x: state.pos.x, y: state.pos.y };
+                    state.scene = 'altar';
+                    renderAltar();
+                    return;
+                }
+                renderMap();
+            }
+
+            function startBattle() {
+                const pool = MONSTERS[state.zone] || MONSTERS.forest;
+                const m = pool[Math.floor(Math.random() * pool.length)];
+                state.enemy = { ...m, maxHp: m.hp };
+                state.battle = true;
+                state.dead = false;
+                state.scene = 'battle';
+                state.buffs = { atk: 0, spd: 0, def: 0, shield: 0, weakDebuff: false };
+                state.escapeCounter = 0;
+                setVoice(`⚔️ ${m.name} 出現了！`);
+                renderBattle();
+            }
+
+            function startBoss() {
+                const boss = BOSSES[state.zone];
+                state.enemy = { ...boss, maxHp: boss.hp, isBoss: true };
+                state.battle = true;
+                state.dead = false;
+                state.scene = 'battle';
+                state.buffs = { atk: 0, spd: 0, def: 0, shield: 0, weakDebuff: false };
+                state.escapeCounter = 0;
+                setVoice(`👑 Boss ${boss.name}！`);
+                renderBattle();
+            }
+
+            function dmgCalc(atk, def, power = 1, atkEl, defEl, isPlayer = false) {
+                let base = Math.max(1, Math.floor(atk * power) - def);
+                if (atkEl && defEl && atkEl !== 'none' && defEl !== 'none') {
+                    if (ELEMENT_WEAKNESS[atkEl] === defEl) base = Math.floor(base * 1.3);
+                    else if (ELEMENT_WEAKNESS[defEl] === atkEl) base = Math.floor(base * 0.7);
+                }
+                let result = Math.max(1, base + Math.floor(Math.random() * 8));
+                if (isPlayer && state.race === 'demon') result = Math.floor(result * 1.20);
+                if (!isPlayer && state.buffs.weakDebuff) result = Math.floor(result * 1.2);
+                return result;
+            }
+
+            function showDamage(el, dmg, col = '#ff4d4d') {
+                if (!el) return;
+                const d = document.createElement('div');
+                d.className = 'pop-damage';
+                d.textContent = dmg;
+                d.style.color = col;
+                el.style.position = 'relative';
+                el.appendChild(d);
+                setTimeout(() => d.remove(), 700);
+            }
+
+            function shakeEl(id) {
+                const el = document.getElementById(id);
+                if (el) { el.classList.add('shake');
+                    setTimeout(() => el.classList.remove('shake'), 400); }
+            }
+
+            function playerAtk() {
+                if (state.dead || !state.battle) return;
+                const f = EVOLUTION_TREE[state.race][state.player.form];
+                const dmg = dmgCalc(stats().atk, state.enemy.def, 1, f.element, state.enemy.el, true);
+                state.enemy.hp -= dmg;
+                setVoice(`造成 ${dmg} 傷害`);
+                shakeEl('enemy-card');
+                showDamage(document.getElementById('enemy-card'), dmg);
+                checkEnd();
+            }
+
+            function playerSkill(id) {
+                if (state.dead || !state.battle) return;
+                const sk = SKILLS[id];
+                if (!sk || state.player.mp < sk.mp) return;
+                if ((sk.attr === 'heal' || sk.heal) && state.race !== 'god') { setVoice('只有神族可使用治癒！'); return; }
+                state.player.mp -= sk.mp;
+                if (sk.attr === 'heal' || sk.heal) {
+                    const heal = sk.heal || 18;
+                    state.player.hp = Math.min(state.player.maxHp, state.player.hp + heal);
+                    setVoice(`❤️ 回復${heal}HP`);
+                    showDamage(document.getElementById('player-card'), heal, '#4dff4d');
+                } else if (sk.attr === 'buff') setVoice('🛡️ 增益');
+                else {
+                    const f = EVOLUTION_TREE[state.race][state.player.form];
+                    const dmg = dmgCalc(stats().atk, state.enemy.def, sk.power || 1, sk.element || f.element, state.enemy
+                        .el, true);
+                    state.enemy.hp -= dmg;
+                    setVoice(`✨ ${sk.name}！ ${dmg} 傷害`);
+                    shakeEl('enemy-card');
+                    showDamage(document.getElementById('enemy-card'), dmg);
+                }
+                checkEnd();
+            }
+
+            function playerDodge() {
+                if (state.dead || !state.battle || state.player.mp < 3) return;
+                state.player.mp -= 3;
+                if (Math.random() < 0.8) {
+                    setVoice('💨 閃避成功！');
+                    state.escapeCounter++;
+                    if (state.escapeCounter >= 3) setVoice('已可逃跑');
+                } else setVoice('閃避失敗…');
+                checkEnd();
+            }
+
+            function tryRun() {
+                if (state.dead || !state.battle) return;
+                if (state.escapeCounter < 3) { setVoice(`需累積閃避3次 (${state.escapeCounter}/3)`); return; }
+                setVoice('🏃 逃跑成功！');
+                state.battle = false;
+                state.enemy = null;
+                state.scene = 'map';
+                renderMap();
+            }
+
+            function usePotion(type) {
+                const p = state.player,
+                    bonus = state.race === 'god' ? 1.5 : 1;
+                if (type === 'hp') { p.hp = Math.min(p.maxHp, p.hp + Math.floor(30 * bonus));
+                    p.potions.hp--; } else if (type === 'mp') { p.mp = Math.min(p.maxMp, p.mp + Math.floor(18 * bonus));
+                    p.potions.mp--; } else if (type === 'speed') { state.buffs.spd += Math.floor(14 * bonus);
+                    p.potions.speed--; } else if (type === 'atk') { state.buffs.atk += Math.floor(14 * bonus);
+                    p.potions.atk--; } else if (type === 'weak' && state.enemy) { state.buffs.weakDebuff = true;
+                    p.potions.weak--;
+                    setVoice('敵人虛弱，受傷+20%'); } else if (type === 'weak') setVoice('無敵方');
+                setVoice('藥水生效');
+                renderBattle();
+            }
+
+            function enemyTurn() {
+                if (!state.enemy || state.enemy.hp <= 0 || state.dead) return;
+                const dmg = dmgCalc(state.enemy.atk, stats().def, 1, state.enemy.el, EVOLUTION_TREE[state.race][state
+                    .player.form].element);
+                state.player.hp -= dmg;
+                setVoice(`${state.enemy.name} 造成 ${dmg} 傷害`);
+                shakeEl('player-card');
+                showDamage(document.getElementById('player-card'), dmg);
+                if (state.player.hp <= 0) { playerDeath(); return; }
+                renderBattle();
+            }
+
+            function playerDeath() {
+                state.player.hp = 0;
+                state.dead = true;
+                state.battle = false;
+                setVoice('被擊倒…返回起點');
+                const overlay = document.createElement('div');
+                overlay.className = 'death-overlay';
+                document.body.appendChild(overlay);
+                setTimeout(() => overlay.remove(), 1200);
+                setTimeout(() => {
+                    if (state.race !== 'human') {
+                        state.player.potions = { hp: 3, mp: 2, speed: 1, atk: 1, weak: 1 };
+                        state.equipment = { weapon: null, armor: null, accessory: null };
+                        state.equipInv = [];
+                    }
+                    state.player.hp = state.player.maxHp;
+                    state.player.mp = state.player.maxMp;
+                    state.dead = false;
+                    state.zone = START_ZONE;
+                    state.pos = { ...START_POS };
+                    state.scene = 'map';
+                    renderMap();
+                }, 1500);
+                renderBattle();
+            }
+
+            function addEquip(type, grade) {
+                const pool = EQUIPMENT_POOL[type].filter(e => e.grade === grade);
+                if (pool.length) {
+                    const eq = { ...pool[Math.floor(Math.random() * pool.length)], type };
+                    state.equipInv.push(eq);
+                    setVoice(`獲得${eq.name}`);
+                }
+            }
+
+            function addToInv(id) {
+                const existing = state.inv.find(i => i.id === id);
+                if (existing) existing.qty++;
+                else state.inv.push({ id, name: LOOT_ITEMS[id].name, qty: 1 });
+            }
+
+            function dropLootFromPool(pool) {
+                if (!pool || !pool.length) return;
+                for (let entry of pool) {
+                    if (Math.random() < entry.chance) {
+                        addToInv(entry.id);
+                        setVoice(`獲得 ${LOOT_ITEMS[entry.id].name} [${LOOT_RARITY[LOOT_ITEMS[entry.id].rarity]}]`);
+                        break;
+                    }
+                }
+            }
+
+            function checkEnd() {
+                if (state.enemy.hp <= 0) {
+                    state.enemy.hp = 0;
+                    let gold = Math.floor(Math.random() * (state.enemy.goldMax - state.enemy.goldMin + 1)) + state.enemy
+                        .goldMin;
+                    if (state.race === 'human') gold = Math.floor(gold * 1.30);
+                    state.player.gold += gold;
+                    if (state.enemy.isBoss) {
+                        dropLootFromPool(state.enemy.loot);
+                        if (Math.random() < 0.5) {
+                            const grades = [
+                                ['C', 'B'],
+                                ['B', 'A'],
+                                ['A', 'S'],
+                                ['S', 'SS'],
+                                ['S', 'SS'],
+                                ['SS']
+                            ][['forest', 'cave', 'castle', 'dragon_lair', 'sea', 'heaven'].indexOf(state.zone)];
+                            addEquip(['weapon', 'armor', 'accessory'][Math.floor(Math.random() * 3)], grades[Math.floor(
+                                Math.random() * grades.length)]);
+                        }
+                        state.bossDefeated.add(state.zone);
+                        state.bossCooldown = 12;
+                    } else {
+                        dropLootFromPool(state.enemy.loot);
+                        if (Math.random() < 0.2) addEquip(['weapon', 'armor', 'accessory'][Math.floor(Math.random() * 3)],
+                            'D');
+                    }
+                    updateConditionProgress();
+                    levelUp();
+                    state.battle = false;
+                    state.dead = false;
+                    state.scene = 'map';
+                    setTimeout(() => renderMap(), 500);
+                } else enemyTurn();
+            }
+
+            function updateConditionProgress() {
+                if (!state.levelCondition) return;
+                const c = state.levelCondition;
+                if (c.type === 'kill') state.conditionProgress++;
+                else if (c.type === 'boss' && state.enemy?.isBoss) state.conditionProgress++;
+                else if (c.type === 'collect') state.conditionProgress = state.inv.length;
+                else if (c.type === 'explore') state.conditionProgress = new Set([...state.bossDefeated, state.zone])
+                    .size;
+            }
+
+            function levelUp() {
+                if (!state.levelCondition) return;
+                const c = state.levelCondition;
+                let ok = false;
+                if (c.type === 'kill' && state.conditionProgress >= c.target) ok = true;
+                else if (c.type === 'boss' && state.conditionProgress >= c.target) ok = true;
+                else if (c.type === 'collect' && state.conditionProgress >= c.target) ok = true;
+                else if (c.type === 'explore' && state.conditionProgress >= c.target) ok = true;
+                if (ok) {
+                    state.player.lv++;
+                    state.player.maxHp += 16;
+                    state.player.maxMp += 8;
+                    state.player.atk += 4;
+                    state.player.def += 3;
+                    state.player.hp = state.player.maxHp;
+                    state.player.mp = state.player.maxMp;
+                    setVoice(`🎉 升級！ Lv.${state.player.lv}`);
+                    generateLevelCondition();
+                    if (state.player.lv % 5 === 0 && EVOLUTION_TREE[state.race][state.player.form].evolutions?.length)
+                        setVoice('可進化！');
+                }
+            }
+
+            function forceLevelUp(t) {
+                for (let i = 0; i < t; i++) {
+                    state.player.lv++;
+                    state.player.maxHp += 16;
+                    state.player.maxMp += 8;
+                    state.player.atk += 4;
+                    state.player.def += 3;
+                }
+                state.player.hp = state.player.maxHp;
+                state.player.mp = state.player.maxMp;
+                setVoice(`升級藥水：+${t}級`);
+            }
+
+            function evolve(id) {
+                state.player.form = id;
+                state.player.lv = 1;
+                applyForm();
+                state.player.hp = state.player.maxHp;
+                state.player.mp = state.player.maxMp;
+                setVoice(`進化！${EVOLUTION_TREE[state.race][id].name}`);
+                state.scene = 'map';
+                renderMap();
+            }
+
+            function setVoice(m) { state.voice = `神之聲：${m}`; }
+
+            function updateStatusBar() {
+                const p = state.player,
+                    f = EVOLUTION_TREE[state.race][p.form];
+                document.getElementById('status-bar').innerHTML =
+                    `<span>${RACES[state.race].icon} ${f.name} Lv.${p.lv}</span><span>❤️${p.hp}/${p.maxHp}</span><span>💧${p.mp}/${p.maxMp}</span><span>💰${p.gold}</span>`;
+            }
+
+            // ==================== 畫面渲染 ====================
+            function renderMap() {
+                updateStatusBar();
+                const f = EVOLUTION_TREE[state.race][state.player.form];
+                const canEvo = state.player.lv % 5 === 0 && f.evolutions?.length;
+                const map = state.maps[state.zone];
+                let grid = '';
+                for (let y = 0; y < 10; y++)
+                    for (let x = 0; x < 10; x++) {
+                        const isP = x === state.pos.x && y === state.pos.y;
+                        const isBoss = x === BOSS_POS.x && y === BOSS_POS.y;
+                        const ba = !state.bossDefeated.has(state.zone) || state.bossCooldown <= 0;
+                        const key = `${x},${y}`;
+                        const sp = map.special[key];
+                        let cls = '',
+                            icon = map.grid[y][x];
+                        if (isP) { cls = 'player-cell';
+                            icon = f.icon; } else if (isBoss) { cls = ba ? 'boss-cell' : 'boss-disabled';
+                            icon = ba ? '👑' : '💤'; } else if (sp) {
+                            if (sp === 'chest') { cls = 'chest-cell';
+                                icon = '📦'; } else if (sp === 'merchant') { cls = 'merchant-cell';
+                                icon = '🏪'; } else if (sp === 'portal') { cls = 'portal-cell';
+                                icon = '🌀'; }
+                        }
+                        grid +=
+                        `<div class="map-cell ${cls}" data-x="${x}" data-y="${y}">${icon}</div>`;
+                    }
+                const cond = state.levelCondition;
+                const prog = cond ? `${state.conditionProgress}/${cond.target}` : '0/0';
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel">
+            <h3>${ZONES[state.zone].icon} ${ZONES[state.zone].name}</h3>
+            <div class="map-grid" id="mapGrid">${grid}</div>
+            <div style="display:flex;justify-content:space-between;flex-wrap:wrap;">
+            <span>📊 Lv.${state.player.lv} | 進化需${Math.ceil(state.player.lv/5)*5}級</span>
+            <span>🎯 ${cond?cond.desc:''}: ${prog}</span>
+            </div>
+            <div class="god-voice">${state.voice}</div>
+            <div class="flex-row">
+            <button class="btn small" id="statusBtn">📋狀態</button>
+            <button class="btn small" id="equipBtn">🛡️裝備</button>
+            <button class="btn small" id="shopBtn">🛒商店</button>
+            <button class="btn small" id="craftBtn">🔨打造</button>
+            ${canEvo?`<button class="btn small primary" id="evoBtn">✨進化</button>`:''}
+            </div></div>`;
+                bindMapEvents();
+                document.getElementById('statusBtn').onclick = () => { state.scene = 'status';
+                    renderStatus(); };
+                document.getElementById('equipBtn').onclick = () => { state.scene = 'equip';
+                    renderEquip(); };
+                document.getElementById('shopBtn').onclick = () => { state.scene = 'shop';
+                renderShop(); };
+                document.getElementById('craftBtn').onclick = () => { state.scene = 'craft';
+                renderCraft(); };
+                if (canEvo) document.getElementById('evoBtn').onclick = () => { state.scene = 'evo';
+                    renderEvo(); };
+            }
+
+            function bindMapEvents() {
+                document.querySelectorAll('.map-cell').forEach(cell => {
+                    cell.onclick = (e) => {
+                        if (state.battle || state.dead || state.scene !== 'map') return;
+                        const tx = parseInt(e.currentTarget.dataset.x);
+                        const ty = parseInt(e.currentTarget.dataset.y);
+                        const dx = tx - state.pos.x;
+                        const dy = ty - state.pos.y;
+                        if (Math.abs(dx) + Math.abs(dy) === 1) move(dx, dy);
+                    };
+                });
+                const mapGrid = document.getElementById('mapGrid');
+                if (!mapGrid) return;
+                let startX, startY;
+                mapGrid.ontouchstart = e => {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                };
+                mapGrid.ontouchend = e => {
+                    if (state.battle || state.dead || state.scene !== 'map') return;
+                    const dx = e.changedTouches[0].clientX - startX;
+                    const dy = e.changedTouches[0].clientY - startY;
+                    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 25) move(dx > 0 ? 1 : -1, 0);
+                    else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 25) move(0, dy > 0 ? 1 : -1);
+                };
+            }
+
+            function renderBattle() {
+                updateStatusBar();
+                const e = state.enemy,
+                    p = state.player,
+                    f = EVOLUTION_TREE[state.race][p.form];
+                const skills = f.skills || [];
+                let skillBtns = skills.map(sid => {
+                    const sk = SKILLS[sid];
+                    if (!sk || ((sk.attr === 'heal' || sk.heal) && state.race !== 'god')) return '';
+                    return `<button class="btn small" ${p.mp<sk.mp||state.dead?'disabled':''} id="sk_${sid}">${sk.name}(${sk.mp}MP)</button>`;
+                }).join('');
+                const potDisabled = Object.values(p.potions).every(v => v === 0) || state.dead;
+                const hpP = Math.max(0, e.hp / e.maxHp * 100);
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel ${e.isBoss?'boss-bg':''}">
+            <div id="enemy-card" style="position:relative;background:#2a1028;border-radius:12px;padding:10px;">
+            <span style="font-size:2rem;">${e.icon}</span><b>${e.name}</b>
+            <div class="hp-bar"><div class="hp-fill" style="width:${hpP}%;"></div></div>
+            <div style="text-align:right;">${e.hp}/${e.maxHp}</div></div>
+            <div id="player-card" style="margin:10px 0;position:relative;"><b>${f.icon} ${f.name}</b> Lv.${p.lv} ❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</div>
+            <div class="flex-row">
+            <button class="btn" id="atkBtn" ${state.dead?'disabled':''}>⚔️攻擊</button>${skillBtns}
+            <button class="btn" id="dodgeBtn" ${state.dead||p.mp<3?'disabled':''}>💨閃避</button>
+            <button class="btn" id="runBtn" ${state.dead?'disabled':''}>🏃逃跑(${state.escapeCounter}/3)</button>
+            <button class="btn" id="potBtn" ${potDisabled?'disabled':''}>🧪藥水</button></div>
+            <div class="god-voice">${state.voice}</div>${state.dead?'<p style="color:#ff8080;">倒下中…</p>':''}</div>`;
+                document.getElementById('atkBtn').onclick = playerAtk;
+                skills.forEach(sid => { const btn = document.getElementById(`sk_${sid}`); if (btn) btn.onclick = () =>
+                        playerSkill(sid); });
+                document.getElementById('dodgeBtn').onclick = playerDodge;
+                document.getElementById('runBtn').onclick = tryRun;
+                document.getElementById('potBtn').onclick = showPotions;
+            }
+
+            function showPotions() {
+                const p = state.player;
+                let html = '<div class="panel"><h3>🧪 藥水</h3>';
+                const add = (l, k, q) => { if (q > 0) html +=
+                        `<button class="btn small" id="use_${k}">${l} (${q})</button>`; };
+                add('❤️生命', 'hp', p.potions.hp);
+                add('💧魔力', 'mp', p.potions.mp);
+                add('💨速度', 'speed', p.potions.speed);
+                add('⚔️攻擊', 'atk', p.potions.atk);
+                add('☠️虛弱', 'weak', p.potions.weak);
+                html += '<button class="btn small" id="cancelPotion">取消</button></div>';
+                document.getElementById('game-view').innerHTML = html;
+                ['hp', 'mp', 'speed', 'atk', 'weak'].forEach(k => { const btn = document.getElementById(`use_${k}`); if (
+                        btn) btn.onclick = () => { usePotion(k);
+                        renderBattle(); }; });
+                document.getElementById('cancelPotion').onclick = () => renderBattle();
+            }
+
+            function renderStatus() {
+                const p = state.player,
+                    f = EVOLUTION_TREE[state.race][p.form],
+                    s = stats();
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel"><h3>📋 狀態</h3><p>${f.icon} ${f.name} Lv.${p.lv}</p>
+            <p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</p>
+            <p>⚔️攻${s.atk} 🛡️防${s.def} 💨速${s.spd}</p>
+            <button class="btn" id="backMap">返回</button></div>`;
+                document.getElementById('backMap').onclick = () => { state.scene = 'map';
+                    renderMap(); };
+            }
+
+            function renderEquip() {
+                const slots = { weapon: '武器', armor: '防具', accessory: '飾品' };
+                let html = '<div class="panel"><h3>🛡️ 裝備</h3>';
+                for (let [s, n] of Object.entries(slots)) {
+                    const eq = state.equipment[s];
+                    html +=
+                        `<p><b>${n}</b>：${eq?`${eq.name}(${eq.grade}) ${eq.atk?'+'+eq.atk+'攻':''}${eq.def?'+'+eq.def+'防':''}${eq.spd?'+'+eq.spd+'速':''}${eq.matk?'+'+eq.matk+'魔':''}${eq.mdef?'+'+eq.mdef+'魔防':''}${eq.hp?'+'+eq.hp+'血':''}${eq.all?'+'+eq.all+'全':''}`:'空'} ${eq?`<button class="btn small unequip" data-slot="${s}">卸</button><button class="btn small sellEquip" data-slot="${s}">賣25G</button>`:''}</p>`;
+                }
+                html += '<h4>背包裝備</h4>';
+                state.equipInv.forEach((eq, i) => {
+                    html +=
+                        `<div class="item-row"><span>${eq.name}(${eq.grade})</span><button class="btn small equipIt" data-idx="${i}">裝備</button><button class="btn small sellInv" data-idx="${i}">賣25G</button></div>`;
+                });
+                html += '<button class="btn" id="closeEquip">返回</button></div>';
+                document.getElementById('game-view').innerHTML = html;
+                document.getElementById('closeEquip').onclick = () => { state.scene = 'map';
+                    renderMap(); };
+                document.querySelectorAll('.unequip').forEach(b => b.onclick = e => {
+                    const s = e.target.dataset.slot;
+                    const eq = state.equipment[s];
+                    if (eq) { state.equipInv.push(eq);
+                        state.equipment[s] = null;
+                        renderEquip(); }
+                });
+                document.querySelectorAll('.sellEquip').forEach(b => b.onclick = e => {
+                    const s = e.target.dataset.slot;
+                    const eq = state.equipment[s];
+                    if (eq) { state.player.gold += 25;
+                        state.equipment[s] = null;
+                        renderEquip(); }
+                });
+                document.querySelectorAll('.equipIt').forEach(b => b.onclick = e => {
+                    const i = parseInt(e.target.dataset.idx);
+                    const eq = state.equipInv.splice(i, 1)[0];
+                    if (state.equipment[eq.type]) state.equipInv.push(state.equipment[eq.type]);
+                    state.equipment[eq.type] = eq;
+                    renderEquip();
+                });
+                document.querySelectorAll('.sellInv').forEach(b => b.onclick = e => {
+                    const i = parseInt(e.target.dataset.idx);
+                    state.player.gold += 25;
+                    state.equipInv.splice(i, 1);
+                    renderEquip();
+                });
+            }
+
+            function renderShop() {
+                const p = state.player;
+                let invHtml = state.inv.map((it, i) =>
+                    `<div class="item-row"><span>${it.name} x${it.qty}</span><button class="btn small" id="sell_${i}">賣25G</button></div>`
+                ).join('');
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel"><h3>🛒 商店</h3><p>💰 ${p.gold}G</p>
+            <div class="shop-grid">
+            <div class="shop-card">❤️生命藥水 (30HP) 100G <button class="btn small" id="buyHp">買</button></div>
+            <div class="shop-card">💧魔力藥水 (18MP) 80G <button class="btn small" id="buyMp">買</button></div>
+            <div class="shop-card">💨速度藥水 +14 130G <button class="btn small" id="buySpd">買</button></div>
+            <div class="shop-card">⚔️攻擊藥水 +14 140G <button class="btn small" id="buyAtk">買</button></div>
+            <div class="shop-card">☠️虛弱藥水 110G <button class="btn small" id="buyWeak">買</button></div>
+            <div class="shop-card">⭐升級藥水 +3級 500G <button class="btn small" id="buyLevel">買</button></div></div>
+            <h4>掉落物</h4>${invHtml||'無'}<button class="btn" id="closeShop">關閉</button></div>`;
+                document.getElementById('buyHp').onclick = () => { if (p.gold >= 100) { p.gold -= 100;
+                        p.potions.hp++;
+                        renderShop(); } };
+                document.getElementById('buyMp').onclick = () => { if (p.gold >= 80) { p.gold -= 80;
+                        p.potions.mp++;
+                        renderShop(); } };
+                document.getElementById('buySpd').onclick = () => { if (p.gold >= 130) { p.gold -= 130;
+                        p.potions.speed++;
+                        renderShop(); } };
+                document.getElementById('buyAtk').onclick = () => { if (p.gold >= 140) { p.gold -= 140;
+                        p.potions.atk++;
+                        renderShop(); } };
+                document.getElementById('buyWeak').onclick = () => { if (p.gold >= 110) { p.gold -= 110;
+                        p.potions.weak++;
+                        renderShop(); } };
+                document.getElementById('buyLevel').onclick = () => { if (p.gold >= 500) { p.gold -= 500;
+                        forceLevelUp(3);
+                        renderShop(); } };
+                state.inv.forEach((_, i) => { const btn = document.getElementById(`sell_${i}`); if (btn) btn.onclick =
+                        () => { const it = state.inv[i];
+                        p.gold += 25;
+                        it.qty--; if (it.qty <= 0) state.inv.splice(i, 1);
+                        renderShop(); }; });
+                document.getElementById('closeShop').onclick = () => { state.scene = 'map';
+                    renderMap(); };
+            }
+
+            function renderMerchantShop() {
+                const p = state.player;
+                const gradePrice = { D: 35, C: 70, B: 140, A: 210, S: 350, SS: 550 };
+                const allowedGrades = ZONE_MERCHANT_GRADES[state.zone] || ['D', 'C'];
+                let items = '';
+                for (let i = 0; i < 3; i++) {
+                    const type = ['weapon', 'armor', 'accessory'][i];
+                    const grade = allowedGrades[Math.floor(Math.random() * allowedGrades.length)];
+                    const pool = EQUIPMENT_POOL[type].filter(e => e.grade === grade);
+                    if (pool.length) {
+                        const eq = pool[Math.floor(Math.random() * pool.length)];
+                        const price = Math.floor(gradePrice[grade] * 0.85);
+                        items +=
+                            `<div class="shop-card"><span>${eq.name} (${grade})</span><p class="price">${price}G</p><button class="btn small buyMerch" data-type="${type}" data-grade="${grade}" data-price="${price}">購買</button></div>`;
+                    }
+                }
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel"><h3>🏪 流浪商人 (85折) 已買${state.merchantBuyCount}/3</h3>
+            <p style="font-size:0.7rem;color:#c0a0d0;">📍 ${ZONES[state.zone].name} - 最高${allowedGrades[allowedGrades.length-1]}級</p>
+            <p>💰 ${p.gold}G</p><div class="shop-grid">${items}</div><button class="btn" id="closeMerchant">離開</button></div>`;
+                document.querySelectorAll('.buyMerch').forEach(b => b.onclick = e => {
+                    if (state.merchantBuyCount >= 3) return;
+                    const price = parseInt(e.target.dataset.price);
+                    if (p.gold < price) return;
+                    p.gold -= price;
+                    addEquip(e.target.dataset.type, e.target.dataset.grade);
+                    state.merchantBuyCount++;
+                    if (state.merchantBuyCount >= 3) {
+                        delete state.maps[state.zone].special[`${state.pos.x},${state.pos.y}`];
+                        state.scene = 'map';
+                        renderMap();
+                    } else renderMerchantShop();
+                });
+                document.getElementById('closeMerchant').onclick = () => { state.scene = 'map';
+                    renderMap(); };
+            }
+
+            function renderCraft() {
+                const invCounts = {};
+                state.inv.forEach(i => { const r = LOOT_ITEMS[i.id].rarity;
+                    invCounts[r] = (invCounts[r] || 0) + i.qty; });
+                let html =
+                    `<div class="panel"><h3>🔨 鍛造 (材料分級)</h3><p>材料: `;
+                for (let r in LOOT_RARITY) html += `${LOOT_RARITY[r]}:${invCounts[r]||0} `;
+                html += `| 💰${state.player.gold}</p><div class="flex-row">`;
+                for (let grade in CRAFT_RECIPES) {
+                    const rec = CRAFT_RECIPES[grade];
+                    let can = true,
+                        missing = [];
+                    for (let r in rec.needs) if ((invCounts[r] || 0) < rec.needs[r]) { can = false;
+                        missing.push(`${LOOT_RARITY[r]}缺${rec.needs[r]-(invCounts[r]||0)}`); }
+                    if (state.player.gold < rec.cost) { can = false;
+                        missing.push('金幣不足'); }
+                    html +=
+                        `<button class="btn small craftGrade" data-grade="${grade}" ${!can?'disabled':''}>${grade}級 ${rec.cost}G ${missing.length?'('+missing.join(',')+')':''}</button>`;
+                }
+                html += '</div><button class="btn" id="closeCraft">返回</button></div>';
+                document.getElementById('game-view').innerHTML = html;
+                document.querySelectorAll('.craftGrade').forEach(b => b.onclick = e => {
+                    const grade = e.target.dataset.grade;
+                    const rec = CRAFT_RECIPES[grade];
+                    if (state.player.gold < rec.cost) return;
+                    for (let r in rec.needs) {
+                        let need = rec.needs[r];
+                        for (let i = state.inv.length - 1; i >= 0 && need > 0; i--) {
+                            if (LOOT_ITEMS[state.inv[i].id].rarity === r) {
+                                const take = Math.min(state.inv[i].qty, need);
+                                state.inv[i].qty -= take;
+                                need -= take;
+                                if (state.inv[i].qty <= 0) state.inv.splice(i, 1);
+                            }
+                        }
+                        if (need > 0) return;
+                    }
+                    state.player.gold -= rec.cost;
+                    addEquip(['weapon', 'armor', 'accessory'][Math.floor(Math.random() * 3)], grade);
+                    renderCraft();
+                });
+                document.getElementById('closeCraft').onclick = () => { state.scene = 'map';
+                    renderMap(); };
+            }
+
+            function renderAltar() {
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel"><h3>🌀 暗影祭壇</h3><p>選擇一項永久提升</p>
+            <button class="btn" id="aAtk">⚔️攻擊+4</button><button class="btn" id="aDef">🛡️防禦+4</button>
+            <button class="btn" id="aSpd">💨速度+4</button><button class="btn" id="aHp">❤️生命+25</button>
+            <button class="btn" id="aMp">💧魔力+12</button></div>`;
+                document.getElementById('aAtk').onclick = () => { state.player.atk += 4;
+                    returnFromAltar(); };
+                document.getElementById('aDef').onclick = () => { state.player.def += 4;
+                    returnFromAltar(); };
+                document.getElementById('aSpd').onclick = () => { state.player.spd += 4;
+                    returnFromAltar(); };
+                document.getElementById('aHp').onclick = () => { state.player.maxHp += 25;
+                    state.player.hp += 25;
+                    returnFromAltar(); };
+                document.getElementById('aMp').onclick = () => { state.player.maxMp += 12;
+                    state.player.mp += 12;
+                    returnFromAltar(); };
+            }
+
+            function returnFromAltar() {
+                if (state.altarReturn) { state.zone = state.altarReturn.zone;
+                    state.pos = { x: state.altarReturn.x, y: state.altarReturn.y };
+                    state.altarReturn = null; }
+                delete state.maps[state.zone].special[`${state.pos.x},${state.pos.y}`];
+                setVoice('獲得祝福並返回');
+                state.scene = 'map';
+                renderMap();
+            }
+
+            function triggerEvent() {
+                const events = [
+                    { name: '流浪商人', desc: '商人出現', effect: () => { state.merchantBuyCount = 0;
+                            state.scene = 'merchantShop';
+                            renderMerchantShop(); } },
+                    { name: '偷襲', desc: '-15HP', effect: () => { state.player.hp = Math.max(1, state.player.hp - 15);
+                            setVoice('被偷襲！'); } },
+                    { name: '幫助村民', desc: '獲得武器', effect: () => addEquip('weapon', 'D') },
+                    { name: '聖光洗禮', desc: '獲得飾品', effect: () => addEquip('accessory', 'C') },
+                    { name: '寶箱', desc: '+50G', effect: () => { state.player.gold += 50;
+                            setVoice('+50G'); } },
+                    { name: '陷阱', desc: '-10HP', effect: () => { state.player.hp = Math.max(1, state.player.hp -
+                        10); } }
+                ];
+                const ev = events[Math.floor(Math.random() * events.length)];
+                state.scene = 'event';
+                document.getElementById('game-view').innerHTML =
+                    `<div class="panel"><h3>${ev.name}</h3><p>${ev.desc}</p><button class="btn primary" id="acceptEvent">確認</button></div>`;
+                document.getElementById('acceptEvent').onclick = () => { ev.effect(); if (state.scene === 'event') { state
+                        .scene = 'map';
+                        renderMap(); } };
+            }
+
+            function renderEvo() {
+                const opts = EVOLUTION_TREE[state.race][state.player.form].evolutions || [];
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel"><h3>進化</h3><div class="flex-row">${opts.map(id=>`<div class="evolution-card" data-evo="${id}"><span style="font-size:2rem;">${EVOLUTION_TREE[state.race][id].icon}</span><h4>${EVOLUTION_TREE[state.race][id].name}</h4></div>`).join('')}</div></div>`;
+                document.querySelectorAll('.evolution-card').forEach(c => c.onclick = e => evolve(e.currentTarget.dataset
+                    .evo));
+            }
+
+            function setupControls() {
+                document.getElementById('control-area').innerHTML = `
+            <div class="direction-pad">
+            <div class="dir-row"><div class="dir-btn" id="upBtn">↑</div></div>
+            <div class="dir-row">
+            <div class="dir-btn" id="leftBtn">←</div>
+            <div class="dir-btn" id="downBtn">↓</div>
+            <div class="dir-btn" id="rightBtn">→</div>
+            </div></div>`;
+                document.getElementById('upBtn').onclick = () => move(0, -1);
+                document.getElementById('downBtn').onclick = () => move(0, 1);
+                document.getElementById('leftBtn').onclick = () => move(-1, 0);
+                document.getElementById('rightBtn').onclick = () => move(1, 0);
+            }
+            window.addEventListener('keydown', e => {
+                if (state.scene !== 'map' || state.battle || state.dead) return;
+                if (e.key === 'ArrowLeft' || e.key === 'a') { e.preventDefault();
+                    move(-1, 0); }
+                if (e.key === 'ArrowRight' || e.key === 'd') { e.preventDefault();
+                    move(1, 0); }
+                if (e.key === 'ArrowUp' || e.key === 'w') { e.preventDefault();
+                    move(0, -1); }
+                if (e.key === 'ArrowDown' || e.key === 's') { e.preventDefault();
+                    move(0, 1); }
+            });
+
+            function showTutorial() {
+                state.scene = 'tutorial';
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel"><h2>📖 終極冒險</h2>
+            <p>🧭 方向鍵/滑動地圖移動，Boss在(5,5)</p>
+            <p>⚔️ 回合戰鬥，閃避3次可逃</p>
+            <p>🔨 鍛造需要對應稀有度材料</p>
+            <p>📱 手機/電腦完美支援</p>
+            <button class="btn primary" id="toRaceSelect">選擇種族</button></div>`;
+                document.getElementById('toRaceSelect').onclick = showRaceSelect;
+            }
+
+            function showRaceSelect() {
+                state.scene = 'raceSelect';
+                document.getElementById('game-view').innerHTML = `
+            <div class="panel"><h3>選擇種族</h3><div class="flex-row">${Object.entries(RACES).map(([k,r])=>`<div class="race-card" data-race="${k}"><span style="font-size:2.5rem;">${r.icon}</span><h4>${r.name}</h4><p>${r.desc}</p></div>`).join('')}</div></div>`;
+                document.querySelectorAll('.race-card').forEach(c => c.onclick = e => {
+                    initPlayer(e.currentTarget.dataset.race);
+                    genMaps();
+                    state.bossDefeated.clear();
+                    state.inv = [];
+                    state.equipInv = [];
+                    state.equipment = { weapon: null, armor: null, accessory: null };
+                    state.scene = 'map';
+                    state.zone = START_ZONE;
+                    state.pos = { ...START_POS };
+                    setupControls();
+                    renderMap();
+                });
+            }
+            showTutorial();
+        })();
+    </script>
 </body>
 </html>
