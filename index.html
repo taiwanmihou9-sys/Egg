@@ -63,15 +63,116 @@
 const ELEMENTS = {fire:'火',water:'水',wind:'風',earth:'地',light:'光',dark:'闇',none:'無'};
 const ELEMENT_WEAKNESS = {fire:'wind', wind:'earth', earth:'water', water:'fire', light:'dark', dark:'light'};
 const LOOT_RARITY = {common:'普通',uncommon:'罕見',rare:'稀有',epic:'史詩',legendary:'傳說'};
+
 const RACES = {
   human:{name:'人族',icon:'🧑',desc:'均衡·金幣+30%',baseHP:90,baseMP:40,atk:16,def:12,matk:12,mdef:11,spd:11,element:'none',passive:'gold'},
   demon:{name:'魔族',icon:'👿',desc:'高攻·傷害+20%',baseHP:78,baseMP:46,atk:20,def:9,matk:15,mdef:9,spd:14,element:'dark',passive:'dmg'},
   god:{name:'神族',icon:'👼',desc:'魔精·藥水強化',baseHP:100,baseMP:55,atk:11,def:15,matk:16,mdef:16,spd:9,element:'light',passive:'potion'},
   dragon:{name:'龍族',icon:'🐉',desc:'體魄·血魔+35%',baseHP:75,baseMP:30,atk:13,def:14,matk:10,mdef:12,spd:7,element:'none',passive:'bulk'}
 };
-const EVOLUTION_TREE = { /* 完整進化樹保持不變，省略顯示以節省空間，實際代碼中已包含全部 */ };
-// 在完整代碼中，此處包含與先前回答相同的 EVOLUTION_TREE 物件
-const SKILLS = { /* 完整技能列表保持不變 */ };
+
+const EVOLUTION_TREE = {
+  dragon: {
+    'dragon_egg':{name:'龍蛋',icon:'🥚',grade:'F',maxLv:5,element:'none',hp:75,mp:30,atk:13,def:14,matk:10,mdef:12,spd:6,skills:['roll'],evolutions:['whelp','draket','hatchling']},
+    'whelp':{name:'幼龍',icon:'🐉',grade:'D',maxLv:5,element:'fire',hp:175,mp:60,atk:38,def:32,matk:28,mdef:28,spd:14,skills:['roll','flame_breath'],evolutions:['plague_whelp','rainbow_whelp']},
+    'draket':{name:'小龍',icon:'🐲',grade:'D',maxLv:5,element:'wind',hp:150,mp:72,atk:46,def:24,matk:38,mdef:24,spd:18,skills:['roll','fireball'],evolutions:['flame_draket','thunder_draket']},
+    'hatchling':{name:'雛龍',icon:'🐊',grade:'D',maxLv:5,element:'water',hp:160,mp:66,atk:36,def:28,matk:32,mdef:30,spd:22,skills:['roll','wind_cutter'],evolutions:['wind_hatchling','shadow_hatchling']},
+    'plague_whelp':{name:'厄病幼龍',icon:'☠️',grade:'C',maxLv:5,element:'dark',hp:280,mp:90,atk:60,def:46,matk:52,mdef:40,spd:20,skills:['toxic_breath'],evolutions:['calamity_drake']},
+    'rainbow_whelp':{name:'小虹龍',icon:'🌈',grade:'C',maxLv:5,element:'light',hp:250,mp:105,atk:52,def:42,matk:68,mdef:58,spd:22,skills:['holy_light'],evolutions:['sacred_drake']},
+    'flame_draket':{name:'炎龍幼體',icon:'🔥',grade:'C',maxLv:5,element:'fire',hp:240,mp:90,atk:72,def:34,matk:60,mdef:36,spd:24,skills:['inferno'],evolutions:['blast_drake']},
+    'thunder_draket':{name:'雷龍幼體',icon:'⚡',grade:'C',maxLv:5,element:'wind',hp:245,mp:95,atk:66,def:36,matk:68,mdef:40,spd:28,skills:['lightning_strike'],evolutions:['storm_drake']},
+    'wind_hatchling':{name:'風龍幼體',icon:'🌪️',grade:'C',maxLv:5,element:'wind',hp:225,mp:85,atk:58,def:38,matk:58,mdef:42,spd:35,skills:['gale_slash'],evolutions:['tempest_drake']},
+    'shadow_hatchling':{name:'暗龍幼體',icon:'🌑',grade:'C',maxLv:5,element:'dark',hp:260,mp:90,atk:64,def:40,matk:64,mdef:44,spd:27,skills:['dark_claw'],evolutions:['abyss_drake']},
+    'calamity_drake':{name:'災厄龍',icon:'💀',grade:'B',maxLv:100,element:'dark',hp:460,mp:130,atk:88,def:66,matk:80,mdef:60,spd:30,skills:['death_breath'],evolutions:null},
+    'sacred_drake':{name:'聖光龍',icon:'✨',grade:'B',maxLv:100,element:'light',hp:430,mp:155,atk:76,def:64,matk:100,mdef:92,spd:28,skills:['divine_judgment'],evolutions:null},
+    'blast_drake':{name:'爆炎龍',icon:'💥',grade:'B',maxLv:100,element:'fire',hp:410,mp:135,atk:108,def:54,matk:86,mdef:56,spd:33,skills:['explosion'],evolutions:null},
+    'storm_drake':{name:'風暴龍',icon:'⛈️',grade:'B',maxLv:100,element:'wind',hp:380,mp:150,atk:80,def:50,matk:98,mdef:60,spd:44,skills:['thunderstorm'],evolutions:null},
+    'tempest_drake':{name:'颶風龍',icon:'🌪️',grade:'B',maxLv:100,element:'wind',hp:350,mp:145,atk:72,def:46,matk:105,mdef:64,spd:50,skills:['sonic_boom'],evolutions:null},
+    'abyss_drake':{name:'暗黑龍',icon:'🖤',grade:'B',maxLv:100,element:'dark',hp:490,mp:130,atk:96,def:62,matk:96,mdef:66,spd:32,skills:['abyss_gaze'],evolutions:null}
+  },
+  human: {
+    'human_start':{name:'見習者',icon:'🧑',grade:'F',maxLv:5,element:'none',hp:90,mp:40,atk:16,def:12,matk:12,mdef:11,spd:10,skills:['slash','heal'],evolutions:['knight','mage','rogue']},
+    'knight':{name:'騎士',icon:'🛡️',grade:'D',maxLv:5,element:'earth',hp:210,mp:52,atk:38,def:36,matk:16,mdef:22,spd:13,skills:['shield_bash','holy_strike'],evolutions:['paladin','dark_knight','champion']},
+    'mage':{name:'法師',icon:'🧙',grade:'D',maxLv:5,element:'wind',hp:140,mp:95,atk:20,def:18,matk:48,mdef:40,spd:15,skills:['fireball','ice_spike'],evolutions:['archmage','warlock','sorcerer']},
+    'rogue':{name:'盜賊',icon:'🗡️',grade:'D',maxLv:5,element:'wind',hp:160,mp:60,atk:44,def:22,matk:18,mdef:16,spd:24,skills:['shadow_strike','poison_blade'],evolutions:['assassin_human','trickster']},
+    'paladin':{name:'聖騎士',icon:'⚜️',grade:'C',maxLv:5,element:'light',hp:340,mp:78,atk:54,def:58,matk:28,mdef:46,spd:15,skills:['divine_slash','healing_light'],evolutions:['holy_guardian']},
+    'dark_knight':{name:'黑騎士',icon:'🗡️',grade:'C',maxLv:5,element:'dark',hp:290,mp:66,atk:66,def:46,matk:34,mdef:34,spd:20,skills:['dark_slash','curse'],evolutions:['death_knight']},
+    'champion':{name:'鬥士',icon:'⚔️',grade:'C',maxLv:5,element:'fire',hp:380,mp:55,atk:68,def:42,matk:14,mdef:26,spd:18,skills:['slash','flame_breath'],evolutions:['gladiator']},
+    'archmage':{name:'大法師',icon:'🔮',grade:'C',maxLv:5,element:'water',hp:190,mp:125,atk:22,def:26,matk:74,mdef:58,spd:19,skills:['meteor','blizzard'],evolutions:['grand_sorcerer']},
+    'warlock':{name:'術士',icon:'🕯️',grade:'C',maxLv:5,element:'fire',hp:165,mp:118,atk:26,def:22,matk:66,mdef:52,spd:22,skills:['chaos_bolt','soul_drain'],evolutions:['demonologist']},
+    'sorcerer':{name:'巫師',icon:'✨',grade:'C',maxLv:5,element:'wind',hp:175,mp:110,atk:24,def:24,matk:70,mdef:55,spd:21,skills:['lightning_strike','gale_slash'],evolutions:['stormcaller']},
+    'assassin_human':{name:'刺客',icon:'🗡️',grade:'C',maxLv:5,element:'dark',hp:210,mp:75,atk:64,def:28,matk:22,mdef:20,spd:30,skills:['death_mark','vanish'],evolutions:['shadow_master']},
+    'trickster':{name:'詭術師',icon:'🎭',grade:'C',maxLv:5,element:'water',hp:190,mp:85,atk:42,def:25,matk:44,mdef:38,spd:26,skills:['chaos_bolt','heal'],evolutions:['illusionist']},
+    'holy_guardian':{name:'神聖守衛',icon:'🛡️',grade:'B',maxLv:100,element:'light',hp:480,mp:100,atk:68,def:72,matk:36,mdef:58,spd:16,skills:['guardian','divine_judgment'],evolutions:null},
+    'death_knight':{name:'死亡騎士',icon:'💀',grade:'B',maxLv:100,element:'dark',hp:420,mp:85,atk:82,def:58,matk:46,mdef:42,spd:22,skills:['dark_slash','death_breath'],evolutions:null},
+    'gladiator':{name:'角鬥士',icon:'🏛️',grade:'B',maxLv:100,element:'earth',hp:520,mp:70,atk:84,def:54,matk:20,mdef:34,spd:20,skills:['shield_bash','explosion'],evolutions:null},
+    'grand_sorcerer':{name:'大巫師',icon:'🧙‍♂️',grade:'B',maxLv:100,element:'water',hp:280,mp:155,atk:28,def:34,matk:98,mdef:74,spd:21,skills:['blizzard','meteor'],evolutions:null},
+    'demonologist':{name:'惡魔學者',icon:'👿',grade:'B',maxLv:100,element:'dark',hp:250,mp:145,atk:32,def:28,matk:88,mdef:66,spd:24,skills:['apocalypse','summon'],evolutions:null},
+    'stormcaller':{name:'風暴召喚者',icon:'🌪️',grade:'B',maxLv:100,element:'wind',hp:260,mp:140,atk:30,def:30,matk:92,mdef:68,spd:23,skills:['thunderstorm','sonic_boom'],evolutions:null},
+    'shadow_master':{name:'暗影大師',icon:'🌑',grade:'B',maxLv:100,element:'dark',hp:310,mp:100,atk:88,def:36,matk:30,mdef:28,spd:34,skills:['abyss_gaze','vanish'],evolutions:null},
+    'illusionist':{name:'幻術師',icon:'🎲',grade:'B',maxLv:100,element:'water',hp:270,mp:120,atk:48,def:32,matk:68,mdef:52,spd:28,skills:['curse','healing_light'],evolutions:null}
+  },
+  demon: {
+    'demon_start':{name:'小惡魔',icon:'👿',grade:'F',maxLv:5,element:'dark',hp:78,mp:46,atk:20,def:9,matk:15,mdef:9,spd:12,skills:['claw','dark_bolt'],evolutions:['assassin','warlock_demon','brute']},
+    'assassin':{name:'暗殺者',icon:'🗡️',grade:'D',maxLv:5,element:'wind',hp:180,mp:72,atk:52,def:24,matk:26,mdef:20,spd:26,skills:['shadow_strike','poison_blade'],evolutions:['night_lord','demon_blade']},
+    'warlock_demon':{name:'惡魔術士',icon:'👹',grade:'D',maxLv:5,element:'fire',hp:155,mp:92,atk:34,def:20,matk:54,mdef:40,spd:17,skills:['fire_rain','life_steal'],evolutions:['demon_lord','inferno_mage']},
+    'brute':{name:'惡魔蠻兵',icon:'💪',grade:'D',maxLv:5,element:'earth',hp:250,mp:40,atk:48,def:32,matk:12,mdef:15,spd:10,skills:['claw','shield_bash'],evolutions:['juggernaut']},
+    'night_lord':{name:'夜之王',icon:'🌑',grade:'C',maxLv:5,element:'dark',hp:310,mp:105,atk:74,def:38,matk:42,mdef:34,spd:30,skills:['death_mark','vanish'],evolutions:['abyss_lord']},
+    'demon_blade':{name:'魔刃',icon:'⚔️',grade:'C',maxLv:5,element:'dark',hp:280,mp:85,atk:80,def:34,matk:30,mdef:26,spd:32,skills:['dark_slash','poison_blade'],evolutions:['blade_master']},
+    'demon_lord':{name:'惡魔領主',icon:'😈',grade:'C',maxLv:5,element:'dark',hp:270,mp:118,atk:54,def:34,matk:78,mdef:54,spd:22,skills:['apocalypse','summon'],evolutions:['archdemon']},
+    'inferno_mage':{name:'煉獄法師',icon:'🔥',grade:'C',maxLv:5,element:'fire',hp:220,mp:125,atk:38,def:22,matk:82,mdef:48,spd:20,skills:['inferno','explosion'],evolutions:['phoenix_mage']},
+    'juggernaut':{name:'攻城獸',icon:'🦍',grade:'C',maxLv:5,element:'earth',hp:400,mp:55,atk:68,def:50,matk:18,mdef:22,spd:12,skills:['shield_bash','guardian'],evolutions:['behemoth']},
+    'abyss_lord':{name:'深淵領主',icon:'🖤',grade:'B',maxLv:100,element:'dark',hp:450,mp:140,atk:96,def:52,matk:60,mdef:46,spd:32,skills:['abyss_gaze','death_breath'],evolutions:null},
+    'blade_master':{name:'劍聖',icon:'⚔️',grade:'B',maxLv:100,element:'wind',hp:380,mp:110,atk:104,def:44,matk:38,mdef:34,spd:36,skills:['gale_slash','shadow_strike'],evolutions:null},
+    'archdemon':{name:'大惡魔',icon:'👿',grade:'B',maxLv:100,element:'dark',hp:420,mp:150,atk:72,def:46,matk:100,mdef:70,spd:24,skills:['apocalypse','chaos_bolt'],evolutions:null},
+    'phoenix_mage':{name:'鳳凰法師',icon:'🐦‍🔥',grade:'B',maxLv:100,element:'fire',hp:340,mp:160,atk:52,def:30,matk:112,mdef:66,spd:22,skills:['inferno','resurrection'],evolutions:null},
+    'behemoth':{name:'巨獸',icon:'🦣',grade:'B',maxLv:100,element:'earth',hp:560,mp:70,atk:88,def:68,matk:24,mdef:30,spd:14,skills:['guardian','explosion'],evolutions:null}
+  },
+  god: {
+    'god_start':{name:'小天使',icon:'👼',grade:'F',maxLv:5,element:'light',hp:100,mp:55,atk:11,def:15,matk:16,mdef:16,spd:8,skills:['heal','holy_arrow'],evolutions:['priest','paladin_god','herald']},
+    'priest':{name:'祭司',icon:'✝️',grade:'D',maxLv:5,element:'water',hp:230,mp:105,atk:16,def:26,matk:54,mdef:56,spd:11,skills:['divine_heal','holy_light'],evolutions:['saint','prophet']},
+    'paladin_god':{name:'神騎士',icon:'🛡️',grade:'D',maxLv:5,element:'earth',hp:270,mp:72,atk:42,def:44,matk:24,mdef:34,spd:13,skills:['shield_of_faith','smite'],evolutions:['god_knight','crusader']},
+    'herald':{name:'先驅者',icon:'📯',grade:'D',maxLv:5,element:'wind',hp:210,mp:85,atk:28,def:24,matk:44,mdef:42,spd:18,skills:['holy_arrow','gale_slash'],evolutions:['seraph']},
+    'saint':{name:'聖人',icon:'🌟',grade:'C',maxLv:5,element:'light',hp:320,mp:155,atk:20,def:36,matk:74,mdef:78,spd:13,skills:['resurrection','judgment'],evolutions:['divine_saint']},
+    'prophet':{name:'先知',icon:'🔮',grade:'C',maxLv:5,element:'water',hp:280,mp:140,atk:18,def:30,matk:82,mdef:70,spd:15,skills:['divine_judgment','healing_light'],evolutions:['oracle']},
+    'god_knight':{name:'神騎士',icon:'👑',grade:'C',maxLv:5,element:'light',hp:400,mp:90,atk:62,def:62,matk:30,mdef:46,spd:15,skills:['holy_slash','guardian'],evolutions:['archangel']},
+    'crusader':{name:'十字軍',icon:'⚔️',grade:'C',maxLv:5,element:'fire',hp:380,mp:80,atk:64,def:48,matk:34,mdef:40,spd:17,skills:['smite','holy_strike'],evolutions:['inquisitor']},
+    'seraph':{name:'熾天使',icon:'👼',grade:'C',maxLv:5,element:'wind',hp:300,mp:120,atk:36,def:32,matk:68,mdef:62,spd:22,skills:['holy_light','thunderstorm'],evolutions:['celestial']},
+    'divine_saint':{name:'神聖者',icon:'🌟',grade:'B',maxLv:100,element:'light',hp:460,mp:190,atk:28,def:46,matk:98,mdef:100,spd:15,skills:['resurrection','divine_judgment'],evolutions:null},
+    'oracle':{name:'神諭者',icon:'🔮',grade:'B',maxLv:100,element:'water',hp:400,mp:175,atk:24,def:38,matk:108,mdef:88,spd:17,skills:['blizzard','judgment'],evolutions:null},
+    'archangel':{name:'大天使',icon:'👼',grade:'B',maxLv:100,element:'light',hp:540,mp:110,atk:76,def:74,matk:42,mdef:58,spd:18,skills:['holy_slash','guardian'],evolutions:null},
+    'inquisitor':{name:'審判官',icon:'🔥',grade:'B',maxLv:100,element:'fire',hp:520,mp:95,atk:78,def:60,matk:46,mdef:52,spd:19,skills:['smite','inferno'],evolutions:null},
+    'celestial':{name:'天人',icon:'☁️',grade:'B',maxLv:100,element:'wind',hp:430,mp:150,atk:48,def:40,matk:86,mdef:76,spd:24,skills:['sonic_boom','holy_light'],evolutions:null}
+  }
+};
+
+const SKILLS = {
+  roll:{name:'滾動',mp:4,power:1.2,attr:'phys'}, flame_breath:{name:'火焰吐息',mp:10,power:1.8,attr:'mag',element:'fire'},
+  fireball:{name:'火球術',mp:12,power:2.0,attr:'mag',element:'fire'}, wind_cutter:{name:'風刃',mp:8,power:1.5,attr:'phys',element:'wind'},
+  toxic_breath:{name:'毒息',mp:14,power:1.7,attr:'mag',element:'dark'}, holy_light:{name:'聖光',mp:16,power:2.1,attr:'mag',element:'light'},
+  inferno:{name:'地獄火',mp:20,power:2.4,attr:'mag',element:'fire'}, lightning_strike:{name:'雷擊',mp:18,power:2.3,attr:'mag',element:'wind'},
+  gale_slash:{name:'風刃',mp:12,power:1.9,attr:'phys',element:'wind'}, dark_claw:{name:'暗爪',mp:14,power:2.0,attr:'phys',element:'dark'},
+  death_breath:{name:'死亡吐息',mp:25,power:2.8,attr:'mag',element:'dark'}, divine_judgment:{name:'神聖審判',mp:20,power:2.5,attr:'mag',element:'light'},
+  explosion:{name:'爆炸',mp:22,power:2.6,attr:'mag',element:'fire'}, thunderstorm:{name:'雷暴',mp:20,power:2.4,attr:'mag',element:'wind'},
+  sonic_boom:{name:'音爆',mp:18,power:2.2,attr:'phys',element:'wind'}, abyss_gaze:{name:'深淵凝視',mp:24,power:2.7,attr:'mag',element:'dark'},
+  slash:{name:'斬擊',mp:5,power:1.3,attr:'phys'}, heal:{name:'治癒',mp:5,heal:18},
+  shield_bash:{name:'盾擊',mp:12,power:1.6,attr:'phys'}, holy_strike:{name:'神聖打擊',mp:15,power:2.0,attr:'mag',element:'light'},
+  ice_spike:{name:'冰刺',mp:14,power:1.8,attr:'mag',element:'water'}, divine_slash:{name:'聖劍',mp:18,power:2.2,attr:'phys',element:'light'},
+  healing_light:{name:'治癒光',mp:20,heal:65}, dark_slash:{name:'暗黑斬',mp:16,power:2.1,attr:'phys',element:'dark'},
+  curse:{name:'詛咒',mp:12,power:0.5,attr:'mag',element:'dark'}, meteor:{name:'隕石',mp:25,power:2.8,attr:'mag',element:'fire'},
+  blizzard:{name:'暴風雪',mp:22,power:2.5,attr:'mag',element:'water'}, chaos_bolt:{name:'混沌箭',mp:20,power:2.4,attr:'mag',element:'dark'},
+  soul_drain:{name:'靈魂吸取',mp:18,power:1.5,attr:'mag',element:'dark'}, claw:{name:'爪擊',mp:5,power:1.3,attr:'phys'},
+  dark_bolt:{name:'黑暗彈',mp:10,power:1.7,attr:'mag',element:'dark'}, shadow_strike:{name:'影襲',mp:14,power:2.0,attr:'phys',element:'dark'},
+  poison_blade:{name:'毒刃',mp:12,power:1.6,attr:'phys'}, fire_rain:{name:'火雨',mp:18,power:2.1,attr:'mag',element:'fire'},
+  life_steal:{name:'生命吸取',mp:15,power:1.4,attr:'mag',element:'dark'}, death_mark:{name:'死亡標記',mp:20,power:2.4,attr:'phys',element:'dark'},
+  vanish:{name:'消失',mp:10,attr:'buff'}, apocalypse:{name:'啟示錄',mp:30,power:3.0,attr:'mag',element:'dark'},
+  summon:{name:'召喚',mp:25,attr:'mag'}, holy_arrow:{name:'聖光箭',mp:10,power:1.7,attr:'mag',element:'light'},
+  divine_heal:{name:'神聖治癒',mp:18,heal:78}, shield_of_faith:{name:'信仰盾',mp:12,attr:'buff'},
+  smite:{name:'懲戒',mp:16,power:2.2,attr:'mag',element:'light'}, resurrection:{name:'復活',mp:30,attr:'revive'},
+  judgment:{name:'審判',mp:25,power:2.6,attr:'mag',element:'light'}, holy_slash:{name:'聖刃',mp:18,power:2.0,attr:'phys',element:'light'},
+  guardian:{name:'守護',mp:15,attr:'buff'}
+};
+
 const ZONES = {
   forest:{name:'幽暗森林',icon:'🌲',terrains:['🌳','🌲','🌿','🍄']},
   cave:{name:'廢棄礦洞',icon:'🕳️',terrains:['🪨','⛰️','🕳️','💎']},
@@ -80,15 +181,90 @@ const ZONES = {
   sea:{name:'深邃海域',icon:'🌊',terrains:['🌊','🐚','🦀','🐠']},
   heaven:{name:'天空聖殿',icon:'☁️',terrains:['☁️','✨','🌟','🕊️']}
 };
-const LOOT_ITEMS = { /* 完整掉落物列表保持不變 */ };
-const MONSTERS = { /* 完整怪物列表保持不變 */ };
-const BOSSES = { /* 完整Boss列表保持不變 */ };
-const EQUIPMENT_POOL = { /* 完整裝備池保持不變 */ };
+
+const LOOT_ITEMS = {
+  goblin_tooth:{name:'哥布林牙齒',icon:'🦷',rarity:'common'},
+  fire_fur:{name:'火狐毛皮',icon:'🔥',rarity:'common'},
+  snake_scale:{name:'蛇鱗',icon:'🐍',rarity:'common'},
+  stone_core:{name:'石核',icon:'🪨',rarity:'common'},
+  bat_wing:{name:'蝙蝠翅膀',icon:'🦇',rarity:'common'},
+  worm_essence:{name:'蟲之精華',icon:'✨',rarity:'common'},
+  dark_bone:{name:'暗黑骨',icon:'🦴',rarity:'uncommon'},
+  holy_water:{name:'聖水',icon:'💧',rarity:'uncommon'},
+  ghost_essence:{name:'幽靈精華',icon:'👻',rarity:'uncommon'},
+  sea_pearl:{name:'海珍珠',icon:'🫧',rarity:'uncommon'},
+  dragon_scale:{name:'龍鱗',icon:'🔶',rarity:'rare'},
+  magma_core:{name:'岩漿核心',icon:'❤️‍🔥',rarity:'rare'},
+  shark_tooth:{name:'鯊魚牙',icon:'🦈',rarity:'rare'},
+  heaven_feather:{name:'天堂羽毛',icon:'🪶',rarity:'rare'},
+  unicorn_horn:{name:'獨角獸角',icon:'🦄',rarity:'epic'},
+  dark_crystal:{name:'暗影水晶',icon:'🖤',rarity:'epic'},
+  phoenix_feather:{name:'鳳凰羽毛',icon:'🔥',rarity:'legendary'},
+  divine_essence:{name:'神聖精華',icon:'✨',rarity:'legendary'},
+  world_core:{name:'世界核心',icon:'🌍',rarity:'legendary'}
+};
+
+const MONSTERS = {
+  forest:[
+    {name:'哥布林',icon:'👹',el:'earth',hp:42,atk:11,def:6,exp:18,goldMin:30,goldMax:45,loot:[{id:'goblin_tooth',chance:0.7}]},
+    {name:'火狐',icon:'🦊',el:'fire',hp:44,atk:12,def:7,exp:22,goldMin:30,goldMax:45,loot:[{id:'fire_fur',chance:0.6}]},
+    {name:'毒蛇',icon:'🐍',el:'water',hp:38,atk:13,def:5,exp:20,goldMin:30,goldMax:45,loot:[{id:'snake_scale',chance:0.65}]}
+  ],
+  cave:[
+    {name:'石傀儡',icon:'🗿',el:'earth',hp:110,atk:23,def:17,exp:45,goldMin:35,goldMax:50,loot:[{id:'stone_core',chance:0.7}]},
+    {name:'暗影蝙蝠',icon:'🦇',el:'dark',hp:88,atk:21,def:11,exp:40,goldMin:35,goldMax:50,loot:[{id:'bat_wing',chance:0.65}]},
+    {name:'礦脈蟲',icon:'🪱',el:'wind',hp:95,atk:19,def:14,exp:42,goldMin:35,goldMax:50,loot:[{id:'worm_essence',chance:0.6}]}
+  ],
+  castle:[
+    {name:'骷髏騎士',icon:'💀',el:'dark',hp:195,atk:34,def:23,exp:65,goldMin:35,goldMax:50,loot:[{id:'dark_bone',chance:0.7}]},
+    {name:'聖光祭司',icon:'🧙',el:'light',hp:175,atk:30,def:21,exp:60,goldMin:35,goldMax:50,loot:[{id:'holy_water',chance:0.65}]},
+    {name:'幽靈',icon:'👻',el:'dark',hp:150,atk:28,def:16,exp:55,goldMin:35,goldMax:50,loot:[{id:'ghost_essence',chance:0.6}]}
+  ],
+  dragon_lair:[
+    {name:'火龍',icon:'🐉',el:'fire',hp:300,atk:44,def:32,exp:90,goldMin:40,goldMax:50,loot:[{id:'dragon_scale',chance:0.3},{id:'magma_core',chance:0.3}]},
+    {name:'岩漿元素',icon:'🔥',el:'fire',hp:280,atk:40,def:30,exp:85,goldMin:40,goldMax:50,loot:[{id:'magma_core',chance:0.4}]}
+  ],
+  sea:[
+    {name:'人魚戰士',icon:'🧜',el:'water',hp:350,atk:48,def:34,exp:100,goldMin:45,goldMax:55,loot:[{id:'sea_pearl',chance:0.5}]},
+    {name:'海獸',icon:'🦈',el:'water',hp:380,atk:52,def:36,exp:110,goldMin:45,goldMax:55,loot:[{id:'shark_tooth',chance:0.4}]}
+  ],
+  heaven:[
+    {name:'天使斥候',icon:'👼',el:'light',hp:420,atk:56,def:40,exp:130,goldMin:50,goldMax:60,loot:[{id:'heaven_feather',chance:0.5}]},
+    {name:'聖獸',icon:'🦄',el:'light',hp:450,atk:60,def:42,exp:140,goldMin:50,goldMax:60,loot:[{id:'unicorn_horn',chance:0.3}]}
+  ]
+};
+const BOSSES = {
+  forest:{name:'森林巨魔',icon:'👾',el:'earth',hp:220,atk:30,def:22,exp:120,goldMin:300,goldMax:400,loot:[{id:'dark_crystal',chance:0.5},{id:'dragon_scale',chance:0.3}]},
+  cave:{name:'礦洞之王',icon:'👿',el:'dark',hp:400,atk:42,def:32,exp:220,goldMin:300,goldMax:400,loot:[{id:'dark_crystal',chance:0.6},{id:'phoenix_feather',chance:0.2}]},
+  castle:{name:'亡靈領主',icon:'🧛',el:'dark',hp:600,atk:54,def:44,exp:350,goldMin:300,goldMax:400,loot:[{id:'divine_essence',chance:0.4},{id:'world_core',chance:0.1}]},
+  dragon_lair:{name:'遠古巨龍',icon:'🐲',el:'fire',hp:850,atk:68,def:56,exp:520,goldMin:300,goldMax:400,loot:[{id:'phoenix_feather',chance:0.5},{id:'world_core',chance:0.2}]},
+  sea:{name:'海妖',icon:'🧜‍♀️',el:'water',hp:1000,atk:78,def:62,exp:650,goldMin:300,goldMax:400,loot:[{id:'divine_essence',chance:0.5},{id:'phoenix_feather',chance:0.3}]},
+  heaven:{name:'宙斯',icon:'⚡',el:'light',hp:1200,atk:88,def:70,exp:800,goldMin:300,goldMax:400,loot:[{id:'world_core',chance:0.4},{id:'divine_essence',chance:0.4}]}
+};
+
+const EQUIPMENT_POOL = {
+  weapon:[
+    {id:'w_d',name:'木劍',grade:'D',atk:6},{id:'w_c',name:'鐵劍',grade:'C',atk:14},{id:'w_b',name:'鋼刃',grade:'B',atk:24},
+    {id:'w_a',name:'龍牙',grade:'A',atk:36},{id:'w_s',name:'惡魔之牙',grade:'S',atk:50,element:'dark'},{id:'w_ss',name:'聖光槍',grade:'SS',atk:68,element:'light'}
+  ],
+  armor:[
+    {id:'a_d',name:'皮甲',grade:'D',def:5},{id:'a_c',name:'鎖子甲',grade:'C',def:11},{id:'a_b',name:'板甲',grade:'B',def:18},
+    {id:'a_a',name:'龍鱗甲',grade:'A',def:27},{id:'a_s',name:'暗影斗篷',grade:'S',def:22,spd:15},{id:'a_ss',name:'神聖長袍',grade:'SS',def:32,mdef:15}
+  ],
+  accessory:[
+    {id:'ac_d',name:'力量戒指',grade:'D',atk:4},{id:'ac_d2',name:'敏捷戒指',grade:'D',spd:4},
+    {id:'ac_c',name:'疾風護符',grade:'C',spd:14},{id:'ac_c2',name:'智力護符',grade:'C',matk:8},
+    {id:'ac_b',name:'賢者之石',grade:'B',matk:12},{id:'ac_b2',name:'生命寶珠',grade:'B',hp:35},
+    {id:'ac_a',name:'龍心',grade:'A',hp:65},{id:'ac_a2',name:'魔法水晶',grade:'A',matk:14},
+    {id:'ac_s',name:'暗夜之星',grade:'S',atk:14,matk:14},{id:'ac_s2',name:'疾風之羽',grade:'S',spd:20},
+    {id:'ac_ss',name:'神之淚',grade:'SS',all:10},{id:'ac_ss2',name:'永恆之戒',grade:'SS',hp:80,mp:40}
+  ]
+};
+
 const ZONE_MERCHANT_GRADES = {forest:['D','C'],cave:['D','C','B'],castle:['C','B','A'],dragon_lair:['B','A','S'],sea:['A','S'],heaven:['S','SS']};
 const CRAFT_RECIPES = {D:{needs:{common:3},cost:50},C:{needs:{common:5,uncommon:2},cost:120},B:{needs:{uncommon:4,rare:2},cost:250},A:{needs:{rare:5,epic:1},cost:400},S:{needs:{epic:3,legendary:1},cost:600},SS:{needs:{legendary:3},cost:1000}};
 const START_ZONE = 'forest', START_POS = {x:0,y:0}, BOSS_POS = {x:5,y:5};
 
-// 經驗值系統常數
 const EXP_PER_KILL = 25;
 const EXP_PER_BOSS = 120;
 const EXP_TO_LEVEL = (lv) => 50 + lv * 25;
@@ -102,7 +278,7 @@ const state = {
   escapeCounter:0, altarReturn:null, merchantBuyCount:0
 };
 
-function initPlayer(raceKey) {
+function initPlayer(raceKey){
   const race = RACES[raceKey];
   state.race = raceKey;
   const startForm = Object.keys(EVOLUTION_TREE[raceKey])[0];
@@ -120,15 +296,11 @@ function initPlayer(raceKey) {
   state.player.hp = state.player.maxHp;
   state.player.mp = state.player.maxMp;
 }
-
 function applyForm(){
   const f = EVOLUTION_TREE[state.race][state.player.form];
   if(!f) return;
-  Object.assign(state.player, {
-    maxHp:f.hp, maxMp:f.mp, atk:f.atk, def:f.def, matk:f.matk, mdef:f.mdef, spd:f.spd
-  });
+  Object.assign(state.player, {maxHp:f.hp, maxMp:f.mp, atk:f.atk, def:f.def, matk:f.matk, mdef:f.mdef, spd:f.spd});
 }
-
 function stats(){
   const p=state.player, eq={atk:0,def:0,spd:0,matk:0,mdef:0,hp:0,mp:0};
   Object.values(state.equipment).forEach(e=>{
@@ -138,13 +310,8 @@ function stats(){
     if(e.hp) eq.hp+=e.hp; if(e.mp) eq.mp+=e.mp;
     if(e.all){ eq.atk+=e.all; eq.def+=e.all; eq.spd+=e.all; eq.matk+=e.all; eq.mdef+=e.all; }
   });
-  return {
-    atk:p.atk+state.buffs.atk+eq.atk, def:p.def+state.buffs.def+eq.def,
-    spd:p.spd+state.buffs.spd+eq.spd, matk:p.matk+eq.matk, mdef:p.mdef+eq.mdef,
-    maxHp:p.maxHp+eq.hp, maxMp:p.maxMp+eq.mp
-  };
+  return {atk:p.atk+state.buffs.atk+eq.atk, def:p.def+state.buffs.def+eq.def, spd:p.spd+state.buffs.spd+eq.spd, matk:p.matk+eq.matk, mdef:p.mdef+eq.mdef, maxHp:p.maxHp+eq.hp, maxMp:p.maxMp+eq.mp};
 }
-
 function genMaps(){
   for(let z of Object.keys(ZONES)){
     state.maps[z] = {
@@ -159,7 +326,6 @@ function genMaps(){
     }
   }
 }
-
 function move(dx,dy){
   if(state.battle||state.dead||state.scene!=='map') return;
   let nx=state.pos.x+dx, ny=state.pos.y+dy;
@@ -178,7 +344,6 @@ function move(dx,dy){
   else if(Math.random()<0.18) triggerEvent();
   else renderMap();
 }
-
 function handleSpecial(type){
   if(type==='chest'){
     state.player.gold+=Math.floor(Math.random()*60)+40; addEquip('weapon','D');
@@ -190,7 +355,6 @@ function handleSpecial(type){
   }
   renderMap();
 }
-
 function startBattle(){
   const pool=MONSTERS[state.zone]||MONSTERS.forest;
   const m=pool[Math.floor(Math.random()*pool.length)];
@@ -204,7 +368,6 @@ function startBoss(){
   state.buffs={atk:0,spd:0,def:0,shield:0,weakDebuff:false}; state.escapeCounter=0;
   setVoice(`👑 Boss ${boss.name}！`); renderBattle();
 }
-
 function dmgCalc(atk,def,power=1,atkEl,defEl,isP=false){
   let base=Math.max(1,Math.floor(atk*power)-def);
   if(atkEl&&defEl&&atkEl!=='none'&&defEl!=='none'){
@@ -216,7 +379,6 @@ function dmgCalc(atk,def,power=1,atkEl,defEl,isP=false){
   if(!isP&&state.buffs.weakDebuff) res=Math.floor(res*1.2);
   return res;
 }
-
 function showDamage(el,dmg,col='#ff4d4d'){
   if(!el) return; const d=document.createElement('div'); d.className='pop-damage'; d.textContent=dmg; d.style.color=col;
   el.style.position='relative'; el.appendChild(d); setTimeout(()=>d.remove(),700);
@@ -268,7 +430,6 @@ function usePotion(type){
   else if(type==='weak') setVoice('無敵方');
   setVoice('藥水生效'); renderBattle();
 }
-
 function enemyTurn(){
   if(!state.enemy||state.enemy.hp<=0||state.dead) return;
   const dmg=dmgCalc(state.enemy.atk,stats().def,1,state.enemy.el,EVOLUTION_TREE[state.race][state.player.form].element);
@@ -285,19 +446,15 @@ function playerDeath(){
   },1500);
   renderBattle();
 }
-
 function addEquip(type,grade){
   const pool=EQUIPMENT_POOL[type].filter(e=>e.grade===grade);
   if(pool.length){ const eq={...pool[Math.floor(Math.random()*pool.length)],type}; state.equipInv.push(eq); setVoice(`獲得${eq.name}`); }
 }
-function addToInv(id){
-  const ex=state.inv.find(i=>i.id===id); if(ex) ex.qty++; else state.inv.push({id,name:LOOT_ITEMS[id].name,qty:1});
-}
+function addToInv(id){ const ex=state.inv.find(i=>i.id===id); if(ex) ex.qty++; else state.inv.push({id,name:LOOT_ITEMS[id].name,qty:1}); }
 function dropLootFromPool(pool){
   if(!pool||!pool.length) return;
   for(let entry of pool){ if(Math.random()<entry.chance){ addToInv(entry.id); setVoice(`獲得 ${LOOT_ITEMS[entry.id].name} [${LOOT_RARITY[LOOT_ITEMS[entry.id].rarity]}]`); break; } }
 }
-
 function gainExp(amount){
   state.player.exp += amount;
   const needed = EXP_TO_LEVEL(state.player.lv);
@@ -308,21 +465,16 @@ function gainExp(amount){
     state.player.hp = state.player.maxHp; state.player.mp = state.player.maxMp;
     setVoice(`🎉 升級！ Lv.${state.player.lv}`);
     if(state.player.lv%5===0 && EVOLUTION_TREE[state.race][state.player.form].evolutions?.length) setVoice('可進化！');
-    // 遞迴檢查是否連續升級
     gainExp(0);
   }
 }
-
 function checkEnd(){
   if(state.enemy.hp<=0){
     state.enemy.hp=0;
     let gold = Math.floor(Math.random()*(state.enemy.goldMax-state.enemy.goldMin+1))+state.enemy.goldMin;
     if(state.race==='human') gold=Math.floor(gold*1.30);
     state.player.gold+=gold;
-    // 經驗值獎勵
-    const expGain = state.enemy.isBoss ? EXP_PER_BOSS : EXP_PER_KILL;
-    gainExp(expGain);
-
+    gainExp(state.enemy.isBoss ? EXP_PER_BOSS : EXP_PER_KILL);
     if(state.enemy.isBoss){
       dropLootFromPool(state.enemy.loot);
       if(Math.random()<0.5){
@@ -338,22 +490,18 @@ function checkEnd(){
     setTimeout(()=>renderMap(),500);
   } else enemyTurn();
 }
-
 function forceLevelUp(t){ for(let i=0;i<t;i++) gainExp(EXP_TO_LEVEL(state.player.lv)); }
-
 function evolve(id){
   state.player.form=id; state.player.lv=1; applyForm();
   state.player.hp=state.player.maxHp; state.player.mp=state.player.maxMp;
   setVoice(`進化！${EVOLUTION_TREE[state.race][id].name}`); state.scene='map'; renderMap();
 }
 function setVoice(m){ state.voice=`神之聲：${m}`; }
-
 function updateStatusBar(){
   const p=state.player, f=EVOLUTION_TREE[state.race][p.form];
   const needed = EXP_TO_LEVEL(p.lv);
   document.getElementById('status-bar').innerHTML = `<span>${RACES[state.race].icon} ${f.name} Lv.${p.lv}</span><span>❤️${p.hp}/${p.maxHp}</span><span>💧${p.mp}/${p.maxMp}</span><span>💰${p.gold}</span><span>⭐${p.exp}/${needed}</span>`;
 }
-
 function renderMap(){
   updateStatusBar();
   const f=EVOLUTION_TREE[state.race][state.player.form];
@@ -394,7 +542,6 @@ function renderMap(){
   document.getElementById('craftBtn').onclick=()=>{ state.scene='craft'; renderCraft(); };
   if(canEvo) document.getElementById('evoBtn').onclick=()=>{ state.scene='evo'; renderEvo(); };
 }
-
 function bindMapEvents(){
   document.querySelectorAll('.map-cell').forEach(cell=>{
     cell.onclick=(e)=>{
@@ -415,7 +562,6 @@ function bindMapEvents(){
     else if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>25) move(0,dy>0?1:-1);
   };
 }
-
 function renderBattle(){
   updateStatusBar();
   const e=state.enemy, p=state.player, f=EVOLUTION_TREE[state.race][p.form];
@@ -456,14 +602,138 @@ function renderStatus(){
   document.getElementById('game-view').innerHTML=`<div class="panel"><h3>📋 狀態</h3><p>${f.icon} ${f.name} Lv.${p.lv}</p><p>❤️${p.hp}/${p.maxHp} 💧${p.mp}/${p.maxMp}</p><p>⚔️攻${s.atk} 🛡️防${s.def} 💨速${s.spd}</p><p>⭐ 經驗 ${p.exp}/${EXP_TO_LEVEL(p.lv)}</p><button class="btn" id="backMap">返回</button></div>`;
   document.getElementById('backMap').onclick=()=>{ state.scene='map'; renderMap(); };
 }
-function renderEquip(){ /* 保持不變 */ }
-function renderShop(){ /* 保持不變 */ }
-function renderMerchantShop(){ /* 保持不變 */ }
-function renderCraft(){ /* 保持不變 */ }
-function renderAltar(){ /* 保持不變 */ }
-function returnFromAltar(){ /* 保持不變 */ }
-function triggerEvent(){ /* 保持不變 */ }
-function renderEvo(){ /* 保持不變 */ }
+function renderEquip(){
+  const slots={weapon:'武器',armor:'防具',accessory:'飾品'};
+  let html='<div class="panel"><h3>🛡️ 裝備</h3>';
+  for(let [s,n] of Object.entries(slots)){
+    const eq=state.equipment[s];
+    html+=`<p><b>${n}</b>：${eq?`${eq.name}(${eq.grade}) ${eq.atk?'+'+eq.atk+'攻':''}${eq.def?'+'+eq.def+'防':''}${eq.spd?'+'+eq.spd+'速':''}${eq.matk?'+'+eq.matk+'魔':''}${eq.mdef?'+'+eq.mdef+'魔防':''}${eq.hp?'+'+eq.hp+'血':''}${eq.all?'+'+eq.all+'全':''}`:'空'} ${eq?`<button class="btn small unequip" data-slot="${s}">卸</button><button class="btn small sellEquip" data-slot="${s}">賣25G</button>`:''}</p>`;
+  }
+  html+='<h4>背包裝備</h4>';
+  state.equipInv.forEach((eq,i)=>{ html+=`<div class="item-row"><span>${eq.name}(${eq.grade})</span><button class="btn small equipIt" data-idx="${i}">裝備</button><button class="btn small sellInv" data-idx="${i}">賣25G</button></div>`; });
+  html+='<button class="btn" id="closeEquip">返回</button></div>';
+  document.getElementById('game-view').innerHTML=html;
+  document.getElementById('closeEquip').onclick=()=>{ state.scene='map'; renderMap(); };
+  document.querySelectorAll('.unequip').forEach(b=>b.onclick=e=>{ const s=e.target.dataset.slot; const eq=state.equipment[s]; if(eq){ state.equipInv.push(eq); state.equipment[s]=null; renderEquip(); } });
+  document.querySelectorAll('.sellEquip').forEach(b=>b.onclick=e=>{ const s=e.target.dataset.slot; const eq=state.equipment[s]; if(eq){ state.player.gold+=25; state.equipment[s]=null; renderEquip(); } });
+  document.querySelectorAll('.equipIt').forEach(b=>b.onclick=e=>{ const i=parseInt(e.target.dataset.idx); const eq=state.equipInv.splice(i,1)[0]; if(state.equipment[eq.type]) state.equipInv.push(state.equipment[eq.type]); state.equipment[eq.type]=eq; renderEquip(); });
+  document.querySelectorAll('.sellInv').forEach(b=>b.onclick=e=>{ const i=parseInt(e.target.dataset.idx); state.player.gold+=25; state.equipInv.splice(i,1); renderEquip(); });
+}
+function renderShop(){
+  const p=state.player;
+  let invHtml=state.inv.map((it,i)=>`<div class="item-row"><span>${it.name} x${it.qty}</span><button class="btn small" id="sell_${i}">賣25G</button></div>`).join('');
+  document.getElementById('game-view').innerHTML=`
+  <div class="panel"><h3>🛒 商店</h3><p>💰 ${p.gold}G</p>
+  <div class="shop-grid">
+  <div class="shop-card">❤️生命藥水 (30HP) 100G <button class="btn small" id="buyHp">買</button></div>
+  <div class="shop-card">💧魔力藥水 (18MP) 80G <button class="btn small" id="buyMp">買</button></div>
+  <div class="shop-card">💨速度藥水 +14 130G <button class="btn small" id="buySpd">買</button></div>
+  <div class="shop-card">⚔️攻擊藥水 +14 140G <button class="btn small" id="buyAtk">買</button></div>
+  <div class="shop-card">☠️虛弱藥水 110G <button class="btn small" id="buyWeak">買</button></div>
+  <div class="shop-card">⭐升級藥水 +3級 500G <button class="btn small" id="buyLevel">買</button></div></div>
+  <h4>掉落物</h4>${invHtml||'無'}<button class="btn" id="closeShop">關閉</button></div>`;
+  document.getElementById('buyHp').onclick=()=>{ if(p.gold>=100){ p.gold-=100; p.potions.hp++; renderShop(); } };
+  document.getElementById('buyMp').onclick=()=>{ if(p.gold>=80){ p.gold-=80; p.potions.mp++; renderShop(); } };
+  document.getElementById('buySpd').onclick=()=>{ if(p.gold>=130){ p.gold-=130; p.potions.speed++; renderShop(); } };
+  document.getElementById('buyAtk').onclick=()=>{ if(p.gold>=140){ p.gold-=140; p.potions.atk++; renderShop(); } };
+  document.getElementById('buyWeak').onclick=()=>{ if(p.gold>=110){ p.gold-=110; p.potions.weak++; renderShop(); } };
+  document.getElementById('buyLevel').onclick=()=>{ if(p.gold>=500){ p.gold-=500; forceLevelUp(3); renderShop(); } };
+  state.inv.forEach((_,i)=>{ const btn=document.getElementById(`sell_${i}`); if(btn) btn.onclick=()=>{ const it=state.inv[i]; p.gold+=25; it.qty--; if(it.qty<=0) state.inv.splice(i,1); renderShop(); }; });
+  document.getElementById('closeShop').onclick=()=>{ state.scene='map'; renderMap(); };
+}
+function renderMerchantShop(){
+  const p=state.player;
+  const gradePrice={D:35,C:70,B:140,A:210,S:350,SS:550};
+  const allowedGrades=ZONE_MERCHANT_GRADES[state.zone]||['D','C'];
+  let items='';
+  for(let i=0;i<3;i++){
+    const type=['weapon','armor','accessory'][i];
+    const grade=allowedGrades[Math.floor(Math.random()*allowedGrades.length)];
+    const pool=EQUIPMENT_POOL[type].filter(e=>e.grade===grade);
+    if(pool.length){
+      const eq=pool[Math.floor(Math.random()*pool.length)];
+      const price=Math.floor(gradePrice[grade]*0.85);
+      items+=`<div class="shop-card"><span>${eq.name} (${grade})</span><p class="price">${price}G</p><button class="btn small buyMerch" data-type="${type}" data-grade="${grade}" data-price="${price}">購買</button></div>`;
+    }
+  }
+  document.getElementById('game-view').innerHTML=`
+  <div class="panel"><h3>🏪 流浪商人 (85折) 已買${state.merchantBuyCount}/3</h3>
+  <p style="font-size:0.7rem;color:#c0a0d0;">📍 ${ZONES[state.zone].name} - 最高${allowedGrades[allowedGrades.length-1]}級</p>
+  <p>💰 ${p.gold}G</p><div class="shop-grid">${items}</div><button class="btn" id="closeMerchant">離開</button></div>`;
+  document.querySelectorAll('.buyMerch').forEach(b=>b.onclick=e=>{
+    if(state.merchantBuyCount>=3) return;
+    const price=parseInt(e.target.dataset.price);
+    if(p.gold<price) return;
+    p.gold-=price; addEquip(e.target.dataset.type,e.target.dataset.grade); state.merchantBuyCount++;
+    if(state.merchantBuyCount>=3){ delete state.maps[state.zone].special[`${state.pos.x},${state.pos.y}`]; state.scene='map'; renderMap(); }
+    else renderMerchantShop();
+  });
+  document.getElementById('closeMerchant').onclick=()=>{ state.scene='map'; renderMap(); };
+}
+function renderCraft(){
+  const invCounts={}; state.inv.forEach(i=>{ const r=LOOT_ITEMS[i.id].rarity; invCounts[r]=(invCounts[r]||0)+i.qty; });
+  let html=`<div class="panel"><h3>🔨 鍛造 (材料分級)</h3><p>材料: `;
+  for(let r in LOOT_RARITY) html+=`${LOOT_RARITY[r]}:${invCounts[r]||0} `;
+  html+=`| 💰${state.player.gold}</p><div class="flex-row">`;
+  for(let grade in CRAFT_RECIPES){
+    const rec=CRAFT_RECIPES[grade]; let can=true, missing=[];
+    for(let r in rec.needs) if((invCounts[r]||0)<rec.needs[r]){ can=false; missing.push(`${LOOT_RARITY[r]}缺${rec.needs[r]-(invCounts[r]||0)}`); }
+    if(state.player.gold<rec.cost){ can=false; missing.push('金幣不足'); }
+    html+=`<button class="btn small craftGrade" data-grade="${grade}" ${!can?'disabled':''}>${grade}級 ${rec.cost}G ${missing.length?'('+missing.join(',')+')':''}</button>`;
+  }
+  html+='</div><button class="btn" id="closeCraft">返回</button></div>';
+  document.getElementById('game-view').innerHTML=html;
+  document.querySelectorAll('.craftGrade').forEach(b=>b.onclick=e=>{
+    const grade=e.target.dataset.grade; const rec=CRAFT_RECIPES[grade];
+    if(state.player.gold<rec.cost) return;
+    for(let r in rec.needs){
+      let need=rec.needs[r];
+      for(let i=state.inv.length-1;i>=0&&need>0;i--){
+        if(LOOT_ITEMS[state.inv[i].id].rarity===r){
+          const take=Math.min(state.inv[i].qty,need); state.inv[i].qty-=take; need-=take;
+          if(state.inv[i].qty<=0) state.inv.splice(i,1);
+        }
+      }
+      if(need>0) return;
+    }
+    state.player.gold-=rec.cost; addEquip(['weapon','armor','accessory'][Math.floor(Math.random()*3)],grade); renderCraft();
+  });
+  document.getElementById('closeCraft').onclick=()=>{ state.scene='map'; renderMap(); };
+}
+function renderAltar(){
+  document.getElementById('game-view').innerHTML=`
+  <div class="panel"><h3>🌀 暗影祭壇</h3><p>選擇一項永久提升</p>
+  <button class="btn" id="aAtk">⚔️攻擊+4</button><button class="btn" id="aDef">🛡️防禦+4</button>
+  <button class="btn" id="aSpd">💨速度+4</button><button class="btn" id="aHp">❤️生命+25</button>
+  <button class="btn" id="aMp">💧魔力+12</button></div>`;
+  document.getElementById('aAtk').onclick=()=>{ state.player.atk+=4; returnFromAltar(); };
+  document.getElementById('aDef').onclick=()=>{ state.player.def+=4; returnFromAltar(); };
+  document.getElementById('aSpd').onclick=()=>{ state.player.spd+=4; returnFromAltar(); };
+  document.getElementById('aHp').onclick=()=>{ state.player.maxHp+=25; state.player.hp+=25; returnFromAltar(); };
+  document.getElementById('aMp').onclick=()=>{ state.player.maxMp+=12; state.player.mp+=12; returnFromAltar(); };
+}
+function returnFromAltar(){
+  if(state.altarReturn){ state.zone=state.altarReturn.zone; state.pos={x:state.altarReturn.x,y:state.altarReturn.y}; state.altarReturn=null; }
+  delete state.maps[state.zone].special[`${state.pos.x},${state.pos.y}`]; setVoice('獲得祝福並返回'); state.scene='map'; renderMap();
+}
+function triggerEvent(){
+  const events=[
+    {name:'流浪商人',desc:'商人出現',effect:()=>{ state.merchantBuyCount=0; state.scene='merchantShop'; renderMerchantShop(); }},
+    {name:'偷襲',desc:'-15HP',effect:()=>{ state.player.hp=Math.max(1,state.player.hp-15); setVoice('被偷襲！'); }},
+    {name:'幫助村民',desc:'獲得武器',effect:()=>addEquip('weapon','D')},
+    {name:'聖光洗禮',desc:'獲得飾品',effect:()=>addEquip('accessory','C')},
+    {name:'寶箱',desc:'+50G',effect:()=>{ state.player.gold+=50; setVoice('+50G'); }},
+    {name:'陷阱',desc:'-10HP',effect:()=>{ state.player.hp=Math.max(1,state.player.hp-10); }}
+  ];
+  const ev=events[Math.floor(Math.random()*events.length)]; state.scene='event';
+  document.getElementById('game-view').innerHTML=`<div class="panel"><h3>${ev.name}</h3><p>${ev.desc}</p><button class="btn primary" id="acceptEvent">確認</button></div>`;
+  document.getElementById('acceptEvent').onclick=()=>{ ev.effect(); if(state.scene==='event'){ state.scene='map'; renderMap(); } };
+}
+function renderEvo(){
+  const opts=EVOLUTION_TREE[state.race][state.player.form].evolutions||[];
+  document.getElementById('game-view').innerHTML=`<div class="panel"><h3>進化</h3><div class="flex-row">${opts.map(id=>`<div class="evolution-card" data-evo="${id}"><span style="font-size:2rem;">${EVOLUTION_TREE[state.race][id].icon}</span><h4>${EVOLUTION_TREE[state.race][id].name}</h4></div>`).join('')}</div></div>`;
+  document.querySelectorAll('.evolution-card').forEach(c=>c.onclick=e=>evolve(e.currentTarget.dataset.evo));
+}
 function setupControls(){
   document.getElementById('control-area').innerHTML=`
   <div class="direction-pad">
@@ -485,7 +755,6 @@ window.addEventListener('keydown',e=>{
   if(e.key==='ArrowUp'||e.key==='w'){ e.preventDefault(); move(0,-1); }
   if(e.key==='ArrowDown'||e.key==='s'){ e.preventDefault(); move(0,1); }
 });
-
 function showTutorial(){
   state.scene='tutorial';
   document.getElementById('game-view').innerHTML=`<div class="panel"><h2>📖 終極冒險</h2><p>🧭 方向鍵/滑動地圖移動</p><p>⚔️ 戰鬥獲得經驗自動升級</p><p>✨ 每5級可選擇進化</p><p>🔨 鍛造需對應稀有度材料</p><button class="btn primary" id="toRaceSelect">選擇種族</button></div>`;
@@ -495,8 +764,12 @@ function showRaceSelect(){
   state.scene='raceSelect';
   document.getElementById('game-view').innerHTML=`<div class="panel"><h3>選擇種族</h3><div class="flex-row">${Object.entries(RACES).map(([k,r])=>`<div class="race-card" data-race="${k}"><span style="font-size:2.5rem;">${r.icon}</span><h4>${r.name}</h4><p>${r.desc}</p></div>`).join('')}</div></div>`;
   document.querySelectorAll('.race-card').forEach(c=>c.onclick=e=>{
-    initPlayer(e.currentTarget.dataset.race); genMaps(); state.bossDefeated.clear(); state.inv=[]; state.equipInv=[]; state.equipment={weapon:null,armor:null,accessory:null};
-    state.scene='map'; state.zone=START_ZONE; state.pos={...START_POS}; setupControls(); renderMap();
+    initPlayer(e.currentTarget.dataset.race);
+    genMaps();
+    state.bossDefeated.clear();
+    state.inv=[]; state.equipInv=[]; state.equipment={weapon:null,armor:null,accessory:null};
+    state.scene='map'; state.zone=START_ZONE; state.pos={...START_POS};
+    setupControls(); renderMap();
   });
 }
 showTutorial();
