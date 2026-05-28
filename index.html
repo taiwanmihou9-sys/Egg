@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0, viewport-fit=cover">
-    <title>轉生龍蛋 · 終極平衡版</title>
+    <title>轉生龍蛋 · 終極版</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{background:#0a0610;font-family:'Noto Serif TC',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background-image:radial-gradient(circle at 30% 30%,#2a1a35 0%,#03010a 90%);padding:8px;touch-action:manipulation}
@@ -55,7 +55,7 @@
 <body>
 <div id="game-container">
     <div class="top-ornament"></div>
-    <div id="header"><h1>🐉 轉生龍蛋 · 終極平衡版</h1><div class="subtitle">森林 · 礦洞 · 城堡 · 龍巢 · 海域 · 天堂</div></div>
+    <div id="header"><h1>🐉 轉生龍蛋 · 終極版</h1><div class="subtitle">森林 · 礦洞 · 城堡 · 龍巢 · 海域 · 天堂</div></div>
     <div id="status-bar"></div>
     <div id="main-area"><div id="game-view"></div><div id="control-area"></div></div>
 </div>
@@ -65,6 +65,7 @@
 const ELEMENTS = {fire:'火',water:'水',wind:'風',earth:'地',light:'光',dark:'闇',none:'無'};
 const ELEMENT_WEAKNESS = {fire:'wind', wind:'earth', earth:'water', water:'fire', light:'dark', dark:'light'};
 const LOOT_RARITY = {common:'普通',uncommon:'罕見',rare:'稀有',epic:'史詩',legendary:'傳說'};
+const ZONE_ORDER = ['forest','cave','castle','dragon_lair','sea','heaven'];
 
 const RACES = {
   human:{name:'人族',icon:'🧑',desc:'均衡·金幣+30%',baseHP:65,baseMP:32,atk:12,def:9,matk:9,mdef:8,spd:9,element:'none',passive:'gold'},
@@ -298,7 +299,16 @@ function move(dx,dy){
   if(nx<0||nx>=10||ny<0||ny>=10){
     const adj={forest:{south:'cave'},cave:{north:'forest',south:'castle'},castle:{north:'cave',south:'dragon_lair'},dragon_lair:{north:'castle',south:'sea'},sea:{north:'dragon_lair',south:'heaven'},heaven:{north:'sea'}};
     const next=adj[state.zone]?.[dx<0?'west':dx>0?'east':dy<0?'north':dy>0?'south':null];
-    if(next){state.zone=next;state.pos={x:dx<0?9:dx>0?0:nx,y:dy<0?9:dy>0?0:ny};}else return;
+    if(next){
+      const curIdx = ZONE_ORDER.indexOf(state.zone);
+      const nextIdx = ZONE_ORDER.indexOf(next);
+      if(nextIdx > curIdx && !state.bossDefeated.has(state.zone)){
+        setVoice(`必須擊敗${ZONES[state.zone].name}的Boss才能前往${ZONES[next].name}！`);
+        renderMap();
+        return;
+      }
+      state.zone=next;state.pos={x:dx<0?9:dx>0?0:nx,y:dy<0?9:dy>0?0:ny};
+    }else return;
   }else{state.pos.x=nx;state.pos.y=ny;}
   if(state.bossCooldown>0)state.bossCooldown--;
   const key=`${state.pos.x},${state.pos.y}`;
@@ -478,12 +488,15 @@ function showTutorial(){
   state.scene='tutorial';
   document.getElementById('game-view').innerHTML=`
     <div class="panel">
-      <h2>📖 終極冒險規則</h2>
-      <p>🧭 方向鍵 / 滑動地圖 / 點擊相鄰格子移動</p>
-      <p>⚔️ 戰鬥獲得經驗自動升級，每5級可進化</p>
-      <p>💀 死亡後返回起點 (人族保留物品)</p>
-      <p>🔨 鍛造需要對應稀有度材料</p>
-      <p>🛒 流浪商人只售賣符合當前區域等級的裝備</p>
+      <h2>📖 遊戲玩法說明</h2>
+      <p>🗺️ <b>探索移動</b>：使用方向鍵(電腦)或滑動/點擊地圖(手機)移動角色。</p>
+      <p>⚔️ <b>回合戰鬥</b>：遭遇怪物進入戰鬥，可攻擊、使用技能、閃避(累積3次可逃跑)。</p>
+      <p>🎯 <b>升級</b>：擊敗敵人獲得經驗，經驗達標自動升級，提升屬性。</p>
+      <p>✨ <b>進化</b>：每5級可選擇進化分支，改變型態並重置等級。</p>
+      <p>👑 <b>Boss挑戰</b>：每個區域的Boss位於地圖中央(5,5)，擊敗後解鎖前往下一區域的通道。</p>
+      <p>🔨 <b>鍛造系統</b>：收集不同稀有度的材料，在鍛造屋合成裝備(低級材料無法造高級裝備)。</p>
+      <p>🛒 <b>流浪商人</b>：隨機出現，只售賣符合當前區域強度的裝備。</p>
+      <p>💀 <b>死亡懲罰</b>：角色死亡後返回森林起點，非人族會失去所有裝備與藥水。</p>
       <button class="btn primary" id="toRaceSelect">選擇種族</button>
     </div>`;
   document.getElementById('toRaceSelect').onclick = showRaceSelect;
@@ -512,7 +525,7 @@ function showRaceSelect(){
   };
 }
 
-// 啟動
+// 啟動遊戲
 showTutorial();
 })();
 </script>
